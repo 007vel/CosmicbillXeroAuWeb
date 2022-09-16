@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <script>document.write('<base href="' + document.location + '" />');</script>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<title>CosmicBills - Login</title>
+
+<!-- Layout CSS -->
+
+</head>
+
+<!-- 3. Display the application -->
+<ngx-spinner bdColor="rgba(87, 109, 142, 0.33)"
+size="medium"
+color="#fff"
+type="Ball-Elastic-Dots"><p style="text-align: center; background-color:#0081c2; font-size: 20px; color: white; height: 30px; width:200px;  "> Please wait... </p> </ngx-spinner>
+
+
+<body class="login-body">
+    <form [formGroup]="frogotform" (ngSubmit)="onSubmit(frogotform.value)">
+    <div id="login-wrapper">
+        <img src="../../assets/images/cosmic bills_logo_white_smaller.gif">
+        <p-messages [(value)]="msgs"></p-messages>
+        <div id="login-container">
+         
+            
+            <span class="title"><h5 style="color:#0081c2"> Recover your password</h5></span>
+
+            <!-- <small>Please enter your UserName and we will send a code in your registered email, which you will need to verify in next screen.</small>
+             -->
+
+             <small>Please enter your UserName.</small>
+            
+
+            <div class="ui-g ui-fluid">
+             <div class="ui-g-12">
+                 <input type="text" autocomplete="off" class="ui-inputtext ui-corner-all ui-state-default ui-widget" placeholder="Enter your username" formControlName="UserName" />
+               </div>
+
+               <div class="ui-g-12">
+                  <button type="submit" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-left"  [disabled]="!frogotform.valid" >
+                      <span class="ui-button-icon-left ui-c fa fa-fw ui-icon-person"></span>
+                      <span class="ui-button-text ui-c">Submit</span>
+                  </button>
+              </div>
+
+              <div class="ui-g-12">
+                  
+                <button [routerLink]="['/login']">
+                  <span class="ui-button-text ui-c">Sign in instead</span>
+              </button>
+            </div>
+            </div>
+        </div>
+        <div class="login-footer">© 2018 - CosmicBills</div>
+  
+    </div>
+   
+  </form>
+</body>
+</html>

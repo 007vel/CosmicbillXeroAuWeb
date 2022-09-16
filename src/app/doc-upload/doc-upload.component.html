@@ -1,0 +1,99 @@
+<br>
+<p-steps [model]="steps" [(activeIndex)]="activeIndex" styleClass="steps-custom" [readonly]="false"></p-steps>
+<br>
+
+<div *ngIf="totalFiles>0">
+<ngx-spinner bdColor="rgba(87, 109, 142, 0.10)" size="medium" color="#0081c2" type="ball-elastic-dots">
+    <p style="text-align: center; background-color:#0081c2; font-size: 20px; color: white; height: 30px; width:200px;  ">
+        Processing {{indexOfFileInProgress}} / {{totalFiles}} </p>
+</ngx-spinner>
+</div>
+
+<h3 style="color: red">{{connectCompanyMessage}}</h3>
+<p-accordion>
+    <p-accordionTab header="Help">
+        <p>Select document(s) to upload by either click on [+ Choose PDFs for scan] button or drag drop your documents </p>
+        <p>Click on [Cancel/Reset] button to reset screen</p>
+        <p>Click on [Upload] button to upload your document(s) </p>
+    </p-accordionTab>
+
+</p-accordion>
+
+
+        <p-fileUpload name="clientFiles" url="{{postDocApiUrl}}" customUpload="true" (onUpload)="onUpload($event)"
+           chooseLabel = "Upload PDFs to scan" 
+           uploadLabel = "Start Scanning"
+           
+            cancelLabel = "Cancel / Reset"
+            (onBeforeSend)="onBeforeSend($event)" multiple="multiple" form-data="formdata" accept=".pdf" maxFileSize="10000000"
+            (onProgress)="onProgress($event)" (onSelect)="onSelect($event)" (uploadHandler)="myUploader($event)" (onClear)="clearAll($event)" >
+
+          <!--  <ng-template pTemplate="content">
+        <ul *ngIf="uploadedFiles.length">
+            <li *ngFor="let file of uploadedFiles">{{file.name}} - {{file.size}} bytes </li>
+        </ul> </ng-template> -->
+
+            <!-- <ng-template let-my pTemplate="uploadedFiles">
+
+        <table>
+            <tr>
+                <td style="width: 50em">{{my.myfile.name}}</td>
+                <td style="width: 12em">{{my.myfile.size}} bytes {{my.myfile.progress}} {{my.id}}</td>
+                <td style="width: 10em">
+                    <button pButton type="button" icon="fa fa-spinner" class="ui-button-rounded ui-button-warning"
+                        (click)="pdfViewer.zoomIn()"></button></td>
+                <td style="width: 10em">
+                    <button pButton type="button" icon="fa fa-check-circle-o" class="ui-button-rounded ui-button-success"
+                        (click)="pdfViewer.zoomOut()"></button>
+                    
+                        <button pButton type="button" icon="fa fa-exclamation-triangle" class="ui-button-rounded ui-button-danger"
+                        (click)="pdfViewer.zoomOut()"></button>
+
+                        <img src="../../assets/images/green_progress.gif" >
+                    
+                    </td>
+            </tr>
+        </table>
+
+    </ng-template> -->
+
+
+      <ng-template let-my pTemplate="file">
+            <div>
+              
+            </div>
+        </ng-template>
+
+            <ng-template let-my pTemplate="content">
+                <div>
+                    <h3 style="color:#0081c2"> Drag & Drop your document(s) here...</h3>
+                 
+                        
+        <table *ngIf="uploadedFiles.length">
+                <tr>
+                        <th style="text-align:left" >Index</th>
+                        <th style="text-align:left">File Name</th>
+                        <th style="text-align:left">File Size</th>
+                        <!-- <th style="text-align:left">Cancel</th> -->
+                        <th style="text-align:left">Status</th>
+                        <th></th>
+                    </tr>
+
+                <tr *ngFor="let my of uploadedFiles">
+                    <td style="width: 4em">{{my.fileId}}</td>
+                    <td style="width: 40em">{{my.myfile.name}}</td>
+                    <td style="width: 10em">{{my.myfile.size}} bytes</td>
+                    <td style="width: 4em">
+                            <!-- <img src="../../assets/images/green_progress.gif" > -->
+                            <p-progressSpinner *ngIf="my.status == 1 || my.status == 2" [style]="{width: '22px', height: '22px'}" strokeWidth="8" fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>
+                            <img *ngIf="my.status == 3" src="../../assets/images/done.png" >
+                     </td>
+                     <td>{{my.progressMessage}}</td>
+
+                </tr>
+            </table>
+                </div>
+            </ng-template>
+
+        </p-fileUpload>
+ 

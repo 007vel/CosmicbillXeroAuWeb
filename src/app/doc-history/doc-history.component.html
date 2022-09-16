@@ -1,0 +1,123 @@
+<p-dialog [(visible)]="display" [modal]="true" [responsive]="true" [width]="950" [minWidth]="200" [positionTop]="50"
+  [maximizable]="true" [baseZIndex]="10000">
+  <p-header>
+
+    <button pButton type="button" icon="fa fa-search-plus" class="ui-button-rounded ui-button-secondary" (click)="pdfViewer.zoomIn()"></button>&nbsp;
+    <button pButton type="button" icon="fa fa-search-minus" class="ui-button-rounded ui-button-secondary" (click)="pdfViewer.zoomOut()"></button>&nbsp;
+    <button pButton type="button" icon="fa fa-search" class="ui-button-rounded ui-button-secondary" (click)="pdfViewer.zoomReset()"></button>&nbsp;
+
+    <button pButton type="button" icon="fa fa-arrow-circle-o-left" class="ui-button-rounded ui-button-secondary" (click)="pdfViewer.nextPage()"></button>&nbsp;
+    <button pButton type="button" icon="fa fa-arrow-circle-o-right" class="ui-button-rounded ui-button-secondary" (click)="pdfViewer.prevPage()"></button>
+    
+  </p-header>
+
+
+  <section id="viewer">
+    <!-- Simple PDF Viewer: open the test.pdf at the second page -->
+    <simple-pdf-viewer #pdfViewer [src]=ScanPdfPath></simple-pdf-viewer>
+  </section>
+
+  <p-footer>
+  </p-footer>
+</p-dialog>
+
+<div class="ui-g">
+  <div>
+
+    <p-panel>
+      <p-header>
+        <b>Date Rang Filter</b>
+      </p-header>
+      <form [formGroup]="userform" (ngSubmit)="onSubmit(userform.value)">
+
+        <div class="ui-grid ui-grid-responsive ui-grid-pad ui-fluid" style="margin: 10px 0px">
+          <div class="ui-grid-row">
+            <div class="ui-grid-col-1">
+              From Date *:
+            </div>
+            <div class="ui-grid-col-2">
+                <input type="date" [ngModel]="formattedDate"
+                formControlName="FromDate" >
+                <!-- <p-calendar hourFormat="12" dateFormat= "mm/dd/yy" formControlName="FromDate"></p-calendar>
+              -->
+            </div>
+
+          </div>
+
+          <div class="ui-grid-row">
+            <div class="ui-grid-col-1">
+              To Date *:
+            </div>
+            <div class="ui-grid-col-2">
+                <input type="date" [ngModel]="currentDate"
+                formControlName="ToDate" >
+                <!-- <p-calendar hourFormat="12" dateFormat= "mm/dd/yy" formControlName="ToDate" ></p-calendar> -->
+            </div>
+          </div>
+
+          <div class="ui-grid-row">
+            <div class="ui-grid-col-1"></div>
+            <div class="ui-grid-col-1">
+              <button pButton type="submit" label="Filter" [disabled]="!userform.valid"></button>
+            </div>
+
+          </div>
+
+        </div>
+
+      </form>
+      <p-footer>
+
+      </p-footer>
+    </p-panel>
+
+
+
+    <p-panel>
+      <p-header>
+        Document Scanned History : Showing only document(s) which has posted to Xero
+      </p-header>
+
+      <p-table [value]="xeroDocuments" [responsive]="true" [metaKeySelection]="true">
+        <ng-template pTemplate="header">
+          <tr>
+            <th style="width: 30em">Supplier</th>
+            <th>Ref Number </th>
+            <th>Amount</th>
+            <th>Doc Type</th>
+            <th>Scanned File Name</th>
+            <th style="width: 10em">Open in Xero</th> 
+            <th style="width: 10em">View pdf</th> 
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-hdr>
+
+          <tr [pSelectableRow]="hdr">
+
+            <td style="word-wrap: break-word">{{hdr.XeroVendorName}} </td>
+            <td>{{hdr.ScanRefNumber}} </td>
+            <td>{{hdr.ScanInvoiceTotal | currency}} </td>
+            <td style="word-wrap: break-word">{{hdr.ScanDocType}} </td>
+            <td style="word-wrap: break-word">{{hdr.ScanFile_Name}} </td>
+            <td style="width: 10em">
+                <button pButton type="button" label="Open in Xero" (click)="sendDeepLink(hdr)" style="margin-bottom:10px"></button>
+            </td>
+            <td>   
+              <button pButton type="button" class="ui-button-rounded ui-button-secondary" 
+              icon="fa fa-file" aria-hidden="true" (click)="showPdf(hdr)"></button>&nbsp;&nbsp;
+
+              <button pButton type="button" class="ui-button-rounded ui-button-secondary"
+              icon="fa fa-download" aria-hidden="true" (click)="downloadPDF(hdr)"></button>
+            </td>
+          
+          </tr>
+        </ng-template>
+      </p-table>
+
+      <p-footer>
+        Document(s) are showing based on dates on which that are posted to Xero
+      </p-footer>
+
+    </p-panel>
+  </div>
+</div>

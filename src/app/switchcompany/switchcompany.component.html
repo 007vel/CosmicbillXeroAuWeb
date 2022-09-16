@@ -1,0 +1,35 @@
+<p-confirmDialog header="Please confirm" icon="pi pi-exclamation-triangle" width="425"></p-confirmDialog>
+<br><br>
+<button pButton type="button" label="Add new XERO Company" (click)="addNewCompany()"></button>
+<br><br>
+<div *ngFor="let company of companies; let i = index">
+
+    <p-card title={{company.CompanyName}} subtitle={{company.LeagalName}} [style]="{width: '360px'}" styleClass="ui-card-shadow">
+        <p-header>
+
+        </p-header>
+
+        <p-footer>
+            <button pButton type="button" label="Connect" icon="pi pi-check" style="margin-right: .25em" (click)="companySelected(company)"></button>
+        </p-footer>
+    </p-card>
+    <br>
+</div>
+
+<br>
+<div *ngFor="let company of companies; let i = index">
+
+    <div *ngIf="company.IsAuthrorize">
+        <p-card title={{company.CompanyName}} subtitle={{company.LeagalName}} [style]="{width: '360px'}" styleClass="ui-card-shadow">
+            <p-header>
+
+            </p-header>
+
+            <p-footer>
+                <button pButton type="button" label="Authorized or Revoked" icon="pi pi-check" style="margin-right: .25em" (click)="companyReAouth(company)"></button>
+            </p-footer>
+        </p-card>
+        <br>
+    </div>
+
+</div>

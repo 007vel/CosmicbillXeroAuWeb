@@ -1,0 +1,7 @@
+{
+  "CLIENT_ID" : "6B70BDFA950343AB9D6175FF38A04D17",
+  "CLIENT_SECRET": "A6-Yp7u28uMNHSJmzTgvg29WyE_S6qM6rcCIe8BuQX_kzXiV",
+  "SCOPES": "openid profile email accounting.transactions accounting.settings offline_access",
+  "REDIRECT_URL": "http://localhost:4200/callback"
+}
+

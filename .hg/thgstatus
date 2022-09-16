@@ -1,0 +1,12 @@
+msrc/app
+msrc/app/doc-auth
+msrc/app/doc-post
+msrc/app/doc-review
+msrc/app/doc-upload
+msrc/app/forgotpass
+msrc/app/login
+msrc/app/map-account
+msrc/app/setpass
+msrc/app/signup
+msrc/assets/layout/css
+msrc/assets/layout/sass

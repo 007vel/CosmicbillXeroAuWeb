@@ -1,0 +1,26 @@
+.column {
+    float: left;
+    width: 50%;
+  }
+  
+  /* Clear floats after the columns */
+  .row:after {
+    content: "";
+    display: table;
+    clear: both;
+  }
+
+  .ui-button {
+    margin-left: 0.25rem;
+    margin-right: 0.25rem;
+
+  
+}
+.required-field::before {
+  content: "*";
+  color: red;
+}
+
+.table-responsive {
+  overflow-y: visible !important;
+}

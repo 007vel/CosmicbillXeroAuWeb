@@ -1,0 +1,99 @@
+<br><br>
+<p-messages [(value)]="msgs"></p-messages>
+<ngx-spinner bdColor="rgba(87, 109, 142, 0.10)" size="medium" color="#0081c2" type="ball-elastic-dots">
+    <p
+        style="text-align: center; background-color:#0081c2; font-size: 20px; color: white; height: 30px; width:200px;  ">
+        {{loadingMessage}} </p>
+</ngx-spinner>
+
+<div class="ui-g">
+    <div class="ui-g-10 ui-g-nopad">
+        <div>
+            <p-panel>
+                <p-header>
+                    Header
+                </p-header>
+                <div class="ui-grid ui-grid-responsive ui-grid-pad ui-fluid" style="margin: 10px 0px">
+                    <div class="ui-grid-row">
+                        <div class="ui-grid-col-2">
+                            Vendor *
+                        </div>
+                        <div class="ui-grid-col-6">
+                            <p-dropdown [filter]="true" [options]="xeroVendors" (onChange)="onChangeVendor($event)"
+                                [(ngModel)]="hdr.VendorID" [style]="{'width':'100%'}">
+                                <ng-template let-car pTemplate="item">
+                                    <div class="ui-helper-clearfix" style="position: relative;">
+                                        <div>{{car.label}}</div>
+                                    </div>
+                                </ng-template>
+                            </p-dropdown>
+                        </div>
+                    </div>
+                    <div class="ui-grid-row">
+                        <div class="ui-grid-col-2">
+                            Expense Account *
+                        </div>
+                        <div class="ui-grid-col-6">
+                            <p-dropdown [filter]="true" [options]="xeroAccounts" [(ngModel)]="hdr.AccountListID"
+                                [style]="{'width':'100%'}">
+                                <ng-template let-car pTemplate="item">
+                                    <div class="ui-helper-clearfix" style="position: relative;">
+                                        <div>{{car.label}}</div>
+                                    </div>
+                                </ng-template>
+                            </p-dropdown>
+                        </div>
+                    </div>
+
+                    <div class="ui-grid-row">
+                        <div class="ui-grid-col-2">
+                            Product Code *
+                        </div>
+                        <div class="ui-grid-col-5">
+                            <input pInputText type="text" [(ngModel)]="hdr.ProductCode" placeholder="Required" />
+                        </div>
+                        <div class="ui-grid-col-1">
+                            <button pButton type="button" label="Save" (click)="save()"></button>
+
+                        </div>
+                    </div>
+
+                </div>
+
+            </p-panel>
+
+
+            <p-panel>
+                <p-header>
+                    Expense Account(s)
+                </p-header>
+
+                <p-table [value]="lstProduct" resizableColumns="true">
+                    <ng-template pTemplate="header">
+                        <tr>
+                            <th style="width: 30em">AccountName</th>
+                            <th>ProductCode </th>
+                            <th style="width: 13em">Edit</th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-hdr>
+
+                        <tr [pSelectableRow]="hdr">
+                            <td style="word-wrap: break-word">{{hdr.FullyQualifiedNameField}} </td>
+                            <td>{{hdr.ProductCode}} </td>
+                            <td style="width: 13em">
+                                <button pButton type="button" label="Edit" (click)="edit(hdr)"
+                                style="margin-bottom:10px;margin-right: 5px;"></button>
+                                <button pButton type="button" label="Delete" (click)="delete(hdr)"
+                                    style="margin-bottom:10px;background: red;border-color: red;"></button>
+                            </td>
+                        </tr>
+                    </ng-template>
+                </p-table>
+            </p-panel>
+
+        </div>
+
+    </div>
+
+</div>

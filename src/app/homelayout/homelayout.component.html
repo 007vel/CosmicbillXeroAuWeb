@@ -1,0 +1,65 @@
+
+<div  class="wrapper" [ngClass]="{'sidebar-inactive-l':menuInactiveDesktop, 'sidebar-active-m':menuActiveMobile}">
+
+        <div *ngIf="subscribedPlan" id="topbar-icons" style=" color: white; background-color: rgb(8, 58, 75)  ; float: center;"   class="animated" >
+              <div *ngIf ="!subscribedPlan.IsPaidPlan">
+               Your have left {{totalTrialPdf}} trial pdf(s) to scan. <a style="color:rgb(236, 236, 215)" href='#/myaccount'> <u> Please click here to subscribe</u></a>
+               </div>
+               <div *ngIf ="subscribedPlan.IsPaidPlan">
+                Your have left {{totalPaidPdf}} pdf(s) to scan. <a style="color:rgb(236, 236, 215)" href='#/myaccount'> <u> Please click here to upgrade plan</u></a>
+                </div>
+        </div>
+
+  <div  class="topbar clearfix">
+      <a id="omega-menu-button" href="#" (click)="toggleMenu($event)">
+          <span class="fa fa-bars"></span>
+      </a>
+      <span class="topbar-title">Click here to expand/collapse </span>
+      <a id="options-menu-button" href="#" (click)="toggleTopMenu($event)">
+          <span class="fa fa-ellipsis-h"></span>
+      </a>
+      <div id="topbar-icons" class="animated" [ngClass]="{'topbar-icons-visible flipInX':topMenuActive,'flipOutX':topMenuLeaving}">
+            
+         <span class="topbar-item-text">{{companyName}}</span>
+                    
+          <!-- <span class="topbar-search" (click)="onSearchClick()">
+              <input type="text" placeholder="Search" />
+              <span class="topbar-search-icon fa fa-search"></span>
+          </span> -->
+          <a href="https://login.xero.com/" target="_blank">Login into Xero</a>
+         
+        
+      </div>
+  </div>
+  <div class="sidebar" (click)="onMenuClick()">
+      <p-scrollPanel #scroller [style]="{height: '100%'}">
+          <div class="sidebar-scroll-content">
+              <div class="logo">
+                 <!-- <img src="../../assets/images/cosmic bills_logo_white_smaller.gif" alt=""> -->
+                 <h2 style="color:wheat" >CosmicBills</h2> 
+              </div>
+             
+              
+           <!--   <div class="profile">
+                  <img src="assets/layout/images/profile.png" alt="" />
+                  <a id="profile-button" href="#" (click)="toggleProfile($event)">
+                      <span class="username">Peggy Olson</span>
+                      <i class="fa fa-fw fa-cog"></i>
+                  </a>
+                  <ul [@submenu]="profileActive ? 'visible' : 'hidden'">
+                      <li><a href="#"><i class="fa fa-fw fa-sliders"></i><span>Account</span></a></li>
+                      <li><a href="#"><i class="fa fa-fw fa-bell"></i><span>Notifications</span><span class="menu-badge">2</span></a></li>
+                      <li><a href="#"><i class="fa fa-fw fa-sign-out"></i><span>Logout</span></a></li>
+                  </ul>
+              </div> -->
+              <app-menu></app-menu>
+          </div>
+      </p-scrollPanel>
+  </div>
+  <div class="main">
+      <router-outlet></router-outlet>
+  </div>
+
+  <!-- <app-doc-review (childEvent)="test(message)"></app-doc-review> -->
+  
+</div>

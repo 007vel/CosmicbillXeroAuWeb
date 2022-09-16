@@ -1,0 +1,88 @@
+<br>
+<p-steps [model]="steps" [(activeIndex)]="activeIndex" styleClass="steps-custom" [readonly]="false"></p-steps><br>
+<p-confirmDialog header="Confirmation" icon="pi pi-exclamation-triangle" width="425"></p-confirmDialog>
+<p-growl [(value)]="msgs"></p-growl>
+<ngx-spinner bdColor="rgba(87, 109, 142, 0.10)"
+size="medium"
+color="#0081c2"
+type="ball-elastic-dots"><p style="text-align: center; background-color:#0081c2; font-size: 20px; color: white; height: 30px; width:200px;  "> Loading... </p> </ngx-spinner>
+
+
+<br>
+
+<div class="ui-g">
+  <div class="ui-g-8">
+    <p-panel>
+      <p-header>
+        Select Account(s) from drop down next to Supplier to map default expense account.
+      </p-header>
+
+      <p-dropdown [filter]="true" [options]="xeroAccounts" [(ngModel)]="xeroAccountIDSelected" [style]="{'width':'100%', 'max-width':'33em'}">
+     
+        <ng-template let-act pTemplate="item">
+          <div class="ui-helper-clearfix" style="position: relative;height: 25px;">
+            <div>{{act.label}}</div>
+          </div>
+        </ng-template>
+      </p-dropdown>
+      &nbsp;&nbsp;
+  <button pButton type="button" label="Apply To All Suppliers" (click)="confirm()" class="ui-button-raised"></button>
+  <br><br>
+
+
+      <p-table [value]="xeroVendAcctDefault" [responsive]="true" selectionMode="multiple" (onRowSelect)="onXeroVendAcctSelect($event)"
+        [metaKeySelection]="true">
+        <ng-template pTemplate="header">
+          <tr>
+            <th style="width: 3em">
+                <label class="container">
+                    <input type="checkbox" (change)="onChangeSelectAll($event)" >
+                    <span class="checkmark"></span>
+                  </label>
+            </th>
+            <th>Supplier</th>
+            <th>Account</th>
+
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-hdr>
+            
+          <tr [pSelectableRow]="hdr">
+            <td style="width: 3em">
+
+                <label class="container">
+                    <input type="checkbox" [ngModel]="hdr.Select" (change)="onChangeSelect($event,hdr)" >
+                    <span class="checkmark"></span>
+                  </label>
+
+              
+            </td>
+            <td style="word-wrap: break-word">
+              {{hdr.DisplayNameField}}
+            </td>
+
+            <td>
+              <p-dropdown [filter]="true" [options]="xeroAccounts" [(ngModel)]="hdr.XeroAccountID" [style]="{'width':'100%', 'max-width':'35em'}" (onChange)="onChangeAccount($event,hdr)">
+                <ng-template let-act pTemplate="item">
+                  <div class="ui-helper-clearfix" style="position: relative;height: 25px;">
+                    <div>{{act.label}}</div>
+                  </div>
+                </ng-template>
+              </p-dropdown>
+            </td>
+
+
+
+
+          </tr>
+        </ng-template>
+      </p-table>
+
+      <p-footer>
+
+        Select all Suppliers and choose an account from top drop down to assign selected account to all Suppliers
+      </p-footer>
+
+    </p-panel>
+  </div>
+</div>

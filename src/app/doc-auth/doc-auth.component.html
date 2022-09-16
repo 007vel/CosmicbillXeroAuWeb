@@ -1,0 +1,150 @@
+<br>
+<p-steps [model]="steps" [(activeIndex)]="activeIndex" styleClass="steps-custom" [readonly]="false"></p-steps>
+<br>
+<p-growl [(value)]="msgs"></p-growl>
+<p-confirmDialog header="Please confirm" icon="pi pi-exclamation-triangle" width="425"></p-confirmDialog>
+
+<ngx-spinner bdColor="rgba(87, 109, 142, 0.10)" size="medium" color="#0081c2" type="ball-elastic-dots">
+    <p style="text-align: center; background-color:#0081c2; font-size: 20px; color: white; height: 30px; width:200px;  ">
+        {{loadingMessage}} </p>
+</ngx-spinner>
+
+<p-dialog [(visible)]="display" [modal]="true" [responsive]="true" [width]="950" [minWidth]="200" [positionTop]="50"
+    [maximizable]="true" [baseZIndex]="10000">
+    <p-header>
+
+        <button pButton type="button" icon="fa fa-search-plus" class="ui-button-rounded" (click)="pdfViewer.zoomIn()"></button>&nbsp;
+        <button pButton type="button" icon="fa fa-search-minus" class="ui-button-rounded" (click)="pdfViewer.zoomOut()"></button>&nbsp;
+        <button pButton type="button" icon="fa fa-search" class="ui-button-rounded" (click)="pdfViewer.zoomReset()"></button>&nbsp;
+
+        <button pButton type="button" icon="fa fa-arrow-circle-o-left" class="ui-button-rounded" (click)="pdfViewer.nextPage()"></button>&nbsp;
+        <button pButton type="button" icon="fa fa-arrow-circle-o-right" class="ui-button-rounded" (click)="pdfViewer.prevPage()"></button>
+    </p-header>
+
+
+    <section id="viewer">
+        <!-- Simple PDF Viewer: open the test.pdf at the second page -->
+        <simple-pdf-viewer #pdfViewer [src]=ScanPdfPath></simple-pdf-viewer>
+    </section>
+
+    <p-footer>
+    </p-footer>
+</p-dialog>
+
+
+<h2 style="color: red">{{connectCompanyMessage}}</h2>
+<p-accordion>
+    <p-accordionTab header="Help">
+        <p>Select document(s) which you want to post to Xero </p>
+        <p>Click on Post To Xero button to post all selected record to create bills</p>
+        <p>Click on Pdf icon to view document that you uploaded </p>
+        <p>Click on Undo icon to dis-approve record, the record will move to review screen where you will be able to edit it  </p>
+        <p>Credit Note(s) are highlighted in  <b><span style="color:#57bb9b"> light green </span></b> color  </p>
+        
+    </p-accordionTab>
+
+</p-accordion>
+<div class="ui-g">
+    <!-- <div [ngClass]="isViewerHidden ? 'ui-g-7' : ''"> -->
+    <div>
+        <p-panel>
+            <p-header>
+
+                <div class="ui-helper-clearfix">
+
+                    <button pButton  class="ui-button-success" type="button" icon="pi pi-check" label="Post To Accounting System" [style]="{'float':'right'}"
+                        (click)="postToXero()"></button>
+                    &nbsp;&nbsp;&nbsp; <span class="ui-panel-title" style="font-size:16px;display:inline-block;margin-top:2px;margin-top:5px">Approved
+                        Documents [Select To Create Auth in Xero]</span>
+                    <!-- <button pButton type="button" label="Show/Hide Pdf Viewer" class="ui-button-rounded" style="float:right"
+                        (click)="showHideViewer()"></button> -->
+                </div>
+
+            </p-header>
+            <p-table [value]="xeroDocumentLines" sortField="DocumentID" sortMode="single" (onSort)="onSort()">
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th style="width: 3em"><label class="container">
+                                <input type="checkbox" (change)="onChangeApproveAll($event)">
+                                <span class="checkmark"></span>
+                            </label></th>
+                        <th colspan="2" style="width: 6em"></th>
+                        
+                        <th style="width: 7em">Invoice No.</th>
+                        <th>Supplier</th>
+                        <th style="width: 17em">Expense Account</th>
+                        <th>Description</th>
+                        <th style="width: 3em">Qty</th>
+                        <th style="width: 5em">Price</th>
+                        <th style="width: 5em">Tax</th>
+                        <th style="width: 6em">Amount</th>
+                        <th style="width: 7em">Total</th>
+
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-rowData let-rowIndex="rowIndex">
+
+
+
+                    <!-- <tr [ngClass]="rowIndex % 2 === 0 ? 'odd' : 'even'"> -->
+
+                            <tr [ngClass]="getRecordClass(rowData.DocumentID,rowData.ScanDocType)">
+
+                        <td style="vertical-align: top;" *ngIf="rowGroupMetadata[rowData.DocumentID].index === rowIndex" [attr.rowspan]="rowGroupMetadata[rowData.DocumentID].size">
+
+                           <label class="container">
+                                            <input type="checkbox" [ngModel]="rowData.SelectToBill" (change)="onChangeApprove($event,rowData)">
+                                            <span class="checkmark"></span>
+                            </label>
+                                
+                        </td>
+
+
+                        <td style="vertical-align: top;" *ngIf="rowGroupMetadata[rowData.DocumentID].index === rowIndex" [attr.rowspan]="rowGroupMetadata[rowData.DocumentID].size">
+                            <button pButton type="button" icon="fa fa-file" class="ui-button-rounded ui-button-secondary" aria-hidden="true" (click)="showPdf(rowData)"></button>
+                        </td>
+
+                        <td style="vertical-align: top;" *ngIf="rowGroupMetadata[rowData.DocumentID].index === rowIndex" [attr.rowspan]="rowGroupMetadata[rowData.DocumentID].size">
+                            <button pButton type="button" icon="fa fa-undo" class="ui-button-rounded ui-button-secondary" aria-hidden="true" (click)="DeAproveRecord(rowData)"></button>
+                        </td>
+
+                        
+                        
+                        <td style="vertical-align: top; word-wrap: break-word;" *ngIf="rowGroupMetadata[rowData.DocumentID].index === rowIndex" [attr.rowspan]="rowGroupMetadata[rowData.DocumentID].size">
+                            {{rowData.ScanRefNumber}}
+                            <!-- Ref : {{rowData.ScanRefNumber}} -->
+                        </td>
+
+                        <td style="vertical-align: top;" *ngIf="rowGroupMetadata[rowData.DocumentID].index === rowIndex" [attr.rowspan]="rowGroupMetadata[rowData.DocumentID].size">
+                            {{rowData.XeroVendorName}}
+                            <!-- Ref : {{rowData.ScanRefNumber}} -->
+                        </td>
+                        <td style="vertical-align: top;">{{rowData.XeroAccountName}}</td>
+                        <td>{{rowData.ScanDescription}}</td>
+                        <td style="width: 3em; text-align: right">{{rowData.Scan_Quantity}}</td>
+                        <td style="width: 5em; text-align: right">{{rowData.ScanUnit_Price | currency}}</td>
+                        <td style="width: 5em; text-align: right">{{rowData.ScanGST | currency}}</td>
+                        <td style="width: 6em; text-align: right">{{rowData.Scan_Total | currency}}</td>
+
+                        <td style="vertical-align: center;text-align: right" *ngIf="rowGroupMetadata[rowData.DocumentID].index === rowIndex"
+                            [attr.rowspan]="rowGroupMetadata[rowData.DocumentID].size">
+
+                            <table>
+                                <tr>
+                                    <td>
+                                        <b>{{rowData.ScanInvoiceTotal | currency}}</b>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </ng-template>
+            </p-table>
+
+
+            <p-footer>
+                Once you post bills to Xero, you can view all in Xero Document History.
+            </p-footer>
+        </p-panel>
+    </div>
+</div>

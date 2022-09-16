@@ -1,0 +1,119 @@
+<br />
+<p-growl [(value)]="msgs"></p-growl>
+<p-confirmDialog header="Please confirm" icon="pi pi-exclamation-triangle" width="425"></p-confirmDialog>
+
+<ngx-spinner bdColor="rgba(87, 109, 142, 0.10)" size="medium" color="#0081c2" type="ball-elastic-dots">
+    <p style="text-align: center; background-color:#0081c2; font-size: 20px; color: white; height: 30px; width:200px;  ">
+        {{loadingMessage}} </p>
+</ngx-spinner>
+
+<div class="ui-g">
+        <p-card title="My Profile" subtitle="" [style]="{width: '375px'}" styleClass="ui-card-shadow">
+            <p-header>
+                    <b></b>
+            </p-header>
+            <form [formGroup]="userform" (ngSubmit)="onSubmit(userform.value)">
+
+                    <div class="ui-grid ui-grid-responsive ui-grid-pad ui-fluid" style="margin: 10px 0px">
+                        <div class="ui-grid-row">
+                            <div class="ui-grid-col-4">
+                                Name :
+                            </div>
+                            <div class="ui-grid-col-12">
+                                <input pInputText type="text"  formControlName="UserName" readonly placeholder="Required" />
+                            </div>
+        
+                        </div>
+                        <div class="ui-grid-row">
+                            <div class="ui-grid-col-4">
+                                Email :
+                            </div>
+                            <div class="ui-grid-col-12">
+                                <input pInputText type="email"  formControlName="Email" placeholder="Required" />
+                            </div>
+                        </div>
+                        <div class="ui-grid-row">
+                            <div class="ui-grid-col-4">
+                                Phone :
+                            </div>
+                            <div class="ui-grid-col-12">
+                                <input pInputText type="text"  formControlName="Phone" placeholder="Required" />
+                            </div>
+                        </div>
+        
+                        <div class="ui-grid-row">
+                            <div class="ui-grid-col-4"></div>
+                            <div class="ui-grid-col-6">
+                                <button pButton type="submit" label="Submit" [disabled]="!userform.valid"></button>
+                            </div>
+        
+                        </div>
+                       
+                    </div>
+        
+                </form>
+        
+            <p-footer>
+              
+            </p-footer>
+        </p-card>
+
+</div>
+
+<div class="ui-g">
+    <p-card title="User Required" subtitle="" [style]="{width: '500px'}" styleClass="ui-card-shadow">
+        <p-header>
+                <b></b>
+        </p-header>
+
+        <div class="ui-grid ui-grid-responsive ui-grid-pad ui-fluid" style="margin: 10px 0px">
+            <div class="ui-grid-row">
+                <div class="ui-grid-col-12">
+                   Auto Process your bills(login to Approve and Post)
+                </div>
+                <div class="ui-grid-col-2">
+                    <input type="checkbox" [(ngModel)]="AsyncBackEndScanning" (change)="directPostChange($event,1)" />
+                </div>
+            </div>
+            <div class="ui-grid-row">
+                <div class="ui-grid-col-12">
+                    Auto Process your bills(No need to login will post it for you)
+                </div>
+                <div class="ui-grid-col-2">
+                    <input type="checkbox" [(ngModel)]="DirectPostfromEmail" (change)="directPostMailChange($event)"/>
+                </div>
+            </div>
+            <div class="ui-grid-row">
+                <div class="ui-grid-row-18">
+                    Must be selected 'Approved Doc As' if you have choosen Auto Process bills without login...
+                </div>
+            </div>
+            <div class="ui-grid-row">
+                <div class="ui-grid-row-12">
+                    Approve Doc As : 
+                </div>
+                <div class="ui-grid-col-6">
+                <p-dropdown [filter]="false" [options]="docPostAsList" [(ngModel)]="docPostAs" placeholder="Select"
+                (onChange)="onChangeItem($event)" [style]="{'width':'100%', 'max-width':'19em'}">
+                <ng-template let-item pTemplate="item">
+                  <div class="ui-helper-clearfix" style="position: relative;height: 25px;">
+                    <div>{{item.label}}</div>
+                  </div>
+                </ng-template>
+              </p-dropdown>
+              </div>
+            </div>
+
+            <div class="ui-grid-row">
+                <div class="ui-grid-col-4"></div>
+                <div class="ui-grid-col-6">
+                    <button  type="button" (click)="saveChecked()">Save</button>
+                </div>
+            </div>
+           
+        </div>
+        <p-footer>
+        </p-footer>
+    </p-card>
+
+</div>

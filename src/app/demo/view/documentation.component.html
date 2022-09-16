@@ -1,0 +1,324 @@
+<div class="ui-g">
+    <div class="ui-g-12">
+        <div class="card docs">
+
+            <h1>Current Version</h1>
+            <p>Angular 6 and PrimeNG 6</p>
+
+            <h1>Getting Started</h1>
+            <p>Omega Template is distributed as an Angular CLI project. If you don't have CLI installed already run the following commands to set it up. In case
+            you have an application that do not use CLI, skip the <a href="#noncli">Integration with an Existing Non CLI Application</a> part.</p>
+<pre>
+npm install -g angular-cli
+</pre>
+
+            <p>Once CLI is ready in your system, extract the contents of the omega zip file distribution, cd to the directory,
+            install the libraries from npm and then execute "ng serve" to run the application in your local environment at http://localhost:4200/.</p>
+<pre>
+cd omega
+npm install
+ng serve
+</pre>
+
+            <p>That's it, you may now start with the development of your application.</p>
+
+            <h1>Important CLI Commands</h1>
+            <p>Following commands are derived from CLI.</p>
+<pre>
+Run 'ng serve' for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
+
+Run 'ng generate component component-name' to generate a new component. You can also use `ng generate directive/pipe/service/class/module`.
+
+Run 'ng build' to build the project. The build artifacts will be stored in the `dist/` directory. Use the `-prod` flag for a production build.
+
+Run 'ng test' to execute the unit tests via [Karma](https://karma-runner.github.io).
+
+Run 'ng e2e' to execute the end-to-end tests via [Protractor](http://www.protractortest.org/).
+
+Run 'ng help' for more options.
+</pre>
+
+            <h1>Template</h1>
+            <p>Omega layout consists of two parts; the main application template and the menu component. <i>app.component.html</i> inside app folder is the main html template for the base layout having a router-outlet
+                for routing whereas the menu component is defined using the &lt;app-menu /&gt; element.
+            </p>
+
+            <h1>Menu</h1>
+            <p>Menu is a separate component defined in app.menu.component.ts file based on PrimeNG MenuModel API. In order to define the menuitems,
+            navigate to app.menu.component.ts and define your own model. Here is the menu component from the sample application. The helper
+            app-submenu component is also available in the same file.</p>
+
+<pre>
+import &#123;MenuItem&#125; from 'primeng/primeng';
+
+@Component(&#123;
+    selector: 'app-menu',
+    template: `
+        &lt;div class="menu"&gt;
+            &lt;ul app-submenu [item]="model" root="true">&lt;/ul&gt;
+        &lt;/div&gt;
+    `
+&#125;)
+export class AppMenuComponent implements OnInit &#123;
+
+    model: MenuItem[];
+
+    ngOnInit() &#123;
+        this.model = [
+            &#123;label: 'Dashboard', icon: 'fa fa-fw fa-home', routerLink: ['/']&#125;,
+            &#123;
+                label: 'Components', icon: 'fa fa-fw fa-home', routerLink: ['/'],
+                items: [
+                    &#123;label: 'Sample Page', icon: 'fa fa-fw fa-columns', routerLink: ['/sample']&#125;,
+                    &#123;label: 'Forms', icon: 'fa fa-fw fa-code', routerLink: ['/forms']&#125;,
+                    &#123;label: 'Data', icon: 'fa fa-fw fa-table', routerLink: ['/data']&#125;,
+                    &#123;label: 'Panels', icon: 'fa fa-fw fa-list-alt', routerLink: ['/panels']&#125;,
+                    &#123;label: 'Overlays', icon: 'fa fa-fw fa-square', routerLink: ['/overlays']&#125;,
+                    &#123;label: 'Menus', icon: 'fa fa-fw fa-minus-square-o', routerLink: ['/menus']&#125;,
+                    &#123;label: 'Menus', icon: 'fa fa-fw fa-circle-o-notch', routerLink: ['/messages']&#125;,
+                    &#123;label: 'Messages', icon: 'fa fa-fw fa-area-chart', routerLink: ['/charts']&#125;,
+                    &#123;label: 'Charts', icon: 'fa fa-fw fa-columns', routerLink: ['/file']&#125;,
+                    &#123;label: 'File', icon: 'fa fa-fw fa-arrow-circle-o-up', routerLink: ['/misc']&#125;
+                ]
+            &#125;,
+            &#123;label: 'Landing', icon: 'fa fa-fw fa-certificate', routerLink: ['/']&#125;,
+            &#123;
+                label: 'Template Pages', icon: 'fa fa-fw fa-life-saver', routerLink: ['/'],
+                items: [
+                    &#123;label: 'Empty Page', icon: 'fa fa-fw fa-square-o', routerLink: ['/empty']&#125;,
+                    &#123;label: 'Login Page', icon: 'fa fa-fw fa-sign-in', url: 'login.html'&#125;,
+                    &#123;label: 'Error Page', icon: 'fa fa-fw fa-exclamation-circle', url: 'login.html'&#125;,
+                    &#123;label: '404 Page', icon: 'fa fa-fw fa-times', url: 'login.html'&#125;,
+                    &#123;label: 'Access Denied Page', icon: 'fa fa-fw fa-exclamation-triangle', url: 'login.html'&#125;
+                ]
+            &#125;,
+            &#123;
+                label: 'Menu Hierarchy', icon: 'fa fa-fw fa-gg',
+                items: [
+                    &#123;
+                        label: 'Submenu 1', icon: 'fa fa-fw fa-sign-in',
+                        items: [
+                            &#123;
+                                label: 'Submenu 1.1', icon: 'fa fa-fw fa-sign-in',
+                                items: [
+                                    &#123;label: 'Submenu 1.1.1', icon: 'fa fa-fw fa-sign-in'&#125;,
+                                    &#123;label: 'Submenu 1.1.2', icon: 'fa fa-fw fa-sign-in'&#125;,
+                                    &#123;label: 'Submenu 1.1.3', icon: 'fa fa-fw fa-sign-in'&#125;,
+                                ]
+                            &#125;,
+                            &#123;
+                                label: 'Submenu 1.2', icon: 'fa fa-fw fa-sign-in',
+                                items: [
+                                    &#123;label: 'Submenu 1.2.1', icon: 'fa fa-fw fa-sign-in'&#125;,
+                                    &#123;label: 'Submenu 1.2.2', icon: 'fa fa-fw fa-sign-in'&#125;
+                                ]
+                            &#125;,
+                        ]
+                    &#125;,
+                    &#123;
+                        label: 'Submenu 2', icon: 'fa fa-fw fa-sign-in',
+                        items: [
+                            &#123;
+                                label: 'Submenu 2.1', icon: 'fa fa-fw fa-sign-in',
+                                items: [
+                                    &#123;label: 'Submenu 2.1.1', icon: 'fa fa-fw fa-sign-in'&#125;,
+                                    &#123;label: 'Submenu 2.1.2', icon: 'fa fa-fw fa-sign-in'&#125;,
+                                    &#123;label: 'Submenu 2.1.3', icon: 'fa fa-fw fa-sign-in'&#125;,
+                                ]
+                            &#125;,
+                            &#123;
+                                label: 'Submenu 2.2', icon: 'fa fa-fw fa-sign-in',
+                                items: [
+                                    &#123;label: 'Submenu 2.2.1', icon: 'fa fa-fw fa-sign-in'&#125;,
+                                    &#123;label: 'Submenu 2.2.2', icon: 'fa fa-fw fa-sign-in'&#125;
+                                ]
+                            &#125;,
+                        ]
+                    &#125;
+                ]
+            &#125;,
+            &#123;label: 'Documentation', icon: 'fa fa-fw fa-book', routerLink: ['/documentation']&#125;
+        ];
+    &#125;
+&#125;
+</pre>
+
+            <h1>Integration with an Existing CLI Project</h1>
+            <p>To setup Omega in an existing project, copy the <i>src/assets</i> folder to your projects folder with the same name
+                and replace the contents of as app.component.ts, app.component.html with their counterparts in Omega under <i>src/app</i> folder. In addition, copy the menu.components.ts to your project.</p>
+
+            <p>Install PrimeNG</p>
+            <pre>
+npm install primeng@latest --save
+npm install primeicons@latest --save
+</pre>
+
+            <p>Add PrimeNG CSS at styles section in angular.json.</p>
+
+            <pre>
+"styles": [
+    "../node_modules/primeng/resources/primeng.min.css",        //required: PrimeNG components
+    "node_modules/primeicons/primeicons.css",                   //required: PrimeIcons
+    "styles.scss"                                               //your styles and overrides
+],
+</pre>
+            <h1 id="noncli">Integration with an Existing Non-CLI Project</h1>
+            <p>For an existing project that do not use CLI, setup steps are more or less similar. Start with installing the dependencies listed above in package.json</p>
+            <p>Copy the <i>src/assets</i> folder to your application and include the resources listed above with a module bundler like webpack or using link-script tags.</p>
+            <p>Finally copy the contents of app.component.html to your application's main component template such as <i>app/application.html</i> along with the application component and the menu component typescript files.</p>
+
+            <h1>Icons</h1>
+            <p>Omega Layout uses font awesome icons for layout so enable font awesome support in PrimeFaces by setting primefaces.FONT_AWESOME context parameter in web.xml as true. If your PrimeFaces version does
+                not have the font awesome integration, include the font-awesome manually in your application.</p>
+            <p>Default icons of Omega theme are png based and Omega Layout enhances them using sharp looking font awesome icons as well.</p>
+
+            <h1>Grid CSS</h1>
+            <p>Omega uses new PrimeNG Grid CSS throughout the samples, we strongly suggest using Grid CSS as your layout framework as it is well tested and supported by PrimeNG however other grid css solutions can also be used instead.</p>
+
+            <h1>Cards</h1>
+            <p>Card is a section to group content and layout provides a built-in css for it. Apply .card style class to your container to use it.</p>
+<pre>
+&lt;div class="card"&gt;
+    Content here
+&lt;/div&gt;
+
+&lt;div class="card card-w-title"&gt;
+    &lt;h1>Title&lt;/h1&gt;
+    Content here
+&lt;/div&gt;
+</pre>
+
+            <h1>SASS Customization</h1>
+            <p>Omega is implemented using sass where sections are organized in different scss files under sass folder such as _dashboard.scss, _login.scss, _main.scss. The _variables.scss file contains common parameters like fontSize, colors and more. In order to customize the layout, you need to make changes to the .scss files and generate a css file called layout.css. Contents of the variables is as follows;</p>
+
+<pre>
+/* General */
+$fontSize: 14px;
+
+/* Menu */
+$submenuFontSize: 13px;
+$menuBgColor: #3b3e47;
+$menuitemColor: #ffffff;
+$menuitemHoverColor: #2399e5;
+$menuitemActiveColor: #2399e5;
+$menuitemActiveBgColor: #2e3035;
+$menuitemBorderColor: #4e5159;
+$menuitemBadgeBgColor: #007be5;
+$topbarItemBadgeColor: #ef6262;
+$dividerColor: #e3e3e3;
+
+/* Topbar */
+$topbarItemColor: #ffffff;
+$topbarItemHoverColor: #77c7ff;
+
+// === Button Colors === //
+/* GreenButton */
+$greenButton: #1f9e53;
+$greenButtonBorder: #107533;
+$greenButtonHover: #2eb971;
+$greenButtonActive: #178544;
+
+/* YellowButton */
+$yellowButton: #eed511;
+$yellowButtonBorder: #cdb80d;
+$yellowButtonHover: #f8e653;
+$yellowButtonActive: #d4b301;
+
+/* RedButton */
+$redButton: #b8312e;
+$redButtonBorder: #9c1627;
+$redButtonHover: #d2524f;
+$redButtonActive: #9c1627;
+
+/* greyButton */
+$greyButton: #ECEFF1;
+$greyButtonBorder: #CCCFD2;
+$greyButtonText: #525252;
+$greyButtonHover: #F5FBFF;
+$greyButtonActive: #CCCFD2;
+
+/* BlackButton */
+$blackButton: #353535;
+$blackButtonBorder: #212121;
+$blackButtonHover: #4a4a4a;
+$blackButtonActive: #212121;
+
+/* BlueButton */
+$blueButton: #2c78c7;
+$blueButtonBorder: #1a51b0;
+$blueButtonHover: #409cdc;
+$blueButtonActive: #1a51b0;
+
+/* AquaButton */
+$aquaButton: #0084b4;
+$aquaButtonBorder: #087298;
+$aquaButtonHover: #03A8E4;
+$aquaButtonActive: #087298;
+
+/* NavyButton */
+$navyButton: #1f3b59;
+$navyButtonBorder: #21374f;
+$navyButtonHover: #3C6592;
+$navyButtonActive: #21374f;
+</pre>
+
+
+        <h1>Menu Item Badges</h1>
+        <p>Badges are numerical indicators of how many items are associated with a link.
+           The badge property is value of the badge and badgeStyleClass is style class of the badge.</p>
+<pre>
+label: 'Components', icon: 'list', badge: '2', badgeStyleClass: 'red-badge'
+</pre>
+        <p>Omega layout has 4 different badge style.There is a default badge which uses the omega blue. And there is 3 other badge class for menu items.</p>
+        <ul>
+            <li>red-badge</li>
+            <li>green-badge</li>
+            <li>yellow-badge</li>
+        </ul>
+
+        <h1>Migration Guide</h1>
+        <p>For seamless updates and easier maintenance, we suggest keeping your CSS customizations in a separate sass file so that your changes
+        are not overriden with an update.</p>
+
+            <h4>5.2.0 to 6.0.0</h4>
+            <p>Brings support for Angular 6 and RxJS 6, adds theming for new components in PrimeNG such as the new TreeTable
+                and improves behaviors of the layout menus.</p>
+            <ul>
+                <li>Add PrimeIcons package.</li>
+                <li>Update app.module.ts.</li>
+                <li>Update app.component.ts.</li>
+                <li>Update app.menu.component.ts.</li>
+                <li>Update layout css files.</li>
+                <li>Update theme css files.</li>
+            </ul>
+
+            <h4>5.0.0 to 5.2.0</h4>
+            <p>Adds support for PrimeNG 5.2.0 (e.g. TurboTable), replaces nanoscroller with PrimeNG ScrollPanel.</p>
+            <ul>
+                <li>Remove nanoscroller as it is replaced by ScrollPanel component of PrimeNG.</li>
+                <li>Update app.component.ts and app.component.html.</li>
+                <li>Update app.menu.component.ts.</li>
+                <li>Update layout css files.</li>
+                <li>Update theme css files.</li>
+            </ul>
+
+            <h4>4.1.0 to 5.0.0</h4>
+            <ul>
+                <li>Update theme css files.</li>
+                <li>Includes version updates to PrimeNG 5 and Angular 5.</li>
+            </ul>
+
+            <h4>4.0.1 to 4.1.0</h4>
+            <ul>
+                <li>Update layout css files.</li>
+                <li>Update theme css files.</li>
+                <li>Update AppSubmenu component in app.app.menu.component.ts.</li>
+            </ul>
+
+            <h4>4.0.0 to 4.0.1</h4>
+            <ul>
+                <li>Includes version updates to PrimeNG.</li>
+            </ul>
+        </div>
+    </div>
+</div>
