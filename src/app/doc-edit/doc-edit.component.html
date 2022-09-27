@@ -1,7 +1,32 @@
 <ngx-spinner bdColor="rgba(87, 109, 142, 0.10)" size="medium" color="#0081c2" type="ball-elastic-dots">
   <p style="text-align: center; background-color:#0081c2; font-size: 20px; color: white; height: 30px; width:200px;  ">
     {{loadingMessage}} </p>
+
+
 </ngx-spinner>
+
+<p-dialog [(visible)]="display" [modal]="true" [responsive]="true" [width]="950" [minWidth]="200" [positionTop]="50"
+    [maximizable]="true" [baseZIndex]="10000">
+    <p-header>
+
+        <button pButton type="button" icon="fa fa-search-plus" class="ui-button-rounded" (click)="pdfViewer.zoomIn()"></button>&nbsp;
+        <button pButton type="button" icon="fa fa-search-minus" class="ui-button-rounded" (click)="pdfViewer.zoomOut()"></button>&nbsp;
+        <button pButton type="button" icon="fa fa-search" class="ui-button-rounded" (click)="pdfViewer.zoomReset()"></button>&nbsp;
+
+        <button pButton type="button" icon="fa fa-arrow-circle-o-left" class="ui-button-rounded" (click)="pdfViewer.nextPage()"></button>&nbsp;
+        <button pButton type="button" icon="fa fa-arrow-circle-o-right" class="ui-button-rounded" (click)="pdfViewer.prevPage()"></button>
+    </p-header>
+
+
+    <section id="viewer">
+        <!-- Simple PDF Viewer: open the test.pdf at the second page -->
+        <simple-pdf-viewer #pdfViewer [src]=ScanPdfPath></simple-pdf-viewer>
+    </section>
+
+    <p-footer>
+    </p-footer>
+</p-dialog>
+
 <p-growl [(value)]="msgs"></p-growl>
 
     <div class="row">
@@ -59,6 +84,7 @@
     </div>
     <p-button icon="fa fa-trash" style="margin-bottom: 0.5em;" label="Delete Seletected"  (click)="deleteAllLineItem()">
     </p-button>
+   
     <p-table #dt [value]="xeroDocumentLinesEdit" [scrollable]="true" >
       <!-- <ng-template pTemplate="colgroup">
     <colgroup>

@@ -47,6 +47,7 @@ export class DocReviewComponent implements OnInit {
   editSupplierName: string = "";
 
   @ViewChild(SimplePdfViewerComponent) private pdfViewer: SimplePdfViewerComponent;
+
   bookmarks: SimplePDFBookmark[] = [];
 
   @Output() childEvent = new EventEmitter();
@@ -312,7 +313,6 @@ export class DocReviewComponent implements OnInit {
     const fileReader: FileReader = new FileReader();
     fileReader.onload = () => {
 
-      ///reader.readAsDataURL(e.target.files[0])
     this.pdfViewer.openDocument(new Uint8Array(fileReader.result));
     };
     fileReader.readAsArrayBuffer(document);
@@ -320,14 +320,6 @@ export class DocReviewComponent implements OnInit {
 
 
   showPdf(value: any) {
-    //window.open(value.ScanBlob_Url);
-    //this.ScanPdfPath = value.ScanBlob_Url;
-    //this.display = true;
-
-    //this.api.get('Scan/GetQbDocumentFile?xeroDocumentID=',value ).subscribe(
-    //  (res: {}) => this.sucessDocumentFile(res),
-    //  error => this.failedDocumentFile(<any>error));
-
     let headers = new HttpHeaders();
     headers = headers.set('Accept', 'application/pdf');
 

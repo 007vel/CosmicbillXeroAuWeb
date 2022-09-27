@@ -8,6 +8,7 @@ import { NgxSpinnerService } from 'ngx-spinner';
 import { SimplePdfViewerComponent, SimplePDFBookmark } from 'simple-pdf-viewer';
 import { HttpHeaders, HttpClient } from '@angular/common/http';
 import { StoreService } from '../store.service';
+
 import * as moment from 'moment';
 import { element } from 'protractor';
 
@@ -27,7 +28,8 @@ export class DocEditComponent implements OnInit {
   documentMemo: any ="";
   xeroDocumentLinesEdit: any = [];
   xeroDocumentLinesEditToDelete: any = [];
-
+  ScanPdfPath: any;
+  display: boolean = false;
   xeroVendors: SelectItem[] = [];
   xeroVendorsTemp: any = [];
   xeroAccountsTemp: any = [];
@@ -52,6 +54,7 @@ export class DocEditComponent implements OnInit {
   editSubTotal: any = 0;
   editGstTotal: any = 0;
 
+  @ViewChild(SimplePdfViewerComponent) private pdfViewer: SimplePdfViewerComponent;
 
   constructor(private router: Router, private api: ApiService, private http: HttpClient,
     private spinner: NgxSpinnerService, private ss: StoreService,
@@ -540,24 +543,46 @@ element.ScanInvoiceDate = this.invoiceDate;
     this.router.navigateByUrl("/docreview");
   }
 
-  viewPdf(value: any) {
-
-    let headers = new HttpHeaders();
-    headers = headers.set('Accept', 'application/pdf');
-
-    this.http.get(this.api.apiBaseUrl + '/Scan/GetXeroDocumentFile?xeroDocumentID=' + value.DocumentID, { headers: headers, responseType: 'blob' }).subscribe(
-      (res: {}) => this.sucessDocumentFilePath(res),
-      error => this.failedDocumentFile(<any>error));
-
-  }
+  
 
   
-  sucessDocumentFilePath(resp: any) {
-    console.log(resp);
+  sucessDocumentFilePath(resp: any, valu: any) {
+    debugger;
+    console.log(this.api.apiPreBaseUrl + resp);
     const win = window.open(this.api.apiPreBaseUrl + resp, 'View Pdf', 'width=800,height=700');
     win.focus();
     console.log(resp);
   }
+  sucessDocumentFile(resp: any) {
+    this.display = true;
+    this.openDocument1(resp);
+  }
+ 
+  showPdf(value: any) {
+    let headers = new HttpHeaders();
+    headers = headers.set('Accept', 'application/pdf');
+
+    this.http.get(this.api.apiBaseUrl + '/Scan/GetXeroDocumentFile?xeroDocumentID=' + value.DocumentID, { headers: headers, responseType: 'blob' }).subscribe(
+      (res: {}) => this.sucessDocumentFile(res),
+      error => this.failedDocumentFile(<any>error));
+  }
+
+  viewPdf(value: any) {
+    let headers = new HttpHeaders();
+    headers = headers.set('Accept', 'application/pdf');
+
+    this.http.get(this.api.apiBaseUrl + '/Scan/GetXeroDocumentFile?xeroDocumentID=' + value.DocumentID, { headers: headers, responseType: 'blob' }).subscribe(
+      (res: {}) => this.sucessDocumentFile(res),
+      error => this.failedDocumentFile(<any>error));
+  }
+  openDocument1(document: File) {
+    const fileReader: FileReader = new FileReader();
+    fileReader.onload = () => {
+    this.pdfViewer.openDocument(new Uint8Array(fileReader.result));
+    };
+    fileReader.readAsArrayBuffer(document);
+  }
+
   failedDocumentFile(resp: any) {
 
   }
