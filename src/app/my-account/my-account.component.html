@@ -36,17 +36,17 @@ type="ball-elastic-dots"><p style="text-align: center; background-color:#0081c2;
   <p-card title="Purchase/Upgrade Plan" subtitle="" [style]="{width: '375px'}" styleClass="ui-card-shadow">
       <p-header>
       </p-header>
-      <p-dropdown [filter]="true" [options]="plans" [(ngModel)]="planSelected" [style]="{'width':'100%', 'max-width':'40em'}">
+      <!-- <p-dropdown [filter]="true"  [options]="plans" [(ngModel)]="planSelected" [style]="{'width':'100%', 'max-width':'40em'}">
        
           <ng-template let-pln pTemplate="item">
             <div class="ui-helper-clearfix" style="position: relative;height: 25px;">
               <div>{{pln.label}}</div>
             </div>
           </ng-template>
-        </p-dropdown>
-  
+        </p-dropdown> -->
+        
       <p-footer>
-          <button pButton type="button" label="Pay with Card" icon="pi pi-check" style="margin-right: .25em" (click)="buyWithCard()"  ></button>
+          <button pButton type="button" label="Purchase plan" icon="pi pi-check" style="margin-right: .25em" (click)="buyWithCard()"  ></button>
       </p-footer>
   </p-card>
 

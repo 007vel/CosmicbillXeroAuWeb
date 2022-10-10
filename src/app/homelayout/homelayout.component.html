@@ -3,10 +3,10 @@
 
         <div *ngIf="subscribedPlan" id="topbar-icons" style=" color: white; background-color: rgb(8, 58, 75)  ; float: center;"   class="animated" >
               <div *ngIf ="!subscribedPlan.IsPaidPlan">
-               Your have left {{totalTrialPdf}} trial pdf(s) to scan. <a style="color:rgb(236, 236, 215)" href='#/myaccount'> <u> Please click here to subscribe</u></a>
+               Your have left {{totalTrialPdf}} trial pdf(s) to scan. <a style="color:rgb(236, 236, 215)" [routerLink]="" (click)="NavigateToPaymentApp($event)"> <u> Please click here to subscribe</u></a>
                </div>
                <div *ngIf ="subscribedPlan.IsPaidPlan">
-                Your have left {{totalPaidPdf}} pdf(s) to scan. <a style="color:rgb(236, 236, 215)" href='#/myaccount'> <u> Please click here to upgrade plan</u></a>
+                Your have left {{totalPaidPdf}} pdf(s) to scan. <a style="color:rgb(236, 236, 215)" [routerLink]="" (click)="NavigateToPaymentApp($event)"> <u> Please click here to upgrade plan</u></a>
                 </div>
         </div>
 

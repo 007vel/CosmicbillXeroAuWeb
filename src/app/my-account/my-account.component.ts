@@ -1,12 +1,14 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { ApiService } from '../api.service';
-import { Message, SelectItem } from 'primeng/primeng';
+import { ConfirmationService, Message, SelectItem } from 'primeng/primeng';
 import { EncryptingService } from '../encrypting.service';
 import { StoreService } from '../store.service';
 import { environment } from 'src/environments/environment.prod';
 import { Router } from '@angular/router';
 import {Validators,FormControl,FormGroup,FormBuilder} from '@angular/forms';
+import { ParameterHashLocationStrategy } from '../ParameterHashLocationStrategy';
+import { PackagePurchaseHelper } from '../PackagePurchaseHelper';
 
 
 @Component({
@@ -37,7 +39,7 @@ export class MyAccountComponent implements OnInit {
 
   description: string;
 
-  constructor(private router: Router,private fb: FormBuilder,private spinner: NgxSpinnerService, private api: ApiService, private encrypt: EncryptingService, private ss: StoreService) { }
+  constructor(private router: Router,private fb: FormBuilder,private spinner: NgxSpinnerService, private api: ApiService, private encrypt: EncryptingService, private ss: StoreService, private packagePurchaseHelper: PackagePurchaseHelper,private confirmationService: ConfirmationService) { }
 
   ngOnInit() {
 
@@ -45,15 +47,51 @@ export class MyAccountComponent implements OnInit {
   this.genders.push({label:'Select Gender', value:''});
   this.genders.push({label:'Male', value:'Male'});
   this.genders.push({label:'Female', value:'Female'});
-  
-   this.getSubscribedPlan();
-   this.getTotalPdfUsed();
-    this.getMyAccount();
-    
-    this.getPlans();
-    this.getPayment();
-    this.getTotalTrialPdfUsed();
-  }
+  this.packagePurchaseHelper.getSubscribedPlan();
+    this.PostSelectedPlanID();  
+    //this.DoTimeDelay();    
+    this.GetAllPageData();
+   }
+ 
+    delay(ms: number) {
+    return new Promise( resolve => setTimeout(resolve, ms) );
+}
+   private async GetAllPageData() 
+   {
+    this.spinner.show();
+    this.loadingMessage = "Please wait..."
+    await this.delay(2000);
+    this.getTotalPdfUsed();
+    this.getSubscribedPlan();
+     this.getMyAccount();     
+     this.getPlans();
+     this.getPayment();
+     this.getTotalTrialPdfUsed();
+   }
+ 
+   private async DoTimeDelay()
+   {
+     await new Promise(f => setTimeout(this.GetAllPageData, 2000));
+   }
+ private PostSelectedPlanID()
+ {
+   if(ParameterHashLocationStrategy.planId!=null)
+   {
+     this.api.post('Admin/SaveSubscriptionMaster', { 'PlanID': ParameterHashLocationStrategy.planId }).subscribe(
+      (res1: {}) => this.PostPlaidSuccess(),
+      error => this.PostPlaidFailuer());
+   }
+ }
+
+ PostPlaidSuccess()
+ {
+  ParameterHashLocationStrategy.planId = null;
+ }
+
+ PostPlaidFailuer()
+ {
+   
+ }
 
 
   getPayment() {
@@ -189,25 +227,13 @@ export class MyAccountComponent implements OnInit {
 
 
   buyWithCard() {
-  
-  
-    console.log(this.planSelected);
-    if (this.planSelected === null || this.planSelected === undefined) {
-      this.msgs = [];
-      this.msgs.push({ severity: 'Info', summary: 'Please select a plan first', detail: 'Mandatory.' });
-      return;
-    }
-
-
-    //TODO:
-    var encryptedData = 1 + '|' + this.planSelected;
-    console.log('encryptedData');
-   console.log(encryptedData);
-    var token1 = this.ss.fetchToken();
-    //var token =  this.encrypt.encrypt(token1);
-
-    window.location.href = this.api.stripePaymentUrl + token1 + "&plan="+this.planSelected ;
-
+    debugger;
+  if(!this.packagePurchaseHelper.CheckAvailablePackageCount())
+  {
+    this.packagePurchaseHelper.NavigateToPackageApp();
+  }else{
+    alert('You have enough package to process bills..');
+  }
   }
 
   checkXeroToken() {

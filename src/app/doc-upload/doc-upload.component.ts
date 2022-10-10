@@ -1,14 +1,12 @@
-import { Component, OnInit, ViewEncapsulation } from '@angular/core';
-import { StepsModule } from 'primeng/steps';
-import { MenuItem } from 'primeng/api';
-import { FileUploadModule } from 'primeng/fileupload';
+import { Component, Injectable, OnInit, ViewEncapsulation } from '@angular/core';
+import {  MenuItem,ConfirmationService } from 'primeng/api';
 import { Router } from '@angular/router';
 import { StoreService } from '../store.service';
 import { ApiService } from '../api.service';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { HttpHeaders, HttpClient, HttpRequest, HttpEventType, HttpResponse } from '@angular/common/http';
-import {ProgressSpinnerModule} from 'primeng/progressspinner';
 import Swal from 'sweetalert2';
+import { PackagePurchaseHelper } from '../PackagePurchaseHelper';
 
 @Component({
   selector: 'app-doc-upload',
@@ -17,6 +15,7 @@ import Swal from 'sweetalert2';
   encapsulation: ViewEncapsulation.None,
   providers: [ApiService]
 })
+
 export class DocUploadComponent implements OnInit {
 
   steps: MenuItem[];
@@ -40,7 +39,9 @@ export class DocUploadComponent implements OnInit {
 
   constructor(private router: Router, private store: StoreService,
      private http: HttpClient, private api: ApiService, 
-     private spinner: NgxSpinnerService) {
+     private spinner: NgxSpinnerService
+     ,private confirmationService: ConfirmationService, private packagePurchaseHelper: PackagePurchaseHelper
+      ) {
     this.postDocApiUrl = api.apiBaseUrl + "scan/UploadDocumentXero?sessionID=1"
   
   }
@@ -161,8 +162,6 @@ export class DocUploadComponent implements OnInit {
       this.uploadedFiles.push(file);
     }
 
-    // this.router.navigateByUrl('/docreview');
-    //this.messageService.add({severity: 'info', summary: 'File Uploaded', detail: ''});
   }
 
   onBeforeSend(event) {
@@ -190,19 +189,61 @@ export class DocUploadComponent implements OnInit {
     }
   }
 
+ShowPlanSelectionWindow()
+{
+  this.packagePurchaseHelper.NavigateToPackageApp();
+}
+
+
+
   myUploader(event) {
-   
     this.uploadedFiles.forEach(element => {
       console.log('element'+element);
       console.log('element'+element.myfile);
       console.log('element'+element.myfile.name);
       element.progressMessage = "Uploading...";
-      this.upload(element);
+      this.onUploadclick(element);
     });
   }
+  onUploadclick(event)
+  {
+    if(this.packagePurchaseHelper.CheckAvailablePackageCount())
+    {
+      this.uploadBills(event);
+    }else{
+      debugger;
+      this.confirmationService.confirm({
+        message: "You don't have enough package to process bills1, please select package...",
+        accept: () => {
+          this.loadingMessage = "Package selection...";
+          this.packagePurchaseHelper.NavigateToPackageApp();
+          window.close();
+        },
+        reject: () => {
+        }
+    });
+  }
+}
 
+  clickMethod(name: string) : boolean {
+    if(confirm("Are you sure to delete "+name)) {
+      console.log("Implement delete functionality here");
+      return true;
+    }else{
+      return false;
+    }
+  }
+  public openConfirmationDialog(element: any) {
+   // this.confirmationDialogService.confirm('Alert..', 'Upgrade your membership to upload bills ... ?');
+  }
   upload(element) {
-  
+    this.uploadBills(element);
+    
+  }
+
+  uploadBills(element)
+  {
+    
     element.status = 1;
     this.spinner.show();
 

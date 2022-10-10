@@ -1,11 +1,14 @@
 
 import { Component,OnInit, AfterViewInit, OnDestroy,Output,EventEmitter, ViewChild, Renderer2,ViewEncapsulation} from '@angular/core';
 import { trigger, state, style, transition, animate } from '@angular/animations';
-import { ScrollPanel } from 'primeng/primeng';
+import { ConfirmationService, ScrollPanel } from 'primeng/primeng';
 import { StoreService } from '../store.service';
 import './homelayout.component.css';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ApiService } from '../api.service';
+import { Console } from 'console';
+import { PackagePurchaseHelper } from '../PackagePurchaseHelper';
+import { Alert } from 'selenium-webdriver';
 @Component({
   selector: 'app-homelayout',
   templateUrl: './homelayout.component.html',
@@ -61,7 +64,7 @@ export class HomelayoutComponent implements AfterViewInit, OnDestroy, OnInit {
 
 
 
-  constructor( private api: ApiService, private router: Router,public renderer: Renderer2, private ss: StoreService) {
+  constructor( private api: ApiService, private router: Router,public renderer: Renderer2, private ss: StoreService, private packagePurchaseHelper: PackagePurchaseHelper,private confirmationService: ConfirmationService) {
     
 
     this.companyName = this.ss.fetchCompanyName();
@@ -70,15 +73,42 @@ export class HomelayoutComponent implements AfterViewInit, OnDestroy, OnInit {
     }
     
     this.getSubscribedPlan();
+    this.packagePurchaseHelper.getSubscribedPlan();
+
+    this.CheckAvailablePDFCount();
   }
     ngOnInit() {
         
     }
-    // recieveUsername($event) {
-    //     this.companyName = $event;
-    //   }
+    delay(ms: number) {
+        return new Promise( resolve => setTimeout(resolve, ms) );
+    }
+    private async CheckAvailablePDFCount()
+    {
+        await this.delay(1000);
+        this.checkPDFcount(this.packagePurchaseHelper, this.confirmationService);
+    }
 
-
+    private checkPDFcount(packagePurchaseHelper : PackagePurchaseHelper, confirmationService : ConfirmationService)
+    {
+        if(packagePurchaseHelper.CheckAvailablePackageCount())
+        {
+            //PDF are available
+        }else{
+          confirmationService.confirm({
+            message: "You don't have enough package to process bills, please select package...",
+            accept: () => {
+              //this.loadingMessage = "Package selection...";
+              packagePurchaseHelper.NavigateToPackageApp();
+              window.close();
+            },
+            reject: () => {
+            }
+        });
+      }
+    } 
+   
+    
   ngAfterViewInit() {
       setTimeout(() => { this.scrollerViewChild.moveBar(); }, 100);
 
@@ -137,6 +167,18 @@ export class HomelayoutComponent implements AfterViewInit, OnDestroy, OnInit {
       }
 
       event.preventDefault();
+  }
+
+  NavigateToPaymentApp(event: Event)
+  {
+    console.log("NavigateToPaymentApp");
+    if(!this.packagePurchaseHelper.CheckAvailablePackageCount())
+    {   
+        this.packagePurchaseHelper.NavigateToPackageApp();
+    }else{
+        alert('You have enough package to process bills..');
+    }
+
   }
 
   hideTopMenu() {

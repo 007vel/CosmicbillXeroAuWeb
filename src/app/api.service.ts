@@ -21,6 +21,8 @@ export class ApiService {
   public xeroCallbackUrl = environment.xerocallbackUrl;
   public xeroclientId = environment.XeroClientId;
   public xeroScope = environment.scope;
+  public Paymentapp = environment.Paymentapp;
+  public PaymentappReturnUrl = environment.PaymentreturnURL;
   xeroConnectID: any;
   token: any;
 

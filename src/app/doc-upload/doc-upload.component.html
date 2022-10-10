@@ -10,6 +10,8 @@
 </div>
 
 <h3 style="color: red">{{connectCompanyMessage}}</h3>
+<p-confirmDialog header="Confirmation" icon="pi pi-exclamation-triangle"></p-confirmDialog>
+
 <p-accordion>
     <p-accordionTab header="Help">
         <p>Select document(s) to upload by either click on [+ Choose PDFs for scan] button or drag drop your documents </p>
@@ -28,42 +30,13 @@
             (onBeforeSend)="onBeforeSend($event)" multiple="multiple" form-data="formdata" accept=".pdf" maxFileSize="10000000"
             (onProgress)="onProgress($event)" (onSelect)="onSelect($event)" (uploadHandler)="myUploader($event)" (onClear)="clearAll($event)" >
 
-          <!--  <ng-template pTemplate="content">
-        <ul *ngIf="uploadedFiles.length">
-            <li *ngFor="let file of uploadedFiles">{{file.name}} - {{file.size}} bytes </li>
-        </ul> </ng-template> -->
-
-            <!-- <ng-template let-my pTemplate="uploadedFiles">
-
-        <table>
-            <tr>
-                <td style="width: 50em">{{my.myfile.name}}</td>
-                <td style="width: 12em">{{my.myfile.size}} bytes {{my.myfile.progress}} {{my.id}}</td>
-                <td style="width: 10em">
-                    <button pButton type="button" icon="fa fa-spinner" class="ui-button-rounded ui-button-warning"
-                        (click)="pdfViewer.zoomIn()"></button></td>
-                <td style="width: 10em">
-                    <button pButton type="button" icon="fa fa-check-circle-o" class="ui-button-rounded ui-button-success"
-                        (click)="pdfViewer.zoomOut()"></button>
-                    
-                        <button pButton type="button" icon="fa fa-exclamation-triangle" class="ui-button-rounded ui-button-danger"
-                        (click)="pdfViewer.zoomOut()"></button>
-
-                        <img src="../../assets/images/green_progress.gif" >
-                    
-                    </td>
-            </tr>
-        </table>
-
-    </ng-template> -->
-
+      
 
       <ng-template let-my pTemplate="file">
             <div>
               
             </div>
         </ng-template>
-
             <ng-template let-my pTemplate="content">
                 <div>
                     <h3 style="color:#0081c2"> Drag & Drop your document(s) here...</h3>

@@ -10,6 +10,7 @@ import { Issuer } from 'openid-client';
 import { EncryptingService } from '../encrypting.service';
 import { ParameterHashLocationStrategy } from '../ParameterHashLocationStrategy';
 import { HomelayoutComponent } from '../homelayout/homelayout.component';
+import { Console } from 'console';
 
 
 @Component({
@@ -52,16 +53,27 @@ export class InitLoginComponent implements OnInit,OnDestroy  {
       var accessTokenFromStore = this.ss.fetchToken();
       if(accessTokenFromStore!=null)
       {
-        this.GetAccount();
-        this.router.navigate(['/docupload']); 
+        if(ParameterHashLocationStrategy.planId!=null)
+        {
+          this.router.navigate(['/myaccount']); 
+        }else{
+          console.log("Init flow 1 ==========>");
+          this.GetAccount();
+          this.router.navigate(['/docupload']); 
+        }
+
       }else{
+
         if(this.code)
         {
+          console.log("Init flow 2 ==========>");
           this.getToken();
        
         }else if(this.IsloginFlow){
+          console.log("Init flow 3 ==========>");
         window.location.href = "https://login.xero.com/identity/connect/authorize?response_type=code&client_id="+this.api.xeroclientId+"&redirect_uri="+this.api.xeroCallbackUrl+"&scope="+this.api.xeroScope;
         }else{
+          console.log("Init flow 4 ==========>");
           this.router.navigate(['/login']); 
         }
       }

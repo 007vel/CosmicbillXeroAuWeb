@@ -1,0 +1,31 @@
+first 3 person 500
+
+
+
+
+
+1. Retoirve package from payment application
+2. once retriveed package  then we need to create entry 
+
+
+msg: Your trial package about to expire, plesae subsribe for paid plan.
+
+note 
+the carryover pdf count only for auto renewal
+
+
+Please subsribe package
+
+
+
+6-Oct
+ GetAccountSubscribedPlan is failing in myAccount page. so need to fix this "GetAccountSubscribedPlan" API
+ Then post new subscription entry in via API.
+
+ following changes in DB
+ [uspGetPlan]
+ Planmastertable recreate
+ [uspAdminSavePlan]
+ [uspAdminSaveSubscription]
+
+ 

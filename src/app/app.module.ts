@@ -9,7 +9,7 @@ import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {AppRoutes} from './app.routes';
 
 
-import {AccordionModule} from 'primeng/primeng';
+import {AccordionModule, ConfirmationService} from 'primeng/primeng';
 import {AutoCompleteModule} from 'primeng/primeng';
 import {BreadcrumbModule} from 'primeng/primeng';
 import {ButtonModule} from 'primeng/primeng';
@@ -20,7 +20,7 @@ import {ColorPickerModule} from 'primeng/primeng';
 import {CheckboxModule} from 'primeng/primeng';
 import {ChipsModule} from 'primeng/primeng';
 import {CodeHighlighterModule} from 'primeng/primeng';
-import {ConfirmDialogModule} from 'primeng/primeng';
+import {ConfirmDialogModule} from 'primeng/confirmdialog';
 import {SharedModule} from 'primeng/primeng';
 import {ContextMenuModule} from 'primeng/primeng';
 import {DataGridModule} from 'primeng/primeng';
@@ -135,6 +135,8 @@ import { DocEditComponent } from './doc-edit/doc-edit.component';
  import { DocAuthComponent } from './doc-auth/doc-auth.component';
 import { ParameterHashLocationStrategy } from './ParameterHashLocationStrategy';
 import { CacheInterceptor } from './CacheInterceptor';
+import { PackagePurchaseHelper } from './PackagePurchaseHelper';
+
 
 
 @NgModule({
@@ -265,7 +267,7 @@ import { CacheInterceptor } from './CacheInterceptor';
          DocAuthComponent
     ],
     providers: [
-        CarService, CountryService, EventService, NodeService,ApiService,StoreService, EncryptingService,
+        CarService, CountryService,ConfirmDialogModule, EventService, ConfirmationService, NodeService,ApiService,StoreService, EncryptingService,
         {
 			provide: LocationStrategy,
 			useClass: ParameterHashLocationStrategy
