@@ -5,6 +5,7 @@ import { SESSION_STORAGE, LOCAL_STORAGE, StorageService } from 'angular-webstora
 // key that is used to access the data in local storage
 const STORAGE_KEY = 'local_todolist';
 const TOKEN_KEY = 'local_token';
+const COSMIC_ACCOUNT_ID = 'cosmic_account_id';
 const USER_KEY = 'local_user';
 const PASSWORD = 'password';
 
@@ -45,6 +46,10 @@ export class StoreService {
   public storeToken(token: string): void {
     this.storage.set(TOKEN_KEY, token);
     console.log(this.storage.get(TOKEN_KEY) || 'LocaL storage is empty');
+  }
+  public storeCsomicAccountID(token: string): void {
+    this.storage.set(COSMIC_ACCOUNT_ID, token);
+    console.log(this.storage.get(COSMIC_ACCOUNT_ID) || 'LocaL storage is empty');
   }
 
   public storePassword(password: string): void {
@@ -89,6 +94,10 @@ export class StoreService {
   public fetchXeroConnectID(): String {
     return this.storage.get(KEY_COMPANYID)
   }
+  public fetchCosmicAccountID(): String {
+    return this.storage.get(COSMIC_ACCOUNT_ID)
+  //return "5292";
+  }
 
   public storeCompanyName(value: string): void {
     this.storage.set(KEY_COMPANY_NAME, value);
@@ -130,6 +139,7 @@ export class StoreService {
     this.storage.set(KEY_COMPANY_NAME, null);
     this.storage.set(USER_KEY, null);
     this.storage.set(PASSWORD, null);
+    this.storage.set(COSMIC_ACCOUNT_ID, null);
   }
 
 }

@@ -24,14 +24,14 @@ export class PackagePurchaseHelper
         
     window.open(this.api.Paymentapp+"?UserId="+ this.ss.fetchUserName()+
     "&Email="+ this.ss.fetchEmail()+
-    "&Region=AUS&ReturnUrl="+this.api.PaymentappReturnUrl, "_blank");
+    "&Region=AUS&ReturnUrl="+encodeURIComponent( this.api.PaymentappReturnUrl)+"&AccountId="+this.ss.fetchCosmicAccountID(), "_blank");
       }
 
       
   private getTotalPaidPdfUsed() {
     this.api.get('Plan/GetTotalPaidPdfUsed', '').subscribe(
       (res: {}) => this.sucessGetTotalPaidPdfUsed(res),
-      error => this.failedGetTotalPaidPdfUsed(<any>error));
+      error => this.failedGetTotalPaidPdfUsed(<any>error)); 
   }
 
   private sucessGetTotalPaidPdfUsed(res: any) : string{
@@ -99,7 +99,6 @@ export class PackagePurchaseHelper
       //bill process
       return true;
     }
-    return false;
   }
 
   private failedGetTotalTrialPdfUsed(res: any) {

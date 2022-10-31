@@ -9,6 +9,7 @@ import { ApiService } from '../api.service';
 import { Console } from 'console';
 import { PackagePurchaseHelper } from '../PackagePurchaseHelper';
 import { Alert } from 'selenium-webdriver';
+import { CosmicNotifyService } from '../CosmicNotifyService';
 @Component({
   selector: 'app-homelayout',
   templateUrl: './homelayout.component.html',
@@ -48,7 +49,7 @@ export class HomelayoutComponent implements AfterViewInit, OnDestroy, OnInit {
   public topMenuLeaving: boolean;
 
   subscribedPlan:any=null;
-  totalTrialPdf:any = 100;
+  totalTrialPdf:any = 0;
   totalPaidPdf:any = null;
 
   public companyName: String = "No company is connected, Connect a company from Switch Company menu";
@@ -64,7 +65,9 @@ export class HomelayoutComponent implements AfterViewInit, OnDestroy, OnInit {
 
 
 
-  constructor( private api: ApiService, private router: Router,public renderer: Renderer2, private ss: StoreService, private packagePurchaseHelper: PackagePurchaseHelper,private confirmationService: ConfirmationService) {
+  constructor( private api: ApiService, private router: Router,public renderer: Renderer2, private ss: StoreService, 
+    private packagePurchaseHelper: PackagePurchaseHelper,private confirmationService: ConfirmationService,
+    protected cosmicNotifyService:CosmicNotifyService) {
     
 
     this.companyName = this.ss.fetchCompanyName();
@@ -78,7 +81,13 @@ export class HomelayoutComponent implements AfterViewInit, OnDestroy, OnInit {
     this.CheckAvailablePDFCount();
   }
     ngOnInit() {
-        
+        console.log(">>>>>>>>>>>>>>>>>>>>>>>> ngOnInit cosmicNotifyService");
+        this.cosmicNotifyService.myEventEmiter.subscribe(
+            () => { 
+                console.log(">>>>>>>>>>>>>>>>>>>>>>>> cosmicNotifyService");
+                this.getSubscribedPlan();
+             }
+        );
     }
     delay(ms: number) {
         return new Promise( resolve => setTimeout(resolve, ms) );
@@ -91,20 +100,20 @@ export class HomelayoutComponent implements AfterViewInit, OnDestroy, OnInit {
 
     private checkPDFcount(packagePurchaseHelper : PackagePurchaseHelper, confirmationService : ConfirmationService)
     {
-        if(packagePurchaseHelper.CheckAvailablePackageCount())
+       if(packagePurchaseHelper.CheckAvailablePackageCount())
         {
             //PDF are available
         }else{
-          confirmationService.confirm({
-            message: "You don't have enough package to process bills, please select package...",
-            accept: () => {
-              //this.loadingMessage = "Package selection...";
-              packagePurchaseHelper.NavigateToPackageApp();
-              window.close();
-            },
-            reject: () => {
-            }
-        });
+        //   confirmationService.confirm({
+        //     message: "You don't have enough package to process bills, please select package...",
+        //     accept: () => {
+        //       //this.loadingMessage = "Package selection...";
+        //       packagePurchaseHelper.NavigateToPackageApp();
+        //     //  window.close();
+        //     },
+        //     reject: () => {
+        //     }
+        // }); 
       }
     } 
    

@@ -9,6 +9,7 @@ import { HttpHeaders, HttpClient } from '@angular/common/http';
 import { Message, ConfirmationService } from 'primeng/primeng';
 import { Alert } from 'selenium-webdriver';
 import { StoreService } from '../store.service';
+import { CosmicNotifyService } from '../CosmicNotifyService';
 
 
 @Component({
@@ -37,7 +38,7 @@ export class DocPostComponent implements OnInit {
   bookmarks: SimplePDFBookmark[] = [];
 
   constructor(private router: Router, private api: ApiService, private http: HttpClient, private spinner: NgxSpinnerService,
-    private confirmationService: ConfirmationService, private ss: StoreService) { }
+    private confirmationService: ConfirmationService, private ss: StoreService, protected cosmicNotifyService: CosmicNotifyService) { }
 
   validateConnectCompany() {
     var companyName = this.ss.fetchCompanyName();
@@ -316,11 +317,14 @@ export class DocPostComponent implements OnInit {
 
 
   successCreateBill(resp: any) {
+
+
     this.spinner.hide();
     this.msgs = [];
     this.dialogEditVisible = false;
     this.openRespWindow(resp);
     this.getDocumentToBill();
+    this.cosmicNotifyService.myEventEmiter.emit();
   }
 
   failedCreateBill(resp: any) {

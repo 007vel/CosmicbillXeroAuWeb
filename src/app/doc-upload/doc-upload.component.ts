@@ -88,17 +88,8 @@ export class DocUploadComponent implements OnInit {
           this.activeIndex = 3;
           this.router.navigateByUrl('/docpost');
         }
-      }
-      // ,
-		  // {
-			// label: 'Post to Authorised',
-			// command: (event: any) => {
-			//   this.activeIndex = 4;
-			//   this.router.navigateByUrl('/docauth');
-			// }
-		  // }
-    ];
-
+      } ];
+  
 
   }
 
@@ -211,13 +202,13 @@ ShowPlanSelectionWindow()
     {
       this.uploadBills(event);
     }else{
-      debugger;
+     // debugger;
       this.confirmationService.confirm({
         message: "You don't have enough package to process bills1, please select package...",
         accept: () => {
           this.loadingMessage = "Package selection...";
           this.packagePurchaseHelper.NavigateToPackageApp();
-          window.close();
+         // window.close();
         },
         reject: () => {
         }

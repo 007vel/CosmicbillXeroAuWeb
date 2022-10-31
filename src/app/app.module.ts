@@ -136,6 +136,7 @@ import { DocEditComponent } from './doc-edit/doc-edit.component';
 import { ParameterHashLocationStrategy } from './ParameterHashLocationStrategy';
 import { CacheInterceptor } from './CacheInterceptor';
 import { PackagePurchaseHelper } from './PackagePurchaseHelper';
+import { CosmicNotifyService } from './CosmicNotifyService';
 
 
 
@@ -267,7 +268,7 @@ import { PackagePurchaseHelper } from './PackagePurchaseHelper';
          DocAuthComponent
     ],
     providers: [
-        CarService, CountryService,ConfirmDialogModule, EventService, ConfirmationService, NodeService,ApiService,StoreService, EncryptingService,
+        CarService, CountryService,ConfirmDialogModule, EventService, ConfirmationService, NodeService,ApiService,StoreService, EncryptingService,CosmicNotifyService,
         {
 			provide: LocationStrategy,
 			useClass: ParameterHashLocationStrategy

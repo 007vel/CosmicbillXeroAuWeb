@@ -5,6 +5,7 @@ import { NgxSpinnerService } from 'ngx-spinner';
 import { StoreService } from '../store.service';
 import { Validators, FormControl, FormGroup, FormBuilder } from '@angular/forms';
 import { Message, SelectItem, ConfirmationService } from 'primeng/primeng';
+import { CosmicNotifyService } from '../CosmicNotifyService';
 
 @Component({
 	selector: 'app-my-profile',
@@ -25,7 +26,7 @@ export class MyProfileComponent implements OnInit {
 
 	constructor(private router: Router, private api: ApiService,
 		private spinner: NgxSpinnerService, private ss: StoreService,
-		private fb: FormBuilder, private confirmationService: ConfirmationService) { }
+		private fb: FormBuilder, private confirmationService: ConfirmationService,private cosmicNotifyService: CosmicNotifyService) { }
 
 	ngOnInit() {
 		this.docPostAs = "";
@@ -41,6 +42,7 @@ export class MyProfileComponent implements OnInit {
 
 		});
 		this.getMyAccount();
+		//this.cosmicNotifyService.myEventEmiter.emit();
 	}
 
 	getMyAccount() {

@@ -44,10 +44,10 @@ export class DocApproveComponent implements OnInit {
 
   display: boolean = false;
   public ScanPdfPath : "https://ezzydoc.blob.core.windows.net/docs/1877022.pdf?sv=2014-02-14&sr=b&sig=2qUuACRgoCrFkgW%2FincJ6DMvsl7i7gl36G%2Bd%2F98pPfQ%3D&st=2018-09-09T08%3A30%3A47Z&se=2118-09-09T08%3A35%3A47Z&sp=r"; 
+     
 
-   
-
-  constructor(private router: Router, private api: ApiService, private ss: StoreService, private http: HttpClient, private spinner: NgxSpinnerService) {
+  constructor(private router: Router, private api: ApiService, private ss: StoreService, private http: HttpClient, 
+    private spinner: NgxSpinnerService) {
 
   }
 
@@ -165,6 +165,7 @@ failedCheckXeroToken(res: any) {
   sucessDocumentToApprove(resp: any) {
     console.log(resp);
     this.xeroDocuments = resp.Data;
+
     this.spinner.hide();
   }
 

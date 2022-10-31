@@ -1,7 +1,8 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { ApiService } from '../api.service';
-import { ConfirmationService, Message, SelectItem } from 'primeng/primeng';
+import { Message, SelectItem } from 'primeng/primeng';
+import { ConfirmationService } from 'primeng/api'
 import { EncryptingService } from '../encrypting.service';
 import { StoreService } from '../store.service';
 import { environment } from 'src/environments/environment.prod';
@@ -9,6 +10,7 @@ import { Router } from '@angular/router';
 import {Validators,FormControl,FormGroup,FormBuilder} from '@angular/forms';
 import { ParameterHashLocationStrategy } from '../ParameterHashLocationStrategy';
 import { PackagePurchaseHelper } from '../PackagePurchaseHelper';
+import { CosmicNotifyService } from '../CosmicNotifyService';
 
 
 @Component({
@@ -16,7 +18,7 @@ import { PackagePurchaseHelper } from '../PackagePurchaseHelper';
   templateUrl: './my-account.component.html',
   styleUrls: ['./my-account.component.css'], 
   encapsulation: ViewEncapsulation.None,
-  providers: [ApiService, EncryptingService]
+  providers: [ApiService, EncryptingService, ConfirmationService]
 })
 export class MyAccountComponent implements OnInit {
 
@@ -32,6 +34,7 @@ export class MyAccountComponent implements OnInit {
   totalTrialPdfUsed: any;
   myAccountDetail: any;
   userform: FormGroup;
+	AutoRenewalEnable: boolean = false;
 
   submitted: boolean;
 
@@ -39,10 +42,13 @@ export class MyAccountComponent implements OnInit {
 
   description: string;
 
-  constructor(private router: Router,private fb: FormBuilder,private spinner: NgxSpinnerService, private api: ApiService, private encrypt: EncryptingService, private ss: StoreService, private packagePurchaseHelper: PackagePurchaseHelper,private confirmationService: ConfirmationService) { }
+  constructor(private router: Router,private fb: FormBuilder,private spinner: NgxSpinnerService, 
+    private api: ApiService, private encrypt: EncryptingService, private ss: StoreService, 
+    private _confirmationService: ConfirmationService, private packagePurchaseHelper: PackagePurchaseHelper,
+    protected cosmicNotifyService:CosmicNotifyService) { }
 
   ngOnInit() {
-
+   
   this.genders = [];
   this.genders.push({label:'Select Gender', value:''});
   this.genders.push({label:'Male', value:'Male'});
@@ -66,7 +72,8 @@ export class MyAccountComponent implements OnInit {
      this.getMyAccount();     
      this.getPlans();
      this.getPayment();
-     this.getTotalTrialPdfUsed();
+     this.getTotalTrialPdfUsed(); 
+     this.cosmicNotifyService.myEventEmiter.emit();
    }
  
    private async DoTimeDelay()
@@ -79,7 +86,7 @@ export class MyAccountComponent implements OnInit {
    {
      this.api.post('Admin/SaveSubscriptionMaster', { 'PlanID': ParameterHashLocationStrategy.planId }).subscribe(
       (res1: {}) => this.PostPlaidSuccess(),
-      error => this.PostPlaidFailuer());
+      error => this.PostPlaidFailuer()); 
    }
  }
 
@@ -146,6 +153,7 @@ export class MyAccountComponent implements OnInit {
 
   sucessGetSubscribedPlan(res: any) {
     this.subscribedPlan = res.Data;
+    this.AutoRenewalEnable = res.Data.IsAutoRenew;
     console.log('subscribedPlan'+ this.subscribedPlan);
     this.spinner.hide();
   }
@@ -227,13 +235,56 @@ export class MyAccountComponent implements OnInit {
 
 
   buyWithCard() {
-    debugger;
+   // debugger;
   if(!this.packagePurchaseHelper.CheckAvailablePackageCount())
   {
     this.packagePurchaseHelper.NavigateToPackageApp();
   }else{
     alert('You have enough package to process bills..');
   }
+  }
+
+  AutoRenewalCheckboxChange(_event) 
+  {
+    console.log(">>>>>>>>>>>>>>> AutoRenewalCheckboxChange");
+
+    if(!this.AutoRenewalEnable)
+    {
+      this._confirmationService.confirm({
+        message: "Please be mind once you uncheck auto renewal the roll over pdf count will be lost, can not be undo. please confirm?",
+        accept: () => {
+          this.MakeAutorenewalCall();
+        },
+        reject: () => {
+          this.AutoRenewalEnable = !this.AutoRenewalEnable;
+        }
+    });
+    }else{
+      this.MakeAutorenewalCall();
+    }
+
+  }
+ 
+MakeAutorenewalCall()
+{
+  this.spinner.show();
+        this.loadingMessage = "Please wait..."
+        var cloneSubscription = { "SubscriptionID":this.subscribedPlan.SubscriptionID,"IsAutoRenew":this.AutoRenewalEnable};
+    
+        this.api.post('Admin/UpdateSubscriptionMaster', cloneSubscription).subscribe(
+          (res: {}) => this.sucessAutoRenewalCheckboxChange(res),
+          error => this.failedAutoRenewalCheckboxChange(<any>error));
+}
+
+  sucessAutoRenewalCheckboxChange(res: any) {    
+    this.spinner.hide();
+    this.GetAllPageData();
+  }
+  failedAutoRenewalCheckboxChange(res: any) {
+    
+    this.spinner.hide();
+    this.AutoRenewalEnable = !this.AutoRenewalEnable;
+
   }
 
   checkXeroToken() {

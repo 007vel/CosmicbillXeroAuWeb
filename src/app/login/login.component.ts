@@ -102,6 +102,7 @@ console.log(JSON.stringify(re));
     if (res.StatusCode == 0) {
       this.ss.storeUserName(res.Data.UserName.toString());
       this.ss.storeToken(res.Data.Token.toString());
+      this.ss.storeCsomicAccountID(res.Data.AccountID.toString());
       this.ss.storeEmail(res.Data.EmailAddress.toString());
       this.resXero = res.Data;
       this.GetAccount(res);

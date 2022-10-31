@@ -64,7 +64,7 @@ export class InitLoginComponent implements OnInit,OnDestroy  {
 
       }else{
 
-        if(this.code)
+        if(this.code && this.code.length>20)
         {
           console.log("Init flow 2 ==========>");
           this.getToken();
@@ -130,10 +130,28 @@ export class InitLoginComponent implements OnInit,OnDestroy  {
     if (res.StatusCode == 0) {
 
       this.ss.storeToken(res.Data.Token.toString());
-
+      this.ss.storeCsomicAccountID(res.Data.AccountID.toString());
+      this.DefaultPlanAssign();
     } 
     this.GetAccount();
   }
+
+  private DefaultPlanAssign()
+ {
+  this.api.post('Admin/SaveSubscriptionMaster', { 'PlanID': 8988,"IsDefaultSubscription":true }).subscribe(
+    (res1: {}) => this.DefaultPlanAssignSuccess(),
+    error => this.DefaultPlanAssignError()); 
+ }
+
+ DefaultPlanAssignSuccess()
+ {
+
+ }
+
+ DefaultPlanAssignError()
+ {
+  
+ }
   getRequest(){
     
     this.api.post('Xero/GetXeroRequestUrl',"").subscribe(

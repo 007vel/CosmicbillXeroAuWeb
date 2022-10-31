@@ -28,7 +28,17 @@ type="ball-elastic-dots"><p style="text-align: center; background-color:#0081c2;
             <span style="color:blue"> You have scanned <b>{{totalPdfUsed}}</b> bills out of <b> {{subscribedPlan.TotalAllocatePDF}} </b> </span>
             </div>
 
-      
+            <div class="ui-grid ui-grid-responsive ui-grid-pad ui-fluid" style="margin: 10px 0px">
+            <div class="ui-grid-row">
+              <div class="ui-grid-col-12" style="color:blue;font-size:20px">
+                Auto Renewal
+              </div>
+              <div class="ui-grid-col-2">
+                  <input type="checkbox"  [(ngModel)]="AutoRenewalEnable" [disabled]="!subscribedPlan.IsPaidPlan" (change)="AutoRenewalCheckboxChange($event)"/>
+              </div>
+          </div>
+</div>
+<p-confirmDialog header="Confirmation" icon="pi pi-exclamation-triangle" style="background-color:rgb(255, 51, 0);font-size:16px"></p-confirmDialog>
     </p-footer>
   </p-card>
   <br>

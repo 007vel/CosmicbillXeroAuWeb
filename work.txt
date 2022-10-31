@@ -1,8 +1,8 @@
-first 3 person 500
 
+BUILD command
+ng build --prod
 
-
-
+notes:
 
 1. Retoirve package from payment application
 2. once retriveed package  then we need to create entry 
@@ -23,9 +23,20 @@ Please subsribe package
  Then post new subscription entry in via API.
 
  following changes in DB
- [uspGetPlan]
- Planmastertable recreate
- [uspAdminSavePlan]
- [uspAdminSaveSubscription]
+ [uspGetPlan] done
+ Planmastertable recreate   done
+ [uspAdminSavePlan]  done
+ [uspAdminSaveSubscription] done
+change ss.fetchCosmicAccountID() in angular app  done
+[uspGetSubscriptionByAccountID] done
+[uspGetUsedPaidPDF]  - done
+uspGetUsedTrialPDF  - deon
+[uspGetSubscriptionByAccountID] - done
+[SubscriptionMaster] table autorenewwal column added -done
+Create SP in paymenthub db [uspUserSubscriptionByPlanIDAccountID]  - done
+SP uspAdminSaveSubscription  - done
+create Sp [uspAdminUpdateSubscription]  - done
 
- 
+Next work
+need to copy 121 paymen db to local
+test plan update in locally 500 to 80 count
