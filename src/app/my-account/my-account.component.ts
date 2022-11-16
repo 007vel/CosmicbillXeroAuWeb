@@ -93,6 +93,7 @@ export class MyAccountComponent implements OnInit {
  PostPlaidSuccess()
  {
   ParameterHashLocationStrategy.planId = null;
+  this.router.navigate(['/myaccount']); 
  }
 
  PostPlaidFailuer()

@@ -15,9 +15,9 @@ scope :"openid profile email accounting.transactions accounting.settings offline
   //  stripePaymentUrl: 'http://localhost:51152/PayInvoice?token=', 
   //  xerocallbackUrl: "http://localhost:4200/xerouiau",
   //  XeroClientId: "277BDB35BF49482DB8291CFECCC5C241",
-  //  Paymentapp: "http://132.148.73.121:2526/#/plan",
+  //  Paymentapp: "http://localhost:4401/#/plan",
   //  PaymentreturnURL: "http://localhost:4200/#/myaccount"
-  
+
  
 production: true,
   apiBaseUrl: 'https://cosmicinv.com/xeroapiau/api/',
@@ -27,7 +27,7 @@ production: true,
   stripePaymentUrl: 'https://cosmicinv.com/CorePayment/PayInvoice?token=',
   xerocallbackUrl: "https://cosmicbills.com/xerouiau",
   XeroClientId: "277BDB35BF49482DB8291CFECCC5C241",
-Paymentapp: "http://132.148.73.121:2526/#/plan",
+  Paymentapp: "https://paymenthub.cosmicbills.com/#/plan",
    PaymentreturnURL: "https://cosmicbills.com/xerouiau/#/myaccount"
 
 };

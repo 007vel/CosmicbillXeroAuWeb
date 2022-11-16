@@ -9,7 +9,7 @@ export const environment = {
   stripePaymentUrl: 'https://cosmicinv.com/CorePayment/PayInvoice?token=',
   xerocallbackUrl: "https://cosmicbills.com/xerouiau",
    XeroClientId: "277BDB35BF49482DB8291CFECCC5C241",
-   Paymentapp: "http://132.148.73.121:2526/#/plan",
+   Paymentapp: "https://paymenthub.cosmicbills.com/#/plan",
    PaymentreturnURL: "https://cosmicbills.com/xerouiau/#/myaccount"
 
 };

@@ -41,12 +41,6 @@ export class PackagePurchaseHelper
       this.isPackageInfoFetched = true;
       return this.subscribedPlan.TotalAllocatePDF;
     }
-    
-    // if(this.totalPaidPdf>=0 && this.totalPaidPdf<=20){
-    //     this.api.get('Plan/SendRemainingTrialPdfMail?RemainingTrialPDF=',this.totalTrialPdf).subscribe(
-    //         (res: {}) => this.failedGetTotalPaidPdfUsed(res),
-    //         error => this.failedGetTotalPaidPdfUsed(<any>error));
-    // }
   }
   private sucessGetTotalTrialPdfUsed(res: any) {
     if (res.Data != null) {
@@ -99,6 +93,19 @@ export class PackagePurchaseHelper
       //bill process
       return true;
     }
+  }
+
+  public GetAvailablePDf() : Number
+  { 
+    if(this.totalTrialPdf > 0)
+    {
+      return this.totalTrialPdf;
+    }
+    if(this.totalPaidPdf > 0)
+      {
+        return this.totalTrialPdf;
+      }
+    return 0;
   }
 
   private failedGetTotalTrialPdfUsed(res: any) {

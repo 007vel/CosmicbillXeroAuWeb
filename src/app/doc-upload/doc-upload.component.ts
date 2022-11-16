@@ -5,8 +5,11 @@ import { StoreService } from '../store.service';
 import { ApiService } from '../api.service';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { HttpHeaders, HttpClient, HttpRequest, HttpEventType, HttpResponse } from '@angular/common/http';
-import Swal from 'sweetalert2';
+//import Swal from 'sweetalert2';
+//import Swal from 'sweetalert2';
+import Swal from 'sweetalert2/dist/sweetalert2.all.js';
 import { PackagePurchaseHelper } from '../PackagePurchaseHelper';
+import { forEach } from '@angular/router/src/utils/collection';
 
 @Component({
   selector: 'app-doc-upload',
@@ -89,7 +92,7 @@ export class DocUploadComponent implements OnInit {
           this.router.navigateByUrl('/docpost');
         }
       } ];
-  
+      this.packagePurchaseHelper.getSubscribedPlan();
 
   }
 
@@ -143,8 +146,7 @@ export class DocUploadComponent implements OnInit {
   }
 
   onUpload(event) {
-
-    
+   
     this.totalFiles = 0;
     this.spinner.hide();
 
@@ -188,13 +190,22 @@ ShowPlanSelectionWindow()
 
 
   myUploader(event) {
-    this.uploadedFiles.forEach(element => {
-      console.log('element'+element);
-      console.log('element'+element.myfile);
-      console.log('element'+element.myfile.name);
-      element.progressMessage = "Uploading...";
-      this.onUploadclick(element);
-    });
+
+    var processingCount = 0;
+    var availableTotalPdfCount = this.packagePurchaseHelper.GetAvailablePDf();
+    if(availableTotalPdfCount < this.uploadedFiles.length)
+    {
+      var sliced = this.uploadedFiles.slice(0,this.uploadedFiles.length);
+      sliced.forEach(el => {     
+        el.progressMessage = "Uploading...";
+          this.onUploadclick(el);
+      });
+    }else{
+      this.uploadedFiles.forEach(el => {     
+        el.progressMessage = "Uploading...";
+          this.onUploadclick(el);
+      });
+    }
   }
   onUploadclick(event)
   {
@@ -338,9 +349,15 @@ this.spinner.hide();
     if(resp.StatusCode==0){
     this.spinner.hide();
     if(this.DirectPostfromEmail==true){
-      Swal.fire('','No need to wait!..\n We will scan & post the documents and notify you by the email.You will then see your documents in your Accounting System ','info');
+     Swal.fire('','No need to wait!..\n We will scan & post the documents and notify you by the email.You will then see your documents in your Accounting System ','info');
+    //   this.confirmationService.confirm({
+    //     message: "No need to wait!..\n We will scan & post the documents and notify you by the email.You will then see your documents in your Accounting System ",
+    // });
     }else 
        Swal.fire('','No need to wait!..\n We will scan the Documents and notify you by the email.You will then approve at step 3 and post the documents at step 4','info');
+      //  this.confirmationService.confirm({
+      //   message: "No need to wait!..\n We will scan the Documents and notify you by the email.You will then approve at step 3 and post the documents at step 4",
+  //  });
     if(this.uploadedFiles != null)
       this.uploadedFiles = [];
 

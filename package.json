@@ -43,7 +43,7 @@
     "quill": "1.1.8",
     "rxjs": "6.2.0",
     "simple-pdf-viewer": "^2.0.2",
-    "sweetalert2": "^8.0.0",
+    "sweetalert2": "^8.14.0",
     "util": "^0.12.4",
     "web-animations-js": "2.3.1",
     "zone.js": "0.9.1"
