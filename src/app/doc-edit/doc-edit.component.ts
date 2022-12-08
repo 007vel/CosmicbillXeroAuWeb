@@ -360,14 +360,15 @@ element.ScanInvoiceDate = this.invoiceDate;
       gstTotal = gstTotal + element.ScanGST;
       var subt = (element.ScanUnit_Price*element.Scan_Quantity);
       subTotal = subTotal + subt ;
-
+      console.log("========>lineitem "+   (element.ScanUnit_Price*element.Scan_Quantity));
     });
 
   
-    this.editSubTotal = Math.floor(subTotal*100)/100;
+    this.editSubTotal = Math.round(subTotal*100)/100;
     this.editGstTotal = gstTotal;
     this.editTotal = this.editSubTotal + this.editGstTotal;
 
+    console.log("========>subTotal "+    subTotal);
     console.log("========>editSubTotal "+    this.editSubTotal);
     console.log("========>editGstTotal "+    this.editGstTotal);
     console.log("========>editTotal "+    this.editTotal);
@@ -375,6 +376,7 @@ element.ScanInvoiceDate = this.invoiceDate;
     this.xeroDocumentLinesEdit.forEach(element => {
       element.ScanInvoiceTotal = this.editTotal;
       element.ScanSubTotal = this.editSubTotal;
+      element.ScanTax = this.editGstTotal;
     });
 
     

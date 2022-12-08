@@ -48,6 +48,8 @@ export class HomelayoutComponent implements AfterViewInit, OnDestroy, OnInit {
 
   public topMenuLeaving: boolean;
 
+  public showAutoRenewwalMessage : boolean;
+
   subscribedPlan:any=null;
   totalTrialPdf:any = 0;
   totalPaidPdf:any = null;
@@ -244,6 +246,8 @@ getSubscribedPlan() {
   sucessGetTotalPaidPdfUsed(res: any) {
     if (res.Data != null) {
       this.totalPaidPdf = this.subscribedPlan.TotalAllocatePDF - res.Data.TotalPaidUsed;
+      this.ss.storePaidPdfCount(this.totalPaidPdf, true);
+      this.wheatherShowAutoRenewMessage();
     }
     
     if(this.totalPaidPdf>=0 && this.totalPaidPdf<=20){
@@ -268,9 +272,26 @@ getSubscribedPlan() {
       error => this.failedGetTotalTrialPdfUsed(<any>error));
   }
 
+  wheatherShowAutoRenewMessage()
+  {
+    var availableTotalPdfCount = this.packagePurchaseHelper.GetAvailablePDf();
+    
+    if(availableTotalPdfCount < 1 || availableTotalPdfCount == undefined)
+    {
+      if(  this.packagePurchaseHelper.IsAutoRenewal && this.packagePurchaseHelper.IsPaidPlan)
+        {
+            this.showAutoRenewwalMessage = true;
+            return;
+        }
+    }
+    this.showAutoRenewwalMessage = false;
+  }
+
   sucessGetTotalTrialPdfUsed(res: any) {
     if (res.Data != null) {
       this.totalTrialPdf =  this.subscribedPlan.TrialPdf - res.Data.TotalTrialUsed;
+      this.ss.storeTrialPdfCount(this.totalTrialPdf, true);
+      this.wheatherShowAutoRenewMessage();
     }
     
   }

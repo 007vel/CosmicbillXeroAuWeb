@@ -2,6 +2,7 @@ import { Component, Injectable } from "@angular/core";
 import { ApiService } from "./api.service";
 import { StoreService } from "./store.service";
 import {  ConfirmationService } from 'primeng/api';
+import { CosmicNotifyService } from "./CosmicNotifyService";
 
 
 @Injectable({
@@ -14,7 +15,9 @@ export class PackagePurchaseHelper
     totalPaidPdf:Number = 0;
     private isPackageInfoFetched = false;
     loadingMessage: any = "Loading...";
-    constructor(private api: ApiService, private ss: StoreService,private confirmationService: ConfirmationService,)
+    IsPaidPlan: boolean;
+    IsAutoRenewal: boolean;
+    constructor(private api: ApiService, private ss: StoreService,private confirmationService: ConfirmationService, protected cosmicNotifyService: CosmicNotifyService)
     {
         
     }
@@ -34,21 +37,23 @@ export class PackagePurchaseHelper
       error => this.failedGetTotalPaidPdfUsed(<any>error)); 
   }
 
-  private sucessGetTotalPaidPdfUsed(res: any) : string{
+  private sucessGetTotalPaidPdfUsed(res: any) {
     if (res.Data != null) {
       this.totalPaidPdf = this.subscribedPlan.TotalAllocatePDF - res.Data.TotalPaidUsed;
+      this.ss.storePaidPdfCount(this.totalPaidPdf, true);
      // debugger;
       this.isPackageInfoFetched = true;
-      return this.subscribedPlan.TotalAllocatePDF;
+      this.cosmicNotifyService.myEventEmiter.emit();
     }
   }
   private sucessGetTotalTrialPdfUsed(res: any) {
     if (res.Data != null) {
       this.totalTrialPdf =  this.subscribedPlan.TrialPdf - res.Data.TotalTrialUsed;
+      this.ss.storeTrialPdfCount(this.totalTrialPdf, true);
     //  debugger;
       this.isPackageInfoFetched = true;
     }
-    
+    this.cosmicNotifyService.myEventEmiter.emit();
   }
 
   private failedGetTotalPaidPdfUsed(res: any) {
@@ -69,20 +74,10 @@ export class PackagePurchaseHelper
   public CheckAvailablePackageCount() : boolean
   {
    // debugger;
-    if(this.totalTrialPdf < 1)
+    if(this.ss.fetchTrialPdfCount() < 1)
     {
-      if(this.totalPaidPdf<1 )
+      if(this.ss.fetchPaidPdfCount()<1 )
       {
-        // this.confirmationService.confirm({
-        //   message: "You don't have enough package to process bills3, please select package...",
-        //   accept: () => {
-        //     this.loadingMessage = "Package selection...";
-        //     this.NavigateToPackageApp();
-        //     window.close();
-        //   },
-        //   reject: () => {
-        //   }
-        // });
         return false;
 
       }else{
@@ -95,16 +90,18 @@ export class PackagePurchaseHelper
     }
   }
 
-  public GetAvailablePDf() : Number
+  public GetAvailablePDf() : any
   { 
-    if(this.totalTrialPdf > 0)
+    if(this.ss.fetchTrialPdfCount() > 0)
     {
-      return this.totalTrialPdf;
+      return this.ss.fetchTrialPdfCount();
     }
-    if(this.totalPaidPdf > 0)
-      {
-        return this.totalTrialPdf;
-      }
+
+    if(this.ss.fetchPaidPdfCount() > 0)
+    {
+        return this.ss.fetchPaidPdfCount();
+    }
+
     return 0;
   }
 
@@ -112,7 +109,8 @@ export class PackagePurchaseHelper
     
   }
 
-  public getSubscribedPlan() {
+  public getSubscribedPlan()  // Use this mrthod, if need force call for package availability
+   {
     this.api.get('Plan/GetAccountSubscribedPlan', '').subscribe(
       (res: {}) => this.sucessGetSubscribedPlan(res),
       error => this.failedGetSubscribedPlan(<any>error));
@@ -123,6 +121,8 @@ export class PackagePurchaseHelper
     this.subscribedPlan = res.Data;
       
     console.log('subscribedPlan'+ this.subscribedPlan);
+    this.IsAutoRenewal =this.subscribedPlan.IsAutoRenew;
+    this.IsPaidPlan =this.subscribedPlan.IsPaidPlan;
     if(!this.subscribedPlan.IsPaidPlan){
         this.getTotalTrialPdfUsed();
     }else{

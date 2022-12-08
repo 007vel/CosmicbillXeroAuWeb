@@ -8,6 +8,7 @@ import { NgxSpinnerService } from 'ngx-spinner';
 import { SimplePdfViewerComponent, SimplePDFBookmark } from 'simple-pdf-viewer';
 import { HttpHeaders, HttpClient } from '@angular/common/http';
 import { StoreService } from '../store.service';
+import { CosmicNotifyService } from '../CosmicNotifyService';
 
 
 
@@ -55,7 +56,7 @@ export class DocReviewComponent implements OnInit {
 
   constructor(private router: Router, private api: ApiService, private http: HttpClient,
               private spinner: NgxSpinnerService, private ss: StoreService,
-              private confirmationService: ConfirmationService) { }
+              private confirmationService: ConfirmationService, protected cosmicNotifyService: CosmicNotifyService) { }
 
   validateConnectCompany() {
     var companyName = this.ss.fetchCompanyName();
@@ -204,6 +205,7 @@ export class DocReviewComponent implements OnInit {
   }
 
   sucessDocumentToScan(resp: any) {
+
     console.log(resp);
     this.spinner.hide();
     if (resp != null) {
@@ -223,7 +225,7 @@ export class DocReviewComponent implements OnInit {
         }
       }
     }
-
+    this.cosmicNotifyService.myEventEmiter.emit();
   }
 
   failedDocumentToScan(resp: any) {

@@ -5,7 +5,7 @@
 <div *ngIf="totalFiles>0">
 <ngx-spinner bdColor="rgba(87, 109, 142, 0.10)" size="medium" color="#0081c2" type="ball-elastic-dots">
     <p style="text-align: center; background-color:#0081c2; font-size: 20px; color: white; height: 30px; width:200px;  ">
-        Processing {{indexOfFileInProgress}} / {{totalFiles}} </p>
+        {{loadingMessage}}</p>
 </ngx-spinner>
 </div>
 
@@ -23,7 +23,7 @@
 <div>
 
         <p-fileUpload name="clientFiles" url="{{postDocApiUrl}}" customUpload="true" (onUpload)="onUpload($event)"
-           chooseLabel = "Upload PDFs to scan" 
+           chooseLabel = "Upload PDFs to scan"  [(disabled)]="disableUploadButton"
            uploadLabel = "Start Scanning"
            
             cancelLabel = "Cancel / Reset"

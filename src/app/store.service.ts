@@ -16,6 +16,9 @@ const KEY_COMPANY_NAME = 'local_companyName';
 const XERO_VENDOR_KEY = 'local_XeroVendor';
 const XERO_ACCOUNT_KEY = 'local_XeroAccount';
 
+const PAID_PDF_COUNT = 'paid_pdf_count';
+const TRIAL_PDF_COUNT = 'trial_pdf_count';
+
 @Injectable({
   providedIn: 'root'
 })
@@ -109,8 +112,6 @@ export class StoreService {
        return this.storage.get(KEY_COMPANY_NAME)
   }
 
-
-
   public storeXeroVendors(data: any): void {
     this.storage.set(XERO_VENDOR_KEY, data);
     console.log(this.storage.get(XERO_VENDOR_KEY) || 'LocaL storage is empty');
@@ -129,6 +130,30 @@ export class StoreService {
     return this.storage.get(XERO_ACCOUNT_KEY)
   }
 
+  public fetchTrialPdfCount(): any {
+    return this.storage.get(TRIAL_PDF_COUNT)
+  }
+  public fetchPaidPdfCount(): any {
+    return this.storage.get(PAID_PDF_COUNT)
+  }
+  public storePaidPdfCount(value: any, invalidateTrialCount: boolean): void {
+    this.storage.set(PAID_PDF_COUNT, value);
+    if(invalidateTrialCount === true)
+    {
+      this.storeTrialPdfCount(0, false);
+    }
+
+  }
+  public storeTrialPdfCount(value: any,  invalidatePaidCount: boolean): void {
+    this.storage.set(TRIAL_PDF_COUNT, value);
+
+    if(invalidatePaidCount === true)
+    {
+      this.storePaidPdfCount(0, false);
+    }
+
+  }
+
   public clearAll(): any {
     console.log("ClearAll preference");
     this.storage.set(XERO_ACCOUNT_KEY, null);
@@ -140,6 +165,8 @@ export class StoreService {
     this.storage.set(USER_KEY, null);
     this.storage.set(PASSWORD, null);
     this.storage.set(COSMIC_ACCOUNT_ID, null);
+    this.storage.set(PAID_PDF_COUNT, null);
+    this.storage.set(TRIAL_PDF_COUNT, null);
   }
 
 }

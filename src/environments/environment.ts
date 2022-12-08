@@ -19,7 +19,7 @@ scope :"openid profile email accounting.transactions accounting.settings offline
   //  PaymentreturnURL: "http://localhost:4200/#/myaccount"
 
  
-production: true,
+  production: true,
   apiBaseUrl: 'https://cosmicinv.com/xeroapiau/api/',
   apiPreBaseUrl: 'https://cosmicinv.com/xeroapiau/',
   urlPostPDF: 'https://cosmicinv.com/xeroapiau/api/Scan/UploadDocumentXero/',

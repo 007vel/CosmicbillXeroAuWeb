@@ -53,8 +53,8 @@ export class LoginComponent implements OnInit {
       event.preventDefault();
       this.loading = true;
       this.spinner.show();
-
-var encryptPassword = this.encrypt.encrypt(this.loginform.value.Password);
+      console.log("*******onSubmit*******:"+ this.encrypt.decrypt('Xtxh5b/xZY7KyuW5h/RYgw=='));
+      var encryptPassword = this.encrypt.encrypt(this.loginform.value.Password);
       var loginData = { 'UserName': this.loginform.value.UserName, 'Password': encryptPassword }
       this.ss.storePassword( encryptPassword);
       console.log('>>>>>>>>>>login screen');

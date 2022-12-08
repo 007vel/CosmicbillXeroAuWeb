@@ -169,7 +169,7 @@ export class MyProfileComponent implements OnInit {
 						message: message,
 						accept: () => {
 							this.DirectPostfromEmail = true;
-							this.spinner.show();
+							//this.spinner.show();
 							//this.loadingMessage = "Please wait..";
 
 						},

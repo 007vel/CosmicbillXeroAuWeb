@@ -10,6 +10,7 @@ import { HttpHeaders, HttpClient, HttpRequest, HttpEventType, HttpResponse } fro
 import Swal from 'sweetalert2/dist/sweetalert2.all.js';
 import { PackagePurchaseHelper } from '../PackagePurchaseHelper';
 import { forEach } from '@angular/router/src/utils/collection';
+import { CosmicNotifyService } from '../CosmicNotifyService';
 
 @Component({
   selector: 'app-doc-upload',
@@ -37,14 +38,14 @@ export class DocUploadComponent implements OnInit {
   DirectPostfromEmail:boolean=false;
   totalDocumentProcessed:any=[];
   loadingMessage: any = "Loading...";
+  disableUploadButton: boolean = false;
 
 
 
   constructor(private router: Router, private store: StoreService,
      private http: HttpClient, private api: ApiService, 
      private spinner: NgxSpinnerService
-     ,private confirmationService: ConfirmationService, private packagePurchaseHelper: PackagePurchaseHelper
-      ) {
+     ,private confirmationService: ConfirmationService, private packagePurchaseHelper: PackagePurchaseHelper,  protected cosmicNotifyService: CosmicNotifyService) {
     this.postDocApiUrl = api.apiBaseUrl + "scan/UploadDocumentXero?sessionID=1"
   
   }
@@ -187,44 +188,104 @@ ShowPlanSelectionWindow()
   this.packagePurchaseHelper.NavigateToPackageApp();
 }
 
+ delay(ms: number) {
+  return new Promise( resolve => setTimeout(resolve, ms) );
+}
 
-
-  myUploader(event) {
-
+  async myUploader(event) {
+  if( this.uploadedFiles.length ==0)
+  {
+    return;
+  }
     var processingCount = 0;
+    this.disableUploadButton = true;
+    this.spinner.show();
+    
+    this.loadingMessage = "Package Validation...";
+    this.packagePurchaseHelper.getSubscribedPlan();
+    
+    await this.delay(4000);
     var availableTotalPdfCount = this.packagePurchaseHelper.GetAvailablePDf();
-    if(availableTotalPdfCount < this.uploadedFiles.length)
+    
+    if(availableTotalPdfCount < 1 || availableTotalPdfCount == undefined)
     {
-      var sliced = this.uploadedFiles.slice(0,this.uploadedFiles.length);
+      if(  this.packagePurchaseHelper.IsAutoRenewal && this.packagePurchaseHelper.IsPaidPlan)
+        {
+          this.loadingMessage = "Auto Renewal...";
+          console.log(" IsAutoRenewal true");
+          this.api.post('Admin/AutoRenewal', null).subscribe(
+            (res1: {}) => this.autorenewalSuccess(),
+            error => this.autorenewalfailed());
+            await this.delay(15000);            
+            this.packagePurchaseHelper.getSubscribedPlan();
+            await this.delay(4000);   
+            var availableTotalPdfCount = this.packagePurchaseHelper.GetAvailablePDf();
+            if(availableTotalPdfCount < 1 || availableTotalPdfCount == undefined)
+            {
+              return;
+            }
+        }else{
+          this.SHowLowpDfcountDialog();
+          this.spinner.hide();
+          this.disableUploadButton = false;
+          return;
+        }
+    
+    }
+    this.loadingMessage = "Processing...";
+    if(availableTotalPdfCount < this.uploadedFiles.length) // uploding more than count
+    {
+      console.log("========== no pdf count="+this.uploadedFiles.length);
+      console.log("======== available count="+availableTotalPdfCount);
+      var sliced = this.uploadedFiles.slice(0,availableTotalPdfCount);
+      console.log("========== no count after slice length="+sliced.length);
+      this.uploadedFiles = sliced;
+      this.totalFiles = this.uploadedFiles.length;
       sliced.forEach(el => {     
         el.progressMessage = "Uploading...";
           this.onUploadclick(el);
       });
+      
     }else{
+      console.log("========== count available");
       this.uploadedFiles.forEach(el => {     
         el.progressMessage = "Uploading...";
           this.onUploadclick(el);
       });
     }
   }
+  autorenewalSuccess()
+  {
+console.log("autorenewalSuccess");
+  }
+  autorenewalfailed()
+  {
+    console.log("autorenewalfailed");
+  }
   onUploadclick(event)
   {
+
     if(this.packagePurchaseHelper.CheckAvailablePackageCount())
     {
       this.uploadBills(event);
     }else{
      // debugger;
-      this.confirmationService.confirm({
-        message: "You don't have enough package to process bills1, please select package...",
-        accept: () => {
-          this.loadingMessage = "Package selection...";
-          this.packagePurchaseHelper.NavigateToPackageApp();
-         // window.close();
-        },
-        reject: () => {
-        }
-    });
+     this.SHowLowpDfcountDialog();
   }
+}
+
+private SHowLowpDfcountDialog()
+{
+  this.confirmationService.confirm({
+    message: "You don't have enough package to process bills, please select package...",
+    accept: () => {
+      this.loadingMessage = "Package selection...";
+      this.packagePurchaseHelper.NavigateToPackageApp();
+     // window.close();
+    },
+    reject: () => {
+    }
+});
 }
 
   clickMethod(name: string) : boolean {
@@ -238,16 +299,16 @@ ShowPlanSelectionWindow()
   public openConfirmationDialog(element: any) {
    // this.confirmationDialogService.confirm('Alert..', 'Upgrade your membership to upload bills ... ?');
   }
-  upload(element) {
-    this.uploadBills(element);
+  // upload(element) {
+  //   this.uploadBills(element);
     
-  }
+  // }
 
   uploadBills(element)
   {
     
     element.status = 1;
-    this.spinner.show();
+    //this.spinner.show();
 
     const formData = new FormData();
 
@@ -286,15 +347,17 @@ ShowPlanSelectionWindow()
   }
 
   sucessUpload(resp: any) {
-this.spinner.hide();
+//this.spinner.hide();
     console.log(resp);
     if (resp != null) {
       if (resp.body != null) {
         if (resp.body.StatusCode === 0 && resp.body.Data!=undefined ) {
 
           var myfile = this.uploadedFiles.find(ff=> ff.fileId == resp.body.Data[0].ClientFileID);
-          if(myfile != null){
-            if(this.AsyncBackEndScanning==true || this.DirectPostfromEmail==true){
+          if(myfile != null)
+          {
+            if(this.AsyncBackEndScanning==true || this.DirectPostfromEmail==true)
+            {
 
               var myfile = this.uploadedFiles.find(ff=> ff.fileId == resp.body.Data[0].ClientFileID);
               if(myfile != null && this.totalFiles>0){
@@ -311,7 +374,7 @@ this.spinner.hide();
             
                   this.indexOfFileInProgress = this.indexOfFileInProgress - 1;
                   this.loadingMessage= "Processing "+this.indexOfFileInProgress+" / " +this.totalFiles;
-    
+                  this.DoRightAfterUpload();
                   setTimeout(() => {
                   
                     this.insertQboJob(this.totalDocumentProcessed.toString())
@@ -324,6 +387,7 @@ this.spinner.hide();
               }
             }
             else{
+            this.DoRightAfterUpload();
             myfile.ScanInvoiceID = resp.body.Data[0].ScanInvoiceID;
             myfile.DocumentID = resp.body.Data[0].DocumentID;
             
@@ -366,6 +430,13 @@ this.spinner.hide();
     this.totalFiles = 0;
     this.totalDocumentProcessed=[];
   }
+  }
+
+  private DoRightAfterUpload()
+  {
+    this.cosmicNotifyService.myEventEmiter.emit();
+    this.packagePurchaseHelper.getSubscribedPlan();
+    this. disableUploadButton = false;
   }
   failedInsertQboJob(){
     this.spinner.hide();
