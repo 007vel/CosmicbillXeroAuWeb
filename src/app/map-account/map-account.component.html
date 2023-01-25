@@ -30,7 +30,7 @@ type="ball-elastic-dots"><p style="text-align: center; background-color:#0081c2;
   <br><br>
 
 
-      <p-table [value]="xeroVendAcctDefault" [responsive]="true" selectionMode="multiple" (onRowSelect)="onXeroVendAcctSelect($event)"
+      <p-table #dt1  [value]="xeroVendAcctDefault" [responsive]="true" selectionMode="multiple" (onRowSelect)="onXeroVendAcctSelect($event)"
         [metaKeySelection]="true">
         <ng-template pTemplate="header">
           <tr>
@@ -44,6 +44,16 @@ type="ball-elastic-dots"><p style="text-align: center; background-color:#0081c2;
             <th>Account</th>
 
           </tr>
+          <tr>
+
+            <th style="width: 3em">             
+          </th>
+            <th>
+                <input pInputText type="text" (input)="dt1.filter($event.target.value, 'DisplayNameField', 'contains')" [value]="dt1.filters['DisplayNameField']?.value" placeholder="Search by Supplier" class="w-full">
+            </th>
+           
+        </tr>
+
         </ng-template>
         <ng-template pTemplate="body" let-hdr>
             
@@ -62,13 +72,29 @@ type="ball-elastic-dots"><p style="text-align: center; background-color:#0081c2;
             </td>
 
             <td>
-              <p-dropdown [filter]="true" [options]="xeroAccounts" [(ngModel)]="hdr.XeroAccountID" [style]="{'width':'100%', 'max-width':'35em'}" (onChange)="onChangeAccount($event,hdr)">
+              <p-dropdown [filter]="true" [options]="xeroAccounts" [(ngModel)]="hdr.XeroAccountID" 
+              [style]="{'width':'100%', 'max-width':'35em'}" (onChange)="onChangeAccount($event,hdr)">
                 <ng-template let-act pTemplate="item">
                   <div class="ui-helper-clearfix" style="position: relative;height: 25px;">
                     <div>{{act.label}}</div>
                   </div>
                 </ng-template>
               </p-dropdown>
+
+              <!-- <p-autoComplete [suggestions]="filteredAccount"  [style]="{'width':'100%'}" [inputStyle]="{'width':'100%'}"    
+              pTooltip="Please enter at least 3 character to start search of Chart of Account" 
+              tooltipPosition="top" 
+              placeholder="Search Account" [scrollHeight]="100" 
+              [(ngModel)]="hdr.XeroAccountName" 
+               appendTo="body" (onSelect)="onChangeAccountDropdown($event,hdr)" 
+              (completeMethod)="filterAccount($event)">
+              <ng-template let-act pTemplate="item">
+                <div class="ui-helper-clearfix" style="position: relative;">
+                  <div>{{act.FullyQualifiedNameField}}</div>
+                </div>
+              </ng-template> 
+              </p-autoComplete>  -->
+
             </td>
 
 

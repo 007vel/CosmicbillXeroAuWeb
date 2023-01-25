@@ -24,7 +24,7 @@ export class AppMenuComponent implements OnInit {
             {label: 'Post Document To Xero', icon: 'fa fa-check-circle-o', routerLink: ['/docpost']},
             // {label: 'Post Document To Authorised', icon: 'fa fa-check-circle-o', routerLink: ['/docauth']},
             {label: 'Scan History', icon: 'fa fa-history', routerLink: ['/dochistory']},
-            {label: 'Vendor Default', icon: 'fa fa-user-circle-o', routerLink: ['/mapaccount']},
+            {label: 'Supplier & Chart of Accounts Mapping', icon: 'fa fa-user-circle-o', routerLink: ['/mapaccount']},
             {label: 'Switch Company', icon: 'fa fa-building-o', routerLink: ['/switchcompany']},
             { label: 'Manage Product', icon: 'fa fa-thumbs-o-up', routerLink: ['/manageproduct'] },
             //{ label: 'Manage Item', icon: 'fa fa-thumbs-o-up', routerLink: ['/manageitem'] },

@@ -11,7 +11,9 @@ import Swal from 'sweetalert2/dist/sweetalert2.all.js';
 import { PackagePurchaseHelper } from '../PackagePurchaseHelper';
 import { forEach } from '@angular/router/src/utils/collection';
 import { CosmicNotifyService } from '../CosmicNotifyService';
-
+import {MessagesModule} from 'primeng/messages';
+import {MessageModule} from 'primeng/message';
+import { Message, SelectItem } from 'primeng/primeng';
 @Component({
   selector: 'app-doc-upload',
   templateUrl: './doc-upload.component.html',
@@ -40,7 +42,7 @@ export class DocUploadComponent implements OnInit {
   loadingMessage: any = "Loading...";
   disableUploadButton: boolean = false;
 
-
+  msgs: Message[] = [];
 
   constructor(private router: Router, private store: StoreService,
      private http: HttpClient, private api: ApiService, 
@@ -174,8 +176,25 @@ export class DocUploadComponent implements OnInit {
 
   onSelect(event) {
 
+
+
+    console.log("onSelect");
     this.indexOfFileInProgress = 1;
     this.totalFiles = this.totalFiles + event.files.length;
+    console.log("totalFiles" +this.totalFiles);
+    var availableTotalPdfCount = this.packagePurchaseHelper.GetAvailablePDf();
+    console.log("availableTotalPdfCount"+availableTotalPdfCount);
+
+    if(this.totalFiles > availableTotalPdfCount)
+    {
+      console.log("this.totalFiles > availableTotalPdfCount"+availableTotalPdfCount);
+      this.msgs = [];
+      this.msgs.push({ severity: 'Info', summary: 'You Do Not Have Enough Package To Process Please Subscribe Above', detail: 'You have available( '+availableTotalPdfCount+') pdfs cannot exceed the limit .' });
+      this.uploadedFiles = [];
+      this.totalFiles = 0;
+
+      return;
+    }
     
     for (let file of event.files) {
       this.fileIndex++
