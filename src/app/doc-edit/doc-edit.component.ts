@@ -277,8 +277,8 @@ export class DocEditComponent implements OnInit {
 
     this.xeroDocumentLinesEdit.forEach(element => {
       element.Memo = this.documentMemo;
-element.DocumentID = this.documentID;
-element.ScanInvoiceDate = this.invoiceDate;
+      element.DocumentID = this.documentID;
+      element.ScanInvoiceDate = this.invoiceDate;
     });
     if(this.invoiceNumber==""){
       this.msgs.push({ severity: 'error', summary: 'Supplier Invoice Number is a required field', detail: 'Mandatory Field' });
@@ -312,9 +312,6 @@ element.ScanInvoiceDate = this.invoiceDate;
   }
 
 
-
-
-
   onChangeVendor(event: any) {
 
 
@@ -324,14 +321,12 @@ element.ScanInvoiceDate = this.invoiceDate;
       element.XeroVendorName = acct.DisplayNameField;
     });
 
+    this.documentVendor = event.value;
   }
 
 
 
   onChangeAccount(event: any, record: any) {
-
-    //var acct = this.XeroAccountsTemp.find(xx=> xx.idField == event.value);
-    //record.XeroAccountName = acct.nameField;
 
     var acct = this.xeroAccountsTemp.find(xx => xx.XeroAccountID == event.value);
     record.XeroAccountName = acct.FullyQualifiedNameField;
@@ -340,8 +335,6 @@ element.ScanInvoiceDate = this.invoiceDate;
     console.log("Approve the bill");
     console.log(acct);
     console.log(record);
-    //Approve the bill
-  
 
   }
   successUpdateXeroDoc(res1:any){
@@ -376,7 +369,7 @@ element.ScanInvoiceDate = this.invoiceDate;
     this.xeroDocumentLinesEdit.forEach(element => {
       element.ScanInvoiceTotal = this.editTotal;
       element.ScanSubTotal = this.editSubTotal;
-      element.ScanTax = this.editGstTotal;
+      element.ScanTaxTotal = this.editGstTotal;
     });
 
     
@@ -577,6 +570,8 @@ element.ScanInvoiceDate = this.invoiceDate;
       (res: {}) => this.sucessDocumentFile(res),
       error => this.failedDocumentFile(<any>error));
   }
+
+  
   openDocument1(document: File) {
     const fileReader: FileReader = new FileReader();
     fileReader.onload = () => {
@@ -638,7 +633,7 @@ element.ScanInvoiceDate = this.invoiceDate;
   }
   addNewLine() {
 
-    var newRecord = this.xeroDocumentLinesEdit.filter(a => a.DocumentLineID == 0 || a.ScanDescription == '' || a.Scan_Quantity == 0 || a.ScanUnit_Price == 0);
+    var newRecord = this.xeroDocumentLinesEdit.filter(a => a.ScanDescription == '' || a.Scan_Quantity == 0 || a.ScanUnit_Price == 0);
     if (newRecord.length > 0) {
       alert("Please first fill all data in newly added line...");
     }
@@ -663,15 +658,25 @@ element.ScanInvoiceDate = this.invoiceDate;
             'XeroVendorID': this.xeroDocumentLinesEdit[0].XeroVendorID,
             'ScanInvoiceDate': this.xeroDocumentLinesEdit[0].ScanInvoiceDate,
             'XeroAccountID': this.xeroDocumentLinesEdit[0].XeroAccountID,
+            'XeroAccountName': this.xeroDocumentLinesEdit[0].XeroAccountName,
             'ScanABNNumber': this.xeroDocumentLinesEdit[0].ScanABNNumber,
             'ScanRefNumber': this.xeroDocumentLinesEdit[0].ScanRefNumber,
+            'scanBlobUrl': this.xeroDocumentLinesEdit[0].ScanBlob_Url ,
              'ScanTax': 0
   
           });
+
+          var acct = this.xeroVendorsTemp.find(xx => xx.XeroVendorID == this.documentVendor);
+          this.xeroDocumentLinesEdit.forEach(element => {
+            element.XeroVendorID = acct.XeroVendorID;
+            element.XeroVendorName = acct.DisplayNameField;
+          });
+
+
       }else{
         this.xeroDocumentLinesEdit.push(
           {
-            'DocumentID': "",
+            'DocumentID': this.documentID,
             'DocumentLineID': 0,
             'Scan_Quantity': 0,
             'ScanUnit_Price': 0.0,
@@ -679,13 +684,20 @@ element.ScanInvoiceDate = this.invoiceDate;
             'Scan_Total': 0.0,
             'ScanInvoiceTotal': 0,
             'ScanDescription': "",
-            'XeroVendorID': "",
-            'ScanInvoiceDate':"",
+            'XeroVendorID': this.documentVendor ,
+            'ScanInvoiceDate':this.invoiceDate,
             'XeroAccountID': "",
-            'ScanABNNumber': "",
-            'ScanRefNumber': "",
-             'ScanTax': 0
-  
+            'ScanABNNumber': this.billNumber,
+            'ScanRefNumber': this.invoiceNumber,
+             'ScanTax': 0,
+             'scanBlobUrl':this.scanBlobUrl ,
+             'Memo':this.documentMemo
+          });
+
+          var acct = this.xeroVendorsTemp.find(xx => xx.XeroVendorID == this.documentVendor);
+          this.xeroDocumentLinesEdit.forEach(element => {
+            element.XeroVendorID = acct.XeroVendorID;
+            element.XeroVendorName = acct.DisplayNameField;
           });
       }
      

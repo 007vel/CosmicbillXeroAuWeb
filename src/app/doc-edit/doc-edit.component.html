@@ -12,14 +12,10 @@
         <button pButton type="button" icon="fa fa-search-plus" class="ui-button-rounded" (click)="pdfViewer.zoomIn()"></button>&nbsp;
         <button pButton type="button" icon="fa fa-search-minus" class="ui-button-rounded" (click)="pdfViewer.zoomOut()"></button>&nbsp;
         <button pButton type="button" icon="fa fa-search" class="ui-button-rounded" (click)="pdfViewer.zoomReset()"></button>&nbsp;
-
         <button pButton type="button" icon="fa fa-arrow-circle-o-left" class="ui-button-rounded" (click)="pdfViewer.nextPage()"></button>&nbsp;
         <button pButton type="button" icon="fa fa-arrow-circle-o-right" class="ui-button-rounded" (click)="pdfViewer.prevPage()"></button>
     </p-header>
-
-
     <section id="viewer">
-        <!-- Simple PDF Viewer: open the test.pdf at the second page -->
         <simple-pdf-viewer #pdfViewer [src]=ScanPdfPath></simple-pdf-viewer>
     </section>
 
@@ -31,18 +27,7 @@
 
     <div class="row">
       <div class="column" style="margin-bottom: 10px;">
-
-        <!-- <div class="form-group" style="margin-top: 10px;" >
-
-
-          <label style="display: inline-block;width: 200px;"><b>Bill Number </b><span class="required-field"></span></label>
-          <input id="input" type="text" size="20" style="width:200px"  pInputText [(ngModel)]="billNumber" (input)=onChangeBillNumber()>
-        </div> -->
-
-
         <div class="form-group" style="margin-top: 10px;">
-
-
           <label style="display: inline-block;width: 180px;"><b>Invoice Number </b><span class="required-field"></span></label>
           <input id="input" type="text" size="20" style="width:200px"  pInputText [(ngModel)]="invoiceNumber" (input)=onChangeInvoiceNumber()>
         </div>
@@ -67,40 +52,19 @@
        
       </div>
       <div class="column" style="text-align: right;">
-        
         <div class="form-group">
           <div class="form-group" style="margin-top: 10px;">
-
-
             <label style="display: inline-block;width: 220px;margin-right: 10px;"><b>Issue Date </b><span class="required-field"></span></label>
             <input id="invoiceDate" type="date" size="20" style="width:195px" [ngModel]="invoiceDate | date:'yyyy-MM-dd'"
               [value]="invoiceDate | date:'yyyy-MM-dd'" (ngModelChange)=onChangeInvoiceDate($event)>
           </div>
-  
-         
         </div>
-
       </div>
     </div>
     <p-button icon="fa fa-trash" style="margin-bottom: 0.5em;" label="Delete Seletected"  (click)="deleteAllLineItem()">
     </p-button>
    
     <p-table #dt [value]="xeroDocumentLinesEdit" [scrollable]="true" >
-      <!-- <ng-template pTemplate="colgroup">
-    <colgroup>
-        <col style="width:2em">
-        <col style="width:6em">
-        <col style="width:12em"> 
-         <col>
-        <col style="width:12em">
-        <col style="width:8em">
-        <col style="width:4em">
-        <col style="width:5em">
-        <col style="width:4em">
-        <col style="width:6em">
-        <col style="width:8em">
-    </colgroup>
-</ng-template> -->
       <ng-template pTemplate="header">
         <tr>
           <th colspan="3" style="width:6.1em">
@@ -175,63 +139,26 @@
 
 
       </ng-template>
-      <!-- <ng-template pTemplate="footer">
-    <tr>
-      <td colspan="8"></td>
-      <td style="width: 8em; text-align: right"><b>{{editTotal | currency}}</b></td>
-    </tr>
-   
-    <tr>
-      <td colspan="3">
-        <p-button icon="pi pi-plus" style="margin-right: 10;" label="Add New Line" (click)="addNewLine(rowData)"></p-button>
-      </td>
-        <td colspan="6">
-        <p-button icon="pi pi-check" label="Save Changes" (click)="saveEditChanges()"></p-button>
-      </td>
-    </tr>
-
-  </ng-template> -->
+  
 
     </p-table>
 
 
     <div class="row">
       <div class="column" style="margin-bottom: 10px;align-content: center;">
-
-        <!-- <div class="form-group" style="margin-top: 10px;">
-      <label><b>Notes</b></label><span></span>
-      </div>
-
-  
-      <div class="form-group" style="margin-top: 10px;">
-        <textarea [rows]="2" cols="40" pInputTextarea autoResize="autoResize"
-          [(ngModel)]="scanBlobUrl"></textarea>
-        
-      </div> -->
-
-
       </div>
       <div class="column" style="text-align: right;">
         <div class="form-group" style="margin-top: 10px;">
-
-
           <label><b>Sub Total </b></label><span></span>
           <label style="display: inline-block;width: 70px;">{{editSubTotal | currency}}</label><span></span>
-
         </div>
 
-
         <div class="form-group" style="margin-top: 10px;">
-
-
           <label><b>Tax </b></label><span></span>
           <label style="display: inline-block;width: 70px;">{{editGstTotal | currency : 'USD' : 'symbol' : '2.0-2'}}</label><span></span>
-
         </div>
 
         <div class="form-group" style="margin-top: 10px;">
-
-
           <label><b> Total </b></label><span></span>
           <label style="display: inline-block;width: 70px;">{{editTotal | currency}}</label><span></span>
 
@@ -242,16 +169,10 @@
 
     <div class="row">
       <div class="column" style="margin-top: 10px;align-content: center;">
-
-        
-
         <p-button icon="pi pi-plus" style="margin-right: 10;" label="Add New Line"  (click)="addNewLine()">
         </p-button>
-
-
       </div>
       <div class="column" style="text-align: right;margin-top: 10px;">
-
         <p-button icon="pi pi-check" label="Save Changes" (click)="saveEditChanges()"></p-button>
         <p-button label="Exit" (click)="Cancel()" style="margin-left: 10px;"></p-button>
 
