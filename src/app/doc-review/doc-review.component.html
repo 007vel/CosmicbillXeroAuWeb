@@ -128,8 +128,8 @@
               </div>
             </th>
               
-            <th style="width: 7em">Draft</th>
-            <th style="width: 8em">WaitingApproval</th>
+            <!-- <th style="width: 7em">Draft</th>
+            <th style="width: 8em">WaitingApproval</th> -->
             <th colspan="3" style="width: 9em"></th>
             <th style="width: 7em">Invoice No.</th>
             <th style="width: 25em">Supplier</th>
@@ -165,7 +165,8 @@
               <input type="checkbox" [ngModel]="rowData.Deleted" (change)="onChangeDelete($event,rowData)">
             </div>
           </td>
-            <td style="vertical-align: top;text-align: center;align-content: center;" *ngIf="rowGroupMetadata[rowData.DocumentID].index === rowIndex" [attr.rowspan]="rowGroupMetadata[rowData.DocumentID].size">
+
+            <!-- <td style="vertical-align: top;text-align: center;align-content: center;" *ngIf="rowGroupMetadata[rowData.DocumentID].index === rowIndex" [attr.rowspan]="rowGroupMetadata[rowData.DocumentID].size">
 
               <div style="clear: both;align-content: center;" >
                 <input type="checkbox" style="align-content: center;" [ngModel]="rowData.SelectToBill2" (change)="onChangeApproveAsDraft($event,rowData)">
@@ -179,7 +180,7 @@
                 <input type="checkbox" style="align-content: center;" [ngModel]="rowData.SelectToBill3" (change)="onChangeApproveAsWA($event,rowData)">
               </div>
 
-            </td>
+            </td> -->
             
             <td style="vertical-align: top;" *ngIf="rowGroupMetadata[rowData.DocumentID].index === rowIndex" [attr.rowspan]="rowGroupMetadata[rowData.DocumentID].size">
               <button pButton type="button" class="ui-button-rounded ui-button-secondary" icon="fa fa-file" aria-hidden="true" (click)="showPdf(rowData)"></button>

@@ -614,9 +614,11 @@ export class DocEditComponent implements OnInit {
         'ScanInvoiceTotal': this.xeroDocumentLinesEdit[0].ScanInvoiceTotal,
         'ScanDescription': record.ScanDescription,
         'XeroVendorID': record.XeroVendorID,
+        'XeroVendorName': record.XeroVendorName,
         'ScanInvoiceDate': record.ScanInvoiceDate,
         'ScanTax': record.ScanTax,
         'XeroAccountID': record.XeroAccountID,
+        'XeroAccountName': record.XeroAccountName,
         'ScanABNNumber': record.ScanABNNumber,
         'ScanRefNumber': record.ScanRefNumber
       }

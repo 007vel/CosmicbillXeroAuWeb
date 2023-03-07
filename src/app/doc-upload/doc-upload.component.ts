@@ -1,5 +1,5 @@
 import { Component, Injectable, OnInit, ViewEncapsulation } from '@angular/core';
-import {  MenuItem,ConfirmationService } from 'primeng/api';
+import { MenuItem, ConfirmationService } from 'primeng/api';
 import { Router } from '@angular/router';
 import { StoreService } from '../store.service';
 import { ApiService } from '../api.service';
@@ -11,8 +11,8 @@ import Swal from 'sweetalert2/dist/sweetalert2.all.js';
 import { PackagePurchaseHelper } from '../PackagePurchaseHelper';
 import { forEach } from '@angular/router/src/utils/collection';
 import { CosmicNotifyService } from '../CosmicNotifyService';
-import {MessagesModule} from 'primeng/messages';
-import {MessageModule} from 'primeng/message';
+import { MessagesModule } from 'primeng/messages';
+import { MessageModule } from 'primeng/message';
 import { Message, SelectItem } from 'primeng/primeng';
 @Component({
   selector: 'app-doc-upload',
@@ -33,39 +33,39 @@ export class DocUploadComponent implements OnInit {
   indexOfFileInProgress: number = 0;
   progress: any;
   Scanning: any;
-  connectCompanyMessage: string= "";
-  clientFiles:any=[];
-  fileIndex:number = 0;
-  AsyncBackEndScanning:boolean=false;
-  DirectPostfromEmail:boolean=false;
-  totalDocumentProcessed:any=[];
+  connectCompanyMessage: string = "";
+  clientFiles: any = [];
+  fileIndex: number = 0;
+  AsyncBackEndScanning: boolean = false;
+  DirectPostfromEmail: boolean = false;
+  totalDocumentProcessed: any = [];
   loadingMessage: any = "Loading...";
   disableUploadButton: boolean = false;
 
   msgs: Message[] = [];
 
   constructor(private router: Router, private store: StoreService,
-     private http: HttpClient, private api: ApiService, 
-     private spinner: NgxSpinnerService
-     ,private confirmationService: ConfirmationService, private packagePurchaseHelper: PackagePurchaseHelper,  protected cosmicNotifyService: CosmicNotifyService) {
+    private http: HttpClient, private api: ApiService,
+    private spinner: NgxSpinnerService
+    , private confirmationService: ConfirmationService, private packagePurchaseHelper: PackagePurchaseHelper, protected cosmicNotifyService: CosmicNotifyService) {
     this.postDocApiUrl = api.apiBaseUrl + "scan/UploadDocumentXero?sessionID=1"
-  
+
   }
-  
+
   validateConnectCompany() {
     this.getXeroDetail();
     var companyName = this.store.fetchCompanyName();
     if (companyName == '' || companyName == null) {
       this.connectCompanyMessage = "No company is connected, Connect a company from Switch Company menu";
-    }else{
+    } else {
 
     }
   }
 
   ngOnInit() {
-  // this.checkXeroToken();
+    // this.checkXeroToken();
     this.validateConnectCompany();
-    
+
     this.steps = [
       {
         label: 'Map Supplier Default Account',
@@ -94,12 +94,12 @@ export class DocUploadComponent implements OnInit {
           this.activeIndex = 3;
           this.router.navigateByUrl('/docpost');
         }
-      } ];
-      this.packagePurchaseHelper.getSubscribedPlan();
+      }];
+    this.packagePurchaseHelper.getSubscribedPlan();
 
   }
 
-  getXeroDetail(){
+  getXeroDetail() {
     this.api.get('Xero/GetByAccountID', '').subscribe(
       (res: {}) => this.sucessXeroMaster(res),
       error => this.failedXeroMaster(<any>error));
@@ -108,7 +108,7 @@ export class DocUploadComponent implements OnInit {
   failedXeroMaster(res: any) {
     this.spinner.hide();
   }
-  
+
   sucessXeroMaster(res: any) {
     this.spinner.hide();
     if (res.StatusCode == 0 && res.Data[0]) {
@@ -119,37 +119,37 @@ export class DocUploadComponent implements OnInit {
       if (companyName == '' || companyName === null) {
         this.connectCompanyMessage = "No company is connected, Connect a company from Switch Company menu";
       }
-      this.AsyncBackEndScanning=res.Data[0].AsyncBackEndScanning;
-      this.DirectPostfromEmail=res.Data[0].DirectPostfromEmail
+      this.AsyncBackEndScanning = res.Data[0].AsyncBackEndScanning;
+      this.DirectPostfromEmail = res.Data[0].DirectPostfromEmail
     }
   }
 
 
   checkXeroToken() {
-    var xeroID =this.store.fetchXeroConnectID();
-    this.api.get('Xero/CheckXeroToken?XeroID='+ xeroID,"").subscribe(
+    var xeroID = this.store.fetchXeroConnectID();
+    this.api.get('Xero/CheckXeroToken?XeroID=' + xeroID, "").subscribe(
       (res: {}) => this.validateCheckXeroToken(res),
       error => this.failedCheckXeroToken(<any>error));
   }
-  
+
   validateCheckXeroToken(res: any) {
     var token = this.store.fetchToken();
-     if (res.StatusCode == 0) {
-   
-       if (res.Data.XeroTokenMinute < 0) {
-         window.location.href = this.api._xeroConnectUrl + token.toString();
-       }
-       
-     }
-   }
-  
+    if (res.StatusCode == 0) {
+
+      if (res.Data.XeroTokenMinute < 0) {
+        window.location.href = this.api._xeroConnectUrl + token.toString();
+      }
+
+    }
+  }
+
   failedCheckXeroToken(res: any) {
     var token = this.store.fetchToken();
     this.router.navigate(['/initlogin/' + token.toString() + '/0/login']);
   }
 
   onUpload(event) {
-   
+
     this.totalFiles = 0;
     this.spinner.hide();
 
@@ -176,156 +176,144 @@ export class DocUploadComponent implements OnInit {
 
   onSelect(event) {
 
-
-
     console.log("onSelect");
     this.indexOfFileInProgress = 1;
     this.totalFiles = this.totalFiles + event.files.length;
-    console.log("totalFiles" +this.totalFiles);
+    console.log("totalFiles" + this.totalFiles);
     var availableTotalPdfCount = this.packagePurchaseHelper.GetAvailablePDf();
-    console.log("availableTotalPdfCount"+availableTotalPdfCount);
+    console.log("availableTotalPdfCount" + availableTotalPdfCount);
 
-    if(this.totalFiles > availableTotalPdfCount)
-    {
-      console.log("this.totalFiles > availableTotalPdfCount"+availableTotalPdfCount);
-      this.msgs = [];
-      this.msgs.push({ severity: 'Info', summary: 'You Do Not Have Enough Package To Process Please Subscribe Above', detail: 'You have available( '+availableTotalPdfCount+') pdfs cannot exceed the limit .' });
-      this.uploadedFiles = [];
-      this.totalFiles = 0;
+    if (!this.packagePurchaseHelper.IsAutoRenewal && !this.packagePurchaseHelper.IsPaidPlan) {
+      if (this.totalFiles > availableTotalPdfCount) {
+        console.log("this.totalFiles > availableTotalPdfCount" + availableTotalPdfCount);
+        this.msgs = [];
+        this.msgs.push({ severity: 'Info', summary: 'You Do Not Have Enough Package To Process Please Subscribe Above', detail: 'You have available( ' + availableTotalPdfCount + ') pdfs cannot exceed the limit .' });
+        this.uploadedFiles = [];
+        this.totalFiles = 0;
 
-      return;
+        return;
+      }
     }
-    
+
     for (let file of event.files) {
       this.fileIndex++
-      this.uploadedFiles.push( {myfile: file, fileId:this.fileIndex, ScanInvoiceID:0,DocumentID:0, status:0,progressMessage:''});
+      this.uploadedFiles.push({ myfile: file, fileId: this.fileIndex, ScanInvoiceID: 0, DocumentID: 0, status: 0, progressMessage: '' });
     }
   }
 
-ShowPlanSelectionWindow()
-{
-  this.packagePurchaseHelper.NavigateToPackageApp();
-}
+  ShowPlanSelectionWindow() {
+    this.packagePurchaseHelper.NavigateToPackageApp();
+  }
 
- delay(ms: number) {
-  return new Promise( resolve => setTimeout(resolve, ms) );
-}
+  delay(ms: number) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
 
   async myUploader(event) {
-  if( this.uploadedFiles.length ==0)
-  {
-    return;
-  }
+    if (this.uploadedFiles.length == 0) {
+      return;
+    }
     var processingCount = 0;
     this.disableUploadButton = true;
     this.spinner.show();
-    
+
     this.loadingMessage = "Package Validation...";
     this.packagePurchaseHelper.getSubscribedPlan();
-    
+
     await this.delay(4000);
     var availableTotalPdfCount = this.packagePurchaseHelper.GetAvailablePDf();
-    
-    if(availableTotalPdfCount < 1 || availableTotalPdfCount == undefined)
-    {
-      if(  this.packagePurchaseHelper.IsAutoRenewal && this.packagePurchaseHelper.IsPaidPlan)
-        {
-          this.loadingMessage = "Auto Renewal...";
-          console.log(" IsAutoRenewal true");
-          this.api.post('Admin/AutoRenewal', null).subscribe(
-            (res1: {}) => this.autorenewalSuccess(),
-            error => this.autorenewalfailed());
-            await this.delay(15000);            
-            this.packagePurchaseHelper.getSubscribedPlan();
-            await this.delay(4000);   
-            var availableTotalPdfCount = this.packagePurchaseHelper.GetAvailablePDf();
-            if(availableTotalPdfCount < 1 || availableTotalPdfCount == undefined)
-            {
-              return;
-            }
-        }else{
-          this.SHowLowpDfcountDialog();
-          this.spinner.hide();
-          this.disableUploadButton = false;
+
+    if (availableTotalPdfCount < 1 || availableTotalPdfCount == undefined) {
+      if (this.packagePurchaseHelper.IsAutoRenewal && this.packagePurchaseHelper.IsPaidPlan) {
+        this.loadingMessage = "Auto Renewal...";
+        console.log(" IsAutoRenewal true");
+        this.api.post('Admin/AutoRenewal', null).subscribe(
+          (res1: {}) => this.autorenewalSuccess(),
+          error => this.autorenewalfailed());
+        await this.delay(15000);
+        this.packagePurchaseHelper.getSubscribedPlan();
+        await this.delay(4000);
+        var availableTotalPdfCount = this.packagePurchaseHelper.GetAvailablePDf();
+        if (availableTotalPdfCount < 1 || availableTotalPdfCount == undefined) {
           return;
         }
-    
+      } else {
+        this.SHowLowpDfcountDialog();
+        this.spinner.hide();
+        this.disableUploadButton = false;
+        return;
+      }
+
     }
     this.loadingMessage = "Processing...";
-    if(availableTotalPdfCount < this.uploadedFiles.length) // uploding more than count
+    if (availableTotalPdfCount < this.uploadedFiles.length) // uploding more than count
     {
-      console.log("========== no pdf count="+this.uploadedFiles.length);
-      console.log("======== available count="+availableTotalPdfCount);
-      var sliced = this.uploadedFiles.slice(0,availableTotalPdfCount);
-      console.log("========== no count after slice length="+sliced.length);
+      console.log("========== no pdf count=" + this.uploadedFiles.length);
+      console.log("======== available count=" + availableTotalPdfCount);
+      var sliced = this.uploadedFiles.slice(0, availableTotalPdfCount);
+      console.log("========== no count after slice length=" + sliced.length);
       this.uploadedFiles = sliced;
       this.totalFiles = this.uploadedFiles.length;
-      sliced.forEach(el => {     
+      sliced.forEach(el => {
         el.progressMessage = "Uploading...";
-          this.onUploadclick(el);
+        this.onUploadclick(el);
       });
-      
-    }else{
+
+    } else {
       console.log("========== count available");
-      this.uploadedFiles.forEach(el => {     
+      this.uploadedFiles.forEach(el => {
         el.progressMessage = "Uploading...";
-          this.onUploadclick(el);
+        this.onUploadclick(el);
       });
     }
   }
-  autorenewalSuccess()
-  {
-console.log("autorenewalSuccess");
+  autorenewalSuccess() {
+    console.log("autorenewalSuccess");
   }
-  autorenewalfailed()
-  {
+  autorenewalfailed() {
     console.log("autorenewalfailed");
   }
-  onUploadclick(event)
-  {
+  onUploadclick(event) {
 
-    if(this.packagePurchaseHelper.CheckAvailablePackageCount())
-    {
+    if (this.packagePurchaseHelper.CheckAvailablePackageCount()) {
       this.uploadBills(event);
-    }else{
-     // debugger;
-     this.SHowLowpDfcountDialog();
-  }
-}
-
-private SHowLowpDfcountDialog()
-{
-  this.confirmationService.confirm({
-    message: "You don't have enough package to process bills, please select package...",
-    accept: () => {
-      this.loadingMessage = "Package selection...";
-      this.packagePurchaseHelper.NavigateToPackageApp();
-     // window.close();
-    },
-    reject: () => {
+    } else {
+      // debugger;
+      this.SHowLowpDfcountDialog();
     }
-});
-}
+  }
 
-  clickMethod(name: string) : boolean {
-    if(confirm("Are you sure to delete "+name)) {
+  private SHowLowpDfcountDialog() {
+    this.confirmationService.confirm({
+      message: "You don't have enough package to process bills, please select package...",
+      accept: () => {
+        this.loadingMessage = "Package selection...";
+        this.packagePurchaseHelper.NavigateToPackageApp();
+        // window.close();
+      },
+      reject: () => {
+      }
+    });
+  }
+
+  clickMethod(name: string): boolean {
+    if (confirm("Are you sure to delete " + name)) {
       console.log("Implement delete functionality here");
       return true;
-    }else{
+    } else {
       return false;
     }
   }
   public openConfirmationDialog(element: any) {
-   // this.confirmationDialogService.confirm('Alert..', 'Upgrade your membership to upload bills ... ?');
+    // this.confirmationDialogService.confirm('Alert..', 'Upgrade your membership to upload bills ... ?');
   }
   // upload(element) {
   //   this.uploadBills(element);
-    
+
   // }
 
-  uploadBills(element)
-  {
-    
+  uploadBills(element) {
+
     element.status = 1;
     //this.spinner.show();
 
@@ -353,8 +341,8 @@ private SHowLowpDfcountDialog()
   getHeader(): any {
     let xeroConnectID = this.store.fetchXeroConnectID();
     let token = this.store.fetchToken();
-    token = token===null?"":token;
-    xeroConnectID = xeroConnectID === null?"":xeroConnectID;
+    token = token === null ? "" : token;
+    xeroConnectID = xeroConnectID === null ? "" : xeroConnectID;
     return new HttpHeaders(
       {
         'CosmicBill-UserToken': token.toString(),
@@ -366,55 +354,53 @@ private SHowLowpDfcountDialog()
   }
 
   sucessUpload(resp: any) {
-//this.spinner.hide();
+    //this.spinner.hide();
     console.log(resp);
     if (resp != null) {
       if (resp.body != null) {
-        if (resp.body.StatusCode === 0 && resp.body.Data!=undefined ) {
+        if (resp.body.StatusCode === 0 && resp.body.Data != undefined) {
 
-          var myfile = this.uploadedFiles.find(ff=> ff.fileId == resp.body.Data[0].ClientFileID);
-          if(myfile != null)
-          {
-            if(this.AsyncBackEndScanning==true || this.DirectPostfromEmail==true)
-            {
+          var myfile = this.uploadedFiles.find(ff => ff.fileId == resp.body.Data[0].ClientFileID);
+          if (myfile != null) {
+            if (this.AsyncBackEndScanning == true || this.DirectPostfromEmail == true) {
 
-              var myfile = this.uploadedFiles.find(ff=> ff.fileId == resp.body.Data[0].ClientFileID);
-              if(myfile != null && this.totalFiles>0){
+              var myfile = this.uploadedFiles.find(ff => ff.fileId == resp.body.Data[0].ClientFileID);
+              if (myfile != null && this.totalFiles > 0) {
                 myfile.ScanInvoiceID = resp.body.Data[0].ScanInvoiceID;
                 myfile.DocumentID = resp.body.Data[0].DocumentID;
                 this.totalDocumentProcessed.push(resp.body.Data[0].DocumentID);
-                
-                
+
+
                 myfile.status = 3
                 myfile.progressMessage = "Upload Completed.";
                 this.indexOfFileInProgress = this.indexOfFileInProgress + 1;
-                this.loadingMessage= "Processing "+this.indexOfFileInProgress+" / " +this.totalFiles;
+                this.loadingMessage = "Processing " + this.indexOfFileInProgress + " / " + this.totalFiles;
                 if ((this.indexOfFileInProgress - 1) == this.totalFiles) {
-            
+
                   this.indexOfFileInProgress = this.indexOfFileInProgress - 1;
-                  this.loadingMessage= "Processing "+this.indexOfFileInProgress+" / " +this.totalFiles;
+                  this.loadingMessage = "Processing " + this.indexOfFileInProgress + " / " + this.totalFiles;
                   this.DoRightAfterUpload();
                   setTimeout(() => {
-                  
+
                     this.insertQboJob(this.totalDocumentProcessed.toString())
-                    
-                   
+
+
                   }, 1000);
-            
+
                 }
-    
+
               }
             }
-            else{
-            this.DoRightAfterUpload();
-            myfile.ScanInvoiceID = resp.body.Data[0].ScanInvoiceID;
-            myfile.DocumentID = resp.body.Data[0].DocumentID;
-            
-            myfile.status = 2
-            myfile.progressMessage = "Scanning...";
-            //look for scan invoice id
+            else {
+              this.DoRightAfterUpload();
+              myfile.ScanInvoiceID = resp.body.Data[0].ScanInvoiceID;
+              myfile.DocumentID = resp.body.Data[0].DocumentID;
 
-            this.scanDocument(resp.body.Data[0]);
+              myfile.status = 2
+              myfile.progressMessage = "Scanning...";
+              //look for scan invoice id
+
+              this.scanDocument(resp.body.Data[0]);
             }
 
           }
@@ -423,41 +409,40 @@ private SHowLowpDfcountDialog()
     }
   }
 
-  insertQboJob(documentIDs:any){
-    this.api.get('Scan/InsertQboJob?documentIDs=',documentIDs.toString()).subscribe(
+  insertQboJob(documentIDs: any) {
+    this.api.get('Scan/InsertQboJob?documentIDs=', documentIDs.toString()).subscribe(
       (res: {}) => this.successInsertQboJob(res),
       error => this.failedInsertQboJob());
   }
-  successInsertQboJob(resp:any){
-    if(resp.StatusCode==0){
-    this.spinner.hide();
-    if(this.DirectPostfromEmail==true){
-     Swal.fire('','No need to wait!..\n We will scan & post the documents and notify you by the email.You will then see your documents in your Accounting System ','info');
-    //   this.confirmationService.confirm({
-    //     message: "No need to wait!..\n We will scan & post the documents and notify you by the email.You will then see your documents in your Accounting System ",
-    // });
-    }else 
-       Swal.fire('','No need to wait!..\n We will scan the Documents and notify you by the email.You will then approve at step 3 and post the documents at step 4','info');
+  successInsertQboJob(resp: any) {
+    if (resp.StatusCode == 0) {
+      this.spinner.hide();
+      if (this.DirectPostfromEmail == true) {
+        Swal.fire('', 'No need to wait!..\n We will scan & post the documents and notify you by the email.You will then see your documents in your Accounting System ', 'info');
+        //   this.confirmationService.confirm({
+        //     message: "No need to wait!..\n We will scan & post the documents and notify you by the email.You will then see your documents in your Accounting System ",
+        // });
+      } else
+        Swal.fire('', 'No need to wait!..\n We will scan the Documents and notify you by the email.You will then approve at step 3 and post the documents at step 4', 'info');
       //  this.confirmationService.confirm({
       //   message: "No need to wait!..\n We will scan the Documents and notify you by the email.You will then approve at step 3 and post the documents at step 4",
-  //  });
-    if(this.uploadedFiles != null)
-      this.uploadedFiles = [];
+      //  });
+      if (this.uploadedFiles != null)
+        this.uploadedFiles = [];
 
-    this.fileIndex = 0;
-    this.indexOfFileInProgress = 1;
-    this.totalFiles = 0;
-    this.totalDocumentProcessed=[];
-  }
+      this.fileIndex = 0;
+      this.indexOfFileInProgress = 1;
+      this.totalFiles = 0;
+      this.totalDocumentProcessed = [];
+    }
   }
 
-  private DoRightAfterUpload()
-  {
+  private DoRightAfterUpload() {
     this.cosmicNotifyService.myEventEmiter.emit();
     this.packagePurchaseHelper.getSubscribedPlan();
-    this. disableUploadButton = false;
+    this.disableUploadButton = false;
   }
-  failedInsertQboJob(){
+  failedInsertQboJob() {
     this.spinner.hide();
 
   }
@@ -476,14 +461,14 @@ private SHowLowpDfcountDialog()
     console.log(resp);
     this.spinner.hide();
     this.router.navigateByUrl('/docreview');
-    
+
 
   }
 
   scanDocument(document: any) {
 
     this.spinner.show();
-    
+
     this.api.post('Scan/ScanXeroDocument', document).subscribe(
       (res: {}) => this.sucessScanDocument(res),
       error => this.failedScanDocument(<any>error));
@@ -500,8 +485,8 @@ private SHowLowpDfcountDialog()
 
 
           //Getting File uploaded object
-          var myfile = this.uploadedFiles.find(ff=> ff.ScanInvoiceID == resp.Data.ScanInvoiceID);
-          if(myfile != null){
+          var myfile = this.uploadedFiles.find(ff => ff.ScanInvoiceID == resp.Data.ScanInvoiceID);
+          if (myfile != null) {
             myfile.status = 3
             myfile.progressMessage = "Scanning Completed.";
           }
@@ -531,30 +516,30 @@ private SHowLowpDfcountDialog()
   }
 
 
-  clearAll(event){
-    
-    if(this.uploadedFiles != null)
+  clearAll(event) {
+
+    if (this.uploadedFiles != null)
       this.uploadedFiles = [];
 
-      this.fileIndex = 0;
-      this.indexOfFileInProgress = 1;
-      this.totalFiles = 0;
+    this.fileIndex = 0;
+    this.indexOfFileInProgress = 1;
+    this.totalFiles = 0;
   }
 
-  removeFile(my:any){
+  removeFile(my: any) {
     const index: number = this.uploadedFiles.indexOf(my);
     if (index !== -1) {
-        this.uploadedFiles.splice(index, 1);
+      this.uploadedFiles.splice(index, 1);
 
-    if(this.uploadedFiles.length == 0){
-      
-      this.clientFiles = [];
-      this.fileIndex = 0;
-      this.indexOfFileInProgress = 1;
-      this.totalFiles = 0;
+      if (this.uploadedFiles.length == 0) {
+
+        this.clientFiles = [];
+        this.fileIndex = 0;
+        this.indexOfFileInProgress = 1;
+        this.totalFiles = 0;
+      }
+
     }
-
-    }  
   }
 
 }

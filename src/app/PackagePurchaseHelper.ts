@@ -124,6 +124,8 @@ export class PackagePurchaseHelper
     this.IsAutoRenewal =this.subscribedPlan.IsAutoRenew;
     this.IsPaidPlan =this.subscribedPlan.IsPaidPlan;
     if(!this.subscribedPlan.IsPaidPlan){
+      // 1 in cur year any paid ---1--last puchased--rem---carry forwd
+      //0--trial 
         this.getTotalTrialPdfUsed();
     }else{
         this.getTotalPaidPdfUsed();

@@ -779,28 +779,18 @@ export class DocReviewComponent implements OnInit {
 
 
   successApproveDoc(resp: any) {
-
-
-this.router.navigate(['docpost']);
-    //Only works when remove the last record otherwise HTML gets collapsed
-    // lines.forEach(element => {
-
-    //   const index: number = this.XeroDocumentLines.indexOf(element);
-    //   console.log(index);
-    //   if (index !== -1) {
-    //     this.XeroDocumentLines.splice(index, 1);
-    //   }    
-
-
-    // });
-
+    setTimeout(() => 
+    {
+      this.router.navigate(['docpost']);
+    },
+    10000);
 
   }
+
   failedApproveDoc(resp: any,hdr:any) {
     console.log("RESP "+resp);
 
     this.msgs = [];
-    //debugger;
     if(resp.indexOf("409"))
     {
       this.msgs.push({ severity: 'Error', summary: 'Failed to approve', detail: 'Document with same InvoiceNumber already exist..' });
