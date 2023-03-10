@@ -112,7 +112,7 @@ export class HomelayoutComponent implements AfterViewInit, OnDestroy, OnInit {
             //     },
             //     reject: () => {
             //     }
-            // }); 
+            // });
         }
     }
 
@@ -238,32 +238,43 @@ export class HomelayoutComponent implements AfterViewInit, OnDestroy, OnInit {
             }
         } else {
             //if auto renew is on then only proced
-            //if this is less than 365 days to continue the flow else make avail pdf count to 0 
+            //if this is less than 365 days to continue the flow else make avail pdf count to 0
 
             let PlanStartDateTime = new Date(this.subscribedPlan.StartDateTime);
+            console.log("PlanStartDateTime is:"+PlanStartDateTime);
             let todayDate = new Date();
+            console.log("todayDate is:"+todayDate);
             const diffTime = Math.abs(todayDate.getTime() - PlanStartDateTime.getTime());
             const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            console.log("days diff is:"+diffDays);
             // var diff=Math.ceil(todaydate-cdate1);
             if (diffDays <= 365) {
                 if (this.subscribedPlan.IsAutoRenew) {
+                    console.log("flow 0");
                     this.getTotalPaidPdfUsed();
                 }
                 else {
-                    if(this.subscribedPlan.StartMonth == todayDate.getMonth() 
+                    console.log("this.subscribedPlan.StartMonth:"+this.subscribedPlan.StartMonth);
+                    console.log("todayDate.getMonth():"+(todayDate.getMonth()+1));
+                    console.log("this.subscribedPlan.StartYear:"+this.subscribedPlan.StartYear);
+                    console.log("todayDate.getFullYear():"+todayDate.getFullYear());
+                    if(this.subscribedPlan.StartMonth == todayDate.getMonth()+1
                     && this.subscribedPlan.StartYear == todayDate.getFullYear())
                     {
+                        console.log("flow 1");
                         this.getTotalPaidPdfUsed();
                     }
                     else{
+                        console.log("flow 2");
                         this.totalPaidPdf = 0;
                                         this.ss.storePaidPdfCount(this.totalPaidPdf, true);
-                                        this.wheatherShowAutoRenewMessage(); 
+                                        this.wheatherShowAutoRenewMessage();
                     }
                 }
             }
             else {
                 this.totalPaidPdf = 0;
+                console.log("flow 3");
                 this.ss.storePaidPdfCount(this.totalPaidPdf, true);
                 this.wheatherShowAutoRenewMessage();
             }
@@ -308,6 +319,7 @@ export class HomelayoutComponent implements AfterViewInit, OnDestroy, OnInit {
 
     wheatherShowAutoRenewMessage() {
         var availableTotalPdfCount = this.packagePurchaseHelper.GetAvailablePDf();
+        console.log("availableTotalPdfCount is:"+availableTotalPdfCount)
 
         if (availableTotalPdfCount < 1 || availableTotalPdfCount == undefined) {
             if (this.packagePurchaseHelper.IsAutoRenewal && this.packagePurchaseHelper.IsPaidPlan) {
@@ -330,6 +342,19 @@ export class HomelayoutComponent implements AfterViewInit, OnDestroy, OnInit {
     failedGetTotalTrialPdfUsed(res: any) {
 
     }
+
+    //ToDo: write a function that will auto renew the package at the start of every month only if the autonew is ON and add the remaining pdf-usage on top.
+    /**
+     * open a sub-id column (property) for each pdf used.
+     * eg.
+     * |Sr no|sub id | pdf scanned id|.....
+     * +-----+-------+---------------+.....
+     * |    3|  43   | 2345          |.....
+     * +-----+-------+---------------+.....
+     * |    5|  43   | 2346          |.....
+     *
+     * this way we just oucnt the sub id is scanned pdf and
+     */
 
 
 }

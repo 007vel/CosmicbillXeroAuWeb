@@ -19,22 +19,22 @@ export class PackagePurchaseHelper
     IsAutoRenewal: boolean;
     constructor(private api: ApiService, private ss: StoreService,private confirmationService: ConfirmationService, protected cosmicNotifyService: CosmicNotifyService)
     {
-        
+
     }
     public NavigateToPackageApp() {
-  
+
         console.log("NavigateToPaymentApp");
-        
+
     window.open(this.api.Paymentapp+"?UserId="+ this.ss.fetchUserName()+
     "&Email="+ this.ss.fetchEmail()+
     "&Region=AUS&ReturnUrl="+encodeURIComponent( this.api.PaymentappReturnUrl)+"&AccountId="+this.ss.fetchCosmicAccountID(), "_blank");
       }
 
-      
+
   private getTotalPaidPdfUsed() {
     this.api.get('Plan/GetTotalPaidPdfUsed', '').subscribe(
       (res: {}) => this.sucessGetTotalPaidPdfUsed(res),
-      error => this.failedGetTotalPaidPdfUsed(<any>error)); 
+      error => this.failedGetTotalPaidPdfUsed(<any>error));
   }
 
   private sucessGetTotalPaidPdfUsed(res: any) {
@@ -57,15 +57,15 @@ export class PackagePurchaseHelper
   }
 
   private failedGetTotalPaidPdfUsed(res: any) {
-    
+
   }
   private failedGetSubscribedPlan(res: any) {
-    
+
   }
 
-  
+
   private getTotalTrialPdfUsed() {
-    
+
     this.api.get('Plan/GetTotalTrialPdfUsed', '').subscribe(
       (res: {}) => this.sucessGetTotalTrialPdfUsed(res),
       error => this.failedGetTotalTrialPdfUsed(<any>error));
@@ -91,7 +91,9 @@ export class PackagePurchaseHelper
   }
 
   public GetAvailablePDf() : any
-  { 
+  {
+    console.log("fetchPaidPdfCount is:"+this.ss.fetchPaidPdfCount());
+    console.log("fetchTrialPdfCount is:"+this.ss.fetchTrialPdfCount());
     if(this.ss.fetchTrialPdfCount() > 0)
     {
       return this.ss.fetchTrialPdfCount();
@@ -106,7 +108,7 @@ export class PackagePurchaseHelper
   }
 
   private failedGetTotalTrialPdfUsed(res: any) {
-    
+
   }
 
   public getSubscribedPlan()  // Use this mrthod, if need force call for package availability
@@ -119,17 +121,17 @@ export class PackagePurchaseHelper
 
   private sucessGetSubscribedPlan(res: any) {
     this.subscribedPlan = res.Data;
-      
+
     console.log('subscribedPlan'+ this.subscribedPlan);
     this.IsAutoRenewal =this.subscribedPlan.IsAutoRenew;
     this.IsPaidPlan =this.subscribedPlan.IsPaidPlan;
     if(!this.subscribedPlan.IsPaidPlan){
       // 1 in cur year any paid ---1--last puchased--rem---carry forwd
-      //0--trial 
+      //0--trial
         this.getTotalTrialPdfUsed();
     }else{
         this.getTotalPaidPdfUsed();
     }
-    
+
   }
 }

@@ -16,7 +16,7 @@ import { CosmicNotifyService } from '../CosmicNotifyService';
 @Component({
   selector: 'app-my-account',
   templateUrl: './my-account.component.html',
-  styleUrls: ['./my-account.component.css'], 
+  styleUrls: ['./my-account.component.css'],
   encapsulation: ViewEncapsulation.None,
   providers: [ApiService, EncryptingService, ConfirmationService]
 })
@@ -30,6 +30,7 @@ export class MyAccountComponent implements OnInit {
   stripePayment: any = [];
   planSelected: any;
   subscribedPlan: any = null;
+  diffDays:any;
   totalPdfUsed: any;
   totalTrialPdfUsed: any;
   myAccountDetail: any;
@@ -42,40 +43,40 @@ export class MyAccountComponent implements OnInit {
 
   description: string;
 
-  constructor(private router: Router,private fb: FormBuilder,private spinner: NgxSpinnerService, 
-    private api: ApiService, private encrypt: EncryptingService, private ss: StoreService, 
+  constructor(private router: Router,private fb: FormBuilder,private spinner: NgxSpinnerService,
+    private api: ApiService, private encrypt: EncryptingService, private ss: StoreService,
     private _confirmationService: ConfirmationService, private packagePurchaseHelper: PackagePurchaseHelper,
     protected cosmicNotifyService:CosmicNotifyService) { }
 
   ngOnInit() {
-   
+
   this.genders = [];
   this.genders.push({label:'Select Gender', value:''});
   this.genders.push({label:'Male', value:'Male'});
   this.genders.push({label:'Female', value:'Female'});
   this.packagePurchaseHelper.getSubscribedPlan();
-    this.PostSelectedPlanID();  
-    //this.DoTimeDelay();    
+    this.PostSelectedPlanID();
+    //this.DoTimeDelay();
     this.GetAllPageData();
    }
- 
+
     delay(ms: number) {
     return new Promise( resolve => setTimeout(resolve, ms) );
 }
-   private async GetAllPageData() 
+   private async GetAllPageData()
    {
     this.spinner.show();
     this.loadingMessage = "Please wait..."
     await this.delay(2000);
     this.getTotalPdfUsed();
     this.getSubscribedPlan();
-     this.getMyAccount();     
+     this.getMyAccount();
      this.getPlans();
      this.getPayment();
-     this.getTotalTrialPdfUsed(); 
+     this.getTotalTrialPdfUsed();
      this.cosmicNotifyService.myEventEmiter.emit();
    }
- 
+
    private async DoTimeDelay()
    {
      await new Promise(f => setTimeout(this.GetAllPageData, 2000));
@@ -86,19 +87,19 @@ export class MyAccountComponent implements OnInit {
    {
      this.api.post('Admin/SaveSubscriptionMaster', { 'PlanID': ParameterHashLocationStrategy.planId }).subscribe(
       (res1: {}) => this.PostPlaidSuccess(),
-      error => this.PostPlaidFailuer()); 
+      error => this.PostPlaidFailuer());
    }
  }
 
  PostPlaidSuccess()
  {
   ParameterHashLocationStrategy.planId = null;
-  this.router.navigate(['/myaccount']); 
+  this.router.navigate(['/myaccount']);
  }
 
  PostPlaidFailuer()
  {
-   
+
  }
 
 
@@ -156,6 +157,15 @@ export class MyAccountComponent implements OnInit {
     this.subscribedPlan = res.Data;
     this.AutoRenewalEnable = res.Data.IsAutoRenew;
     console.log('subscribedPlan'+ this.subscribedPlan);
+
+
+    let PlanStartDateTime = new Date(this.subscribedPlan.StartDateTime);
+    console.log("PlanStartDateTime is:"+PlanStartDateTime);
+    let todayDate = new Date();
+    console.log("todayDate is:"+todayDate);
+    const diffTime = Math.abs(todayDate.getTime() - PlanStartDateTime.getTime());
+    this.diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
     this.spinner.hide();
   }
 
@@ -224,7 +234,7 @@ export class MyAccountComponent implements OnInit {
       Email: [res.Data.Email],
       Phone: [res.Data.Phone]
   });
-    
+
     this.spinner.hide();
 
 
@@ -238,7 +248,7 @@ export class MyAccountComponent implements OnInit {
   buyWithCard() {
    // debugger;
 
-   
+
    if(!this.packagePurchaseHelper.CheckAvailablePackageCount())
    {
     this.packagePurchaseHelper.NavigateToPackageApp();
@@ -247,7 +257,7 @@ export class MyAccountComponent implements OnInit {
   }
   }
 
-  AutoRenewalCheckboxChange(_event) 
+  AutoRenewalCheckboxChange(_event)
   {
     console.log(">>>>>>>>>>>>>>> AutoRenewalCheckboxChange");
 
@@ -267,24 +277,24 @@ export class MyAccountComponent implements OnInit {
     }
 
   }
- 
+
 MakeAutorenewalCall()
 {
   this.spinner.show();
         this.loadingMessage = "Please wait..."
         var cloneSubscription = { "SubscriptionID":this.subscribedPlan.SubscriptionID,"IsAutoRenew":this.AutoRenewalEnable};
-    
+
         this.api.post('Admin/UpdateSubscriptionMaster', cloneSubscription).subscribe(
           (res: {}) => this.sucessAutoRenewalCheckboxChange(res),
           error => this.failedAutoRenewalCheckboxChange(<any>error));
 }
 
-  sucessAutoRenewalCheckboxChange(res: any) {    
+  sucessAutoRenewalCheckboxChange(res: any) {
     this.spinner.hide();
     this.GetAllPageData();
   }
   failedAutoRenewalCheckboxChange(res: any) {
-    
+
     this.spinner.hide();
     this.AutoRenewalEnable = !this.AutoRenewalEnable;
 
@@ -305,7 +315,7 @@ MakeAutorenewalCall()
        }
      }
    }
-  
+
   failedCheckXeroToken(res: any) {
     var token = this.ss.fetchToken();
     this.router.navigate(['/initlogin/' + token.toString() + '/0/login']);
