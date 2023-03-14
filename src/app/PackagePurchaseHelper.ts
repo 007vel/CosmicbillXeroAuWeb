@@ -40,8 +40,8 @@ export class PackagePurchaseHelper
   private sucessGetTotalPaidPdfUsed(res: any) {
     if (res.Data != null) {
       this.totalPaidPdf = this.subscribedPlan.TotalAllocatePDF - res.Data.TotalPaidUsed;
-      this.ss.storePaidPdfCount(this.totalPaidPdf, true);
-     // debugger;
+   this.ss.storePaidPdfCount(this.totalPaidPdf, true);
+    // debugger;
       this.isPackageInfoFetched = true;
       this.cosmicNotifyService.myEventEmiter.emit();
     }
@@ -132,6 +132,14 @@ export class PackagePurchaseHelper
     }else{
         this.getTotalPaidPdfUsed();
     }
+
+  }
+  public sucessGetSubscribedPlanForAutoRenew(res: any) {
+    this.subscribedPlan = res.Data;
+
+    console.log('subscribedPlan'+ this.subscribedPlan);
+    this.IsAutoRenewal =true;
+    this.totalPaidPdf = this.subscribedPlan.totalAllocatedPdf
 
   }
 }

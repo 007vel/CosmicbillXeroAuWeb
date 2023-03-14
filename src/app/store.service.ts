@@ -19,6 +19,8 @@ const XERO_ACCOUNT_KEY = 'local_XeroAccount';
 const PAID_PDF_COUNT = 'paid_pdf_count';
 const TRIAL_PDF_COUNT = 'trial_pdf_count';
 
+const TOTAL_ALLOCATED_PDF_KEY = 'total_allocated_pdf';
+
 @Injectable({
   providedIn: 'root'
 })
@@ -62,16 +64,16 @@ export class StoreService {
 
   public storeUserName(userName: string): void {
     this.storage.set(USER_KEY, userName);
-    
+
   }
 
-  
+
 
   public fetchToken(): String {
     return this.storage.get(TOKEN_KEY)
   }
 
-  
+
   public fetchUserName(): String {
     return this.storage.get(USER_KEY)
   }
@@ -124,6 +126,14 @@ export class StoreService {
   public storeXeroAccounts(data: any): void {
     this.storage.set(XERO_ACCOUNT_KEY, data);
     console.log(this.storage.get(XERO_ACCOUNT_KEY) || 'LocaL storage is empty');
+  }
+  public storeTotalAllocatedPDF(data: any): void {
+    this.storage.set(TOTAL_ALLOCATED_PDF_KEY, data);
+    console.log(this.storage.get(TOTAL_ALLOCATED_PDF_KEY) || 'LocaL storage is empty');
+  }
+
+  public fetchTotalAllocatedPDF(): any {
+    return this.storage.get(TOTAL_ALLOCATED_PDF_KEY)
   }
 
   public fetchXeroAccounts(): any {

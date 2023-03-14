@@ -34,7 +34,7 @@ export class MyAccountComponent implements OnInit {
     totalPdfUsed: any;
     totalTrialPdfUsed: any;
     myAccountDetail: any;
-    totalPdfCount: any;
+    totalAllocatedPdf: any;
     userform: FormGroup;
     AutoRenewalEnable: boolean = false;
 
@@ -51,12 +51,18 @@ export class MyAccountComponent implements OnInit {
 
     ngOnInit() {
 
-        this.totalPdfCount = this.ss.fetchPaidPdfCount();
         this.genders = [];
         this.genders.push({ label: 'Select Gender', value: '' });
         this.genders.push({ label: 'Male', value: 'Male' });
         this.genders.push({ label: 'Female', value: 'Female' });
-        this.packagePurchaseHelper.getSubscribedPlan();
+
+        if (!this.packagePurchaseHelper.IsAutoRenewal) {
+            this.packagePurchaseHelper.getSubscribedPlan();
+            this.totalAllocatedPdf = this.ss.fetchPaidPdfCount();
+        } else {
+
+            // this.totalAllocatedPdf = this.ss.fetchTotalAllocatedPDF();
+        }
         this.PostSelectedPlanID();
         //this.DoTimeDelay();
         this.GetAllPageData();
@@ -69,7 +75,11 @@ export class MyAccountComponent implements OnInit {
         this.spinner.show();
         this.loadingMessage = "Please wait..."
         await this.delay(2000);
-        this.getTotalPdfUsed();
+
+        if (this.packagePurchaseHelper.IsAutoRenewal) {
+            this.getStartofAutoRenwalInfo();
+
+        } else { this.getTotalPdfUsed(); }
         this.getSubscribedPlan();
         this.getMyAccount();
         this.getPlans();
@@ -77,6 +87,7 @@ export class MyAccountComponent implements OnInit {
         this.getTotalTrialPdfUsed();
         this.cosmicNotifyService.myEventEmiter.emit();
     }
+
 
     private async DoTimeDelay() {
         await new Promise(f => setTimeout(this.GetAllPageData, 2000));
@@ -172,12 +183,26 @@ export class MyAccountComponent implements OnInit {
     getTotalPdfUsed() {
         this.spinner.show();
         this.loadingMessage = "Please wait..."
-
         this.api.get('Plan/GetTotalPaidPdfUsed', '').subscribe(
             (res: {}) => this.sucessGetTotalPdfUsed(res),
             error => this.failedGetTotalPdfUsed(<any>error));
+
     }
 
+
+    getStartofAutoRenwalInfo() {
+        this.api.get('Plan/GetStartOfAutoRenewalInfo', '').subscribe(
+            (res: {}) => this.sucessGetStartofAutoRenwalInfo(res),
+            error => this.failedGetSubscribedPlan(<any>error));
+    }
+
+    sucessGetStartofAutoRenwalInfo(res: any) {
+
+        if (res.Data != null) {
+            this.totalPdfUsed = res.Data.totalUsedPdf;
+            this.totalAllocatedPdf = res.Data.totalAllocatedPdf;
+        }
+    }
     sucessGetTotalPdfUsed(res: any) {
         if (res.Data != null) {
             this.totalPdfUsed = res.Data.TotalPaidUsed;

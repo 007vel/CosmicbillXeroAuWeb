@@ -66,6 +66,7 @@ export class HomelayoutComponent implements AfterViewInit, OnDestroy, OnInit {
 
     topMenuButtonClick: boolean;
     loadingMessage: string;
+    subscriptionAutoRenew: any;
 
 
 
@@ -79,17 +80,23 @@ export class HomelayoutComponent implements AfterViewInit, OnDestroy, OnInit {
         if (this.companyName == '' || this.companyName == null) {
             this.companyName = "No company is connected, Connect a company from Switch Company menu";
         }
-        this.packagePurchaseHelper.getSubscribedPlan();
+        // this.packagePurchaseHelper.getSubscribedPlan();
         this.getSubscribedPlan1();
 
         this.CheckAvailablePDFCount();
+
+
     }
     ngOnInit() {
         console.log(">>>>>>>>>>>>>>>>>>>>>>>> ngOnInit cosmicNotifyService");
         this.cosmicNotifyService.myEventEmiter.subscribe(
             () => {
                 console.log(">>>>>>>>>>>>>>>>>>>>>>>> cosmicNotifyService");
-                this.getSubscribedPlan();
+
+                // temp: do enable below func call
+                if (!this.packagePurchaseHelper.IsAutoRenewal) {
+                    this.getSubscribedPlan();
+                }
             }
         );
     }
@@ -229,6 +236,22 @@ export class HomelayoutComponent implements AfterViewInit, OnDestroy, OnInit {
             error => this.failedGetSubscribedPlan(<any>error));
     }
 
+    getStartofAutoRenwalInfo() {
+        this.api.get('Plan/GetStartOfAutoRenewalInfo', '').subscribe(
+            (res: {}) => this.sucessGetStartofAutoRenwalInfo(res),
+            error => this.failedGetSubscribedPlan(<any>error));
+    }
+
+    sucessGetStartofAutoRenwalInfo(res: any) {
+        this.subscriptionAutoRenew = res.Data;
+        console.log("let  start date time is:" + this.subscriptionAutoRenew.firstIsAutoDate);
+        this.packagePurchaseHelper.sucessGetSubscribedPlanForAutoRenew(res);
+        this.ss.storeTotalAllocatedPDF(this.subscriptionAutoRenew.totalAllocatedPdf);
+        this.totalPaidPdf = this.subscriptionAutoRenew.totalAllocatedPdf - this.subscriptionAutoRenew.totalUsedPdf;
+        this.ss.storePaidPdfCount(this.totalPaidPdf, true);
+
+    }
+
     sucessGetSubscribedPlan(res: any) {
         this.subscribedPlan = res.Data;
 
@@ -261,64 +284,41 @@ export class HomelayoutComponent implements AfterViewInit, OnDestroy, OnInit {
                 if (this.subscribedPlan.IsAutoRenew) {
                     console.log("flow 0");
                     this.getTotalPaidPdfUsed();
-
-                    //[x] When (auto renew is ture) && (diffDays <=365 is true) && (new month start)
-                    //[] then auto renew the subsciption plan
-                    // console.log("//[] then auto renew the subsciption plan");
-                    // this.spinner.show();
-                    //call auto renew after month change
-                    // if((this.subscribedPlan.StartMonth+1) == todayDate.getMonth()+1)
-                    // {
-                    //     console.log("this.ss.fetchUserName() is:"+this.ss.fetchUserName());
-
-                    //     if(this.ss.fetchUserName()==="Aceaj95a58"){
-                    //         //get the remaining pdf count
-                    //         let remainPDF= this.ss.fetchPaidPdfCount();
-
-                    //         console.log("past month pdf is: "+ remainPDF);
-                    //     // console.log("this.ss.fetchUserName() is:"+this.ss.fetchUserName());
-
-                    //         this.callAutorenewal(remainPDF);
-                    //         //add to the new one
-
-                    //          //[] then add unsedPdfScans on top of renewed pdf
-                    // console.log("//[] then add unsedPdfScans on top of renewed");
-
-
-                    //     }
-                    // }
                 }
                 else {
                     console.log("this.subscribedPlan.StartMonth:" + this.subscribedPlan.StartMonth);
                     console.log("todayDate.getMonth():" + (todayDate.getMonth() + 1));
                     console.log("this.subscribedPlan.StartYear:" + this.subscribedPlan.StartYear);
                     console.log("todayDate.getFullYear():" + todayDate.getFullYear());
-                    if (this.subscribedPlan.StartMonth == todayDate.getMonth() + 1
-                        && this.subscribedPlan.StartYear == todayDate.getFullYear()) {
+                    if ((this.subscribedPlan.StartMonth == todayDate.getMonth() + 1)
+                        && (this.subscribedPlan.StartYear == todayDate.getFullYear())) {
                         console.log("flow 1");
                         this.getTotalPaidPdfUsed();
                     }
                     else {
                         console.log("flow 2");
-                        this.totalPaidPdf = 0;
-                        this.ss.storePaidPdfCount(this.totalPaidPdf, true);
-                        this.wheatherShowAutoRenewMessage();
+                        this.setTotalPaidPdfToZero();
                     }
                 }
             }
             else {
-                this.totalPaidPdf = 0;
                 console.log("flow 3");
-                this.ss.storePaidPdfCount(this.totalPaidPdf, true);
-                this.wheatherShowAutoRenewMessage();
+                this.setTotalPaidPdfToZero();
             }
 
         }
 
     }
 
+    private setTotalPaidPdfToZero() {
+        this.totalPaidPdf = 0;
+        this.ss.storePaidPdfCount(this.totalPaidPdf, true);
+        this.wheatherShowAutoRenewMessage();
+    }
+
     sucessGetSubscribedPlan1(res: any) {
         this.subscribedPlan = res.Data;
+
 
         console.log('subscribedPlan' + this.subscribedPlan);
         if (!this.subscribedPlan.IsPaidPlan) {
@@ -333,46 +333,35 @@ export class HomelayoutComponent implements AfterViewInit, OnDestroy, OnInit {
                 this.getTotalTrialPdfUsed();
             }
         } else {
-            //if auto renew is on then only proceed
+            //if auto
+            this.getStartofAutoRenwalInfo();
+            // renew is on then only proceed
             //if this is less than 365 days to continue the flow else make avail pdf count to 0
-
-            let PlanStartDateTime = new Date(this.subscribedPlan.StartDateTime);
+            let PlanStartDateTime = new Date(this.subscriptionAutoRenew.firstIsAutoDate);
             console.log("PlanStartDateTime is:" + PlanStartDateTime);
             let todayDate = new Date();
             console.log("todayDate is:" + todayDate);
             const diffTime = Math.abs(todayDate.getTime() - PlanStartDateTime.getTime());
             const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
             console.log("days diff is:" + diffDays);
-            // var diff=Math.ceil(todaydate-cdate1);
+            // let todayDate = new Date();
             // check for if plan subscription is older than
+            //diffdays will be calculated for firstaut
             if (diffDays <= 365) {
                 if (this.subscribedPlan.IsAutoRenew) {
                     console.log("flow 0");
-                    this.getTotalPaidPdfUsed();
 
                     //[x] When (auto renew is ture) && (diffDays <=365 is true) && (new month start)
                     //[] then auto renew the subsciption plan
                     console.log("//[] then auto renew the subsciption plan");
-                    // this.spinner.show();
-                    //call auto renew after month change
                     if ((this.subscribedPlan.StartMonth + 1) == todayDate.getMonth() + 1) {
                         console.log("this.ss.fetchUserName() is:" + this.ss.fetchUserName());
 
+                        // locking auto renewal for test user. Do remove this when making this feature live for all
                         if (this.ss.fetchUserName() === "Aceaj95a58") {
-                            //get the remaining pdf count
-
-                            let remainPDF = this.ss.fetchPaidPdfCount();
-
-                            console.log("past month pdf is: " + remainPDF);
-                            // console.log("this.ss.fetchUserName() is:"+this.ss.fetchUserName());
-
-                            this.callAutorenewal(remainPDF);
-                            //add to the new one
-
+                            this.callAutorenewal();
                             //[] then add unsedPdfScans on top of renewed pdf
                             console.log("//[] then add unsedPdfScans on top of renewed");
-
-
                         }
                     }
                 }
@@ -388,24 +377,21 @@ export class HomelayoutComponent implements AfterViewInit, OnDestroy, OnInit {
                     }
                     else {
                         console.log("flow 2");
-                        this.totalPaidPdf = 0;
-                        this.ss.storePaidPdfCount(this.totalPaidPdf, true);
-                        this.wheatherShowAutoRenewMessage();
+                        this.setTotalPaidPdfToZero();
+
                     }
                 }
             }
             else {
-                this.totalPaidPdf = 0;
                 console.log("flow 3");
-                this.ss.storePaidPdfCount(this.totalPaidPdf, true);
-                this.wheatherShowAutoRenewMessage();
+                this.setTotalPaidPdfToZero();
             }
 
         }
 
     }
 
-    async callAutorenewal(remainPDF) {
+    async callAutorenewal() {
         if (this.packagePurchaseHelper.IsAutoRenewal && this.packagePurchaseHelper.IsPaidPlan) {
             this.loadingMessage = "Auto Renewal...";
             console.log(" IsAutoRenewal true");
@@ -415,17 +401,9 @@ export class HomelayoutComponent implements AfterViewInit, OnDestroy, OnInit {
 
             );
             await this.delay(15000);
-            this.packagePurchaseHelper.getSubscribedPlan();
-            await this.delay(4000);
-            var availableTotalPdfCount = this.packagePurchaseHelper.GetAvailablePDf() + remainPDF;
-            this.totalPaidPdf = availableTotalPdfCount;
-            this.ss.storePaidPdfCount(this.totalPaidPdf, true);
+            this.getStartofAutoRenwalInfo();
             this.wheatherShowAutoRenewMessage();
-            console.log("new availableTotalPdfCOunt:" + availableTotalPdfCount);
 
-            if (availableTotalPdfCount < 1 || availableTotalPdfCount == undefined) {
-                return;
-            }
         }
     }
 
@@ -442,6 +420,7 @@ export class HomelayoutComponent implements AfterViewInit, OnDestroy, OnInit {
             this.wheatherShowAutoRenewMessage();
         }
 
+        //SICI-A: Why is it sending Mail for remaining trial PDF when user has purchased a Paid plan?
         if (this.totalPaidPdf >= 0 && this.totalPaidPdf <= 20) {
             this.api.get('Plan/SendRemainingTrialPdfMail?RemainingTrialPDF=', this.totalTrialPdf).subscribe(
                 (res: {}) => this.failedGetTotalPaidPdfUsed(res),
@@ -455,7 +434,6 @@ export class HomelayoutComponent implements AfterViewInit, OnDestroy, OnInit {
     failedGetSubscribedPlan(res: any) {
 
     }
-
 
     getTotalTrialPdfUsed() {
 
@@ -489,19 +467,6 @@ export class HomelayoutComponent implements AfterViewInit, OnDestroy, OnInit {
     failedGetTotalTrialPdfUsed(res: any) {
 
     }
-
-    //ToDo: write a function that will auto renew the package at the start of every month only if the autonew is ON and add the remaining pdf-usage on top.
-    /**
-     * open a sub-id column (property) for each pdf used.
-     * eg.
-     * |Sr no|sub id | pdf scanned id|.....
-     * +-----+-------+---------------+.....
-     * |    3|  43   | 2345          |.....
-     * +-----+-------+---------------+.....
-     * |    5|  43   | 2346          |.....
-     *
-     * this way we just oucnt the sub id is scanned pdf and
-     */
 
 
 }
