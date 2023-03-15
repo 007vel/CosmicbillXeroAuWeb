@@ -16,6 +16,19 @@ here start date M1/Y1 : 03/23 & M2/Y2 : 04/24
 if start M2 > M1 && Y2> y1 ; do auto renew and set new subs start date to current date.
 
 
+------------------------------------------------------
+letst plan is afree plan ture || ispaidplan=false || everSubPlan=false
+
+check if current month == start month then use allocated pdfcount of trial plan (say 500)
+    then : from api fetch count of all used pdf in current month. say 5
+    deduct usedpdf:5 from 20 pdfcount (hard coded) show remaining pdf count.
+
+
+else if current month > start month then use 20 pdf count
+    then : from api fetch count of all used pdf in current month. say 5
+    deduct usedpdf:5 from 20 pdfcount (hard coded) show remaining pdf count.
+
+
 
 
 

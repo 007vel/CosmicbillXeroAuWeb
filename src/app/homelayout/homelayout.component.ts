@@ -337,6 +337,14 @@ export class HomelayoutComponent implements AfterViewInit, OnDestroy, OnInit {
             }
             else {
                 console.log("we have to get 20 trial pdfs");
+                let todayDate = new Date();
+                if ((this.subscribedPlan.StartMonth + 1) == todayDate.getMonth() + 1) {
+                    console.log("this.ss.fetchUserName() is:" + this.ss.fetchUserName());
+
+                    // locking auto renewal for test user. Do remove this when making this feature live for all
+                    this.callAutorenewalTrialPlan();
+                    console.log("done updateing trial plan using api call");
+                }
                 this.getTotalTrialPdfUsed();
             }
         } else {
@@ -432,6 +440,22 @@ export class HomelayoutComponent implements AfterViewInit, OnDestroy, OnInit {
             this.getStartofAutoRenwalInfo();
             this.wheatherShowAutoRenewMessage();
 
+        }
+    }
+    async callAutorenewalTrialPlan() {
+        console.log("Trial plan is auto renewal: " + this.subscribedPlan.IsAutoRenew + " & isPaid plan? : " + this.subscribedPlan.IsPaidPlan);
+
+        if (!this.subscribedPlan.IsPaidPlan) {
+            this.loadingMessage = "Auto Renewal...";
+            console.log(" IsAutoRenewal true trial");
+            this.api.post('Admin/AutoRenewal', null).subscribe(
+                (res1: {}) => { console.log("homelayout TS autorenewalSuccess"); console.log(res1); },
+                error => { console.log("homelayout TS autorenewalfailed"); console.log(error); }
+
+            );
+            await this.delay(15000);
+            this.getSubscribedPlan();
+            // this.getTotalTrialPdfUsed();
         }
     }
 
