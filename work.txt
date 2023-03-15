@@ -1,16 +1,50 @@
 
+
+
+2023 03 14
+
+1. --------------
+auto renew is true
+startdatetime : 14/3/23
++ 365 date time: 15/3/24   <---- we need to honour the plan until End of Month of this date.
+
+2. -------------------------
+if 365+ days are done. do on month change: set previous pdf count to zero. do auto renew and set that value for new annual subscription as startdate.
+
+3. --------------------------
+here start date M1/Y1 : 03/23 & M2/Y2 : 04/24
+if start M2 > M1 && Y2> y1 ; do auto renew and set new subs start date to current date.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 BUILD command
 ng build --prod
 
 notes:
 
 1. Retoirve package from payment application
-2. once retriveed package  then we need to create entry 
+2. once retriveed package  then we need to create entry
 
 
 msg: Your trial package about to expire, plesae subsribe for paid plan.
 
-note 
+note
 the carryover pdf count only for auto renewal
 
 

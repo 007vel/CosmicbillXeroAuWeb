@@ -372,7 +372,6 @@ export class HomelayoutComponent implements AfterViewInit, OnDestroy, OnInit {
                         // locking auto renewal for test user. Do remove this when making this feature live for all
                         if (this.ss.fetchUserName() === "Aceaj95a58") {
                             this.callAutorenewal();
-                            //[] then add unsedPdfScans on top of renewed pdf
                             console.log("//[] then add unsedPdfScans on top of renewed");
                         }
                     }
@@ -403,9 +402,14 @@ export class HomelayoutComponent implements AfterViewInit, OnDestroy, OnInit {
 
                 if(this.subscribedPlan.IsAutoRenew)
                 {
+                    console.log("you are here coz 365 days are up");
+
                     //call auto renew
                     //again get the data for total used and allocated
-                    
+                    if (this.ss.fetchUserName() === "Aceaj95a58") {
+                        this.callAutorenewal();
+                        console.log("this triggerd after 365 days are up");
+                    }
 
                 }
                 else
@@ -419,7 +423,9 @@ export class HomelayoutComponent implements AfterViewInit, OnDestroy, OnInit {
     }
 
     async callAutorenewal() {
-        if (this.packagePurchaseHelper.IsAutoRenewal && this.packagePurchaseHelper.IsPaidPlan) {
+        console.log("is auto renewal: "+this.subscribedPlan.IsAutoRenew+" & isPaid plan? : "+this.subscribedPlan.IsPaidPlan);
+
+        if (this.subscribedPlan.IsAutoRenew && this.subscribedPlan.IsPaidPlan) {
             this.loadingMessage = "Auto Renewal...";
             console.log(" IsAutoRenewal true");
             this.api.post('Admin/AutoRenewal', null).subscribe(
