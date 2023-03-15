@@ -81,6 +81,7 @@ export class HomelayoutComponent implements AfterViewInit, OnDestroy, OnInit {
             this.companyName = "No company is connected, Connect a company from Switch Company menu";
         }
         // this.packagePurchaseHelper.getSubscribedPlan();
+        this.getStartofAutoRenwalInfo();
         this.getSubscribedPlan1();
 
         this.CheckAvailablePDFCount();
@@ -232,7 +233,10 @@ export class HomelayoutComponent implements AfterViewInit, OnDestroy, OnInit {
 
     getSubscribedPlan1() {
         this.api.get('Plan/GetAccountSubscribedPlan', '').subscribe(
-            (res: {}) => this.sucessGetSubscribedPlan1(res),
+            (res: {}) => {
+
+                this.sucessGetSubscribedPlan1(res)
+            },
             error => this.failedGetSubscribedPlan(<any>error));
     }
 
@@ -247,8 +251,9 @@ export class HomelayoutComponent implements AfterViewInit, OnDestroy, OnInit {
         console.log("let  start date time is:" + this.subscriptionAutoRenew.firstIsAutoDate);
         this.packagePurchaseHelper.sucessGetSubscribedPlanForAutoRenew(res);
         this.ss.storeTotalAllocatedPDF(this.subscriptionAutoRenew.totalAllocatedPdf);
-        this.totalPaidPdf = this.subscriptionAutoRenew.totalAllocatedPdf - this.subscriptionAutoRenew.totalUsedPdf;
-        this.ss.storePaidPdfCount(this.totalPaidPdf, true);
+
+
+        this.spinner.hide();
 
     }
 
@@ -271,8 +276,9 @@ export class HomelayoutComponent implements AfterViewInit, OnDestroy, OnInit {
             //if auto renew is on then only proceed
             //if this is less than 365 days to continue the flow else make avail pdf count to 0
 
+
             let PlanStartDateTime = new Date(this.subscribedPlan.StartDateTime);
-            console.log("PlanStartDateTime is:" + PlanStartDateTime);
+            console.log("Old PlanStartDateTime is:" + PlanStartDateTime);
             let todayDate = new Date();
             console.log("todayDate is:" + todayDate);
             const diffTime = Math.abs(todayDate.getTime() - PlanStartDateTime.getTime());
@@ -334,9 +340,14 @@ export class HomelayoutComponent implements AfterViewInit, OnDestroy, OnInit {
             }
         } else {
             //if auto
-            this.getStartofAutoRenwalInfo();
+            // this.spinner.show();
+
+            // await this.delay(5000);
+
             // renew is on then only proceed
             //if this is less than 365 days to continue the flow else make avail pdf count to 0
+            console.log("error check 1 : " + this.subscriptionAutoRenew.firstIsAutoDate);
+
             let PlanStartDateTime = new Date(this.subscriptionAutoRenew.firstIsAutoDate);
             console.log("PlanStartDateTime is:" + PlanStartDateTime);
             let todayDate = new Date();
@@ -350,7 +361,8 @@ export class HomelayoutComponent implements AfterViewInit, OnDestroy, OnInit {
             if (diffDays <= 365) {
                 if (this.subscribedPlan.IsAutoRenew) {
                     console.log("flow 0");
-
+                    this.totalPaidPdf = this.subscriptionAutoRenew.totalAllocatedPdf - this.subscriptionAutoRenew.totalUsedPdf;
+                    this.ss.storePaidPdfCount(this.totalPaidPdf, true);
                     //[x] When (auto renew is ture) && (diffDays <=365 is true) && (new month start)
                     //[] then auto renew the subsciption plan
                     console.log("//[] then auto renew the subsciption plan");
@@ -384,7 +396,22 @@ export class HomelayoutComponent implements AfterViewInit, OnDestroy, OnInit {
             }
             else {
                 console.log("flow 3");
-                this.setTotalPaidPdfToZero();
+
+				// greater than 365
+				// check is auto renew for latest startdatetime
+				// if it is true then auto renew it and return the data according to
+
+                if(this.subscribedPlan.IsAutoRenew)
+                {
+                    //call auto renew
+                    //again get the data for total used and allocated
+                    
+
+                }
+                else
+                {
+                    this.setTotalPaidPdfToZero();
+                }
             }
 
         }
