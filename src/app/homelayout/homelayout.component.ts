@@ -189,7 +189,8 @@ export class HomelayoutComponent implements AfterViewInit, OnDestroy, OnInit {
 
     NavigateToPaymentApp(event: Event) {
         console.log("NavigateToPaymentApp");
-        if (!this.packagePurchaseHelper.CheckAvailablePackageCount()) {
+        // if (!this.packagePurchaseHelper.CheckAvailablePackageCount()) {
+        if (!this.packagePurchaseHelper.CheckAvailablePaidPDFCount()) {
             this.packagePurchaseHelper.NavigateToPackageApp();
         } else {
             alert('You have enough package to process bills..');
@@ -270,17 +271,16 @@ export class HomelayoutComponent implements AfterViewInit, OnDestroy, OnInit {
                 this.wheatherShowAutoRenewMessage();
             }
             else {
-                if(this.subscribedPlan.planId == 1019)
-                {
+                if (this.subscribedPlan.planId == 1019) {
                     //month changes from subscription plan startdatetime
                     //give user 20 pdfs to use as trial
                     //database 20 plan ni entry
 
                 }
-                else{
+                else {
                     this.getTotalTrialPdfUsed();
                 }
-                
+
             }
         } else {
             //if auto renew is on then only proceed
@@ -518,7 +518,7 @@ export class HomelayoutComponent implements AfterViewInit, OnDestroy, OnInit {
     }
 
     sucessGetTotalTrialPdfUsed(res: any) {
-        console.log("this.subscribedPlan.TrialPdf  is:"+this.subscribedPlan.TrialPdf+" and res.Data.TotalTrialUsed is:"+res.Data.TotalTrialUsed);
+        console.log("this.subscribedPlan.TrialPdf  is:" + this.subscribedPlan.TrialPdf + " and res.Data.TotalTrialUsed is:" + res.Data.TotalTrialUsed);
         if (res.Data != null) {
             this.totalTrialPdf = this.subscribedPlan.TrialPdf - res.Data.TotalTrialUsed;
             this.ss.storeTrialPdfCount(this.totalTrialPdf, true);

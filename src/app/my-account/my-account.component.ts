@@ -269,8 +269,8 @@ export class MyAccountComponent implements OnInit {
     buyWithCard() {
         // debugger;
 
-
-        if (!this.packagePurchaseHelper.CheckAvailablePackageCount()) {
+        // if (!this.packagePurchaseHelper.CheckAvailablePackageCount()) {
+        if (!this.packagePurchaseHelper.CheckAvailablePaidPDFCount()) {
             this.packagePurchaseHelper.NavigateToPackageApp();
         } else {
             alert('You have enough package to process bills..');

@@ -81,10 +81,22 @@ export class PackagePurchaseHelper {
             }
         } else {
             // uncomment below to return true if you want to lock the purchase window when there is trail pdf count > 0
-            //   return true;
+            return true;
             //bill process
-            return false
+            // return false
         }
+    }
+
+    public CheckAvailablePaidPDFCount(): boolean {
+        // debugger;
+        if (this.ss.fetchPaidPdfCount() < 1) {
+            return false;
+
+        } else {
+            //bill process
+            return true;
+        }
+
     }
 
     public GetAvailablePDf(): any {
