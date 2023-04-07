@@ -270,7 +270,17 @@ export class HomelayoutComponent implements AfterViewInit, OnDestroy, OnInit {
                 this.wheatherShowAutoRenewMessage();
             }
             else {
-                this.getTotalTrialPdfUsed();
+                if(this.subscribedPlan.planId == 1019)
+                {
+                    //month changes from subscription plan startdatetime
+                    //give user 20 pdfs to use as trial
+                    //database 20 plan ni entry
+
+                }
+                else{
+                    this.getTotalTrialPdfUsed();
+                }
+                
             }
         } else {
             //if auto renew is on then only proceed
