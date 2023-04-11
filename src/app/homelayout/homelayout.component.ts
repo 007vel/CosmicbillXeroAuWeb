@@ -10,6 +10,7 @@ import { Console } from 'console';
 import { PackagePurchaseHelper } from '../PackagePurchaseHelper';
 import { Alert } from 'selenium-webdriver';
 import { CosmicNotifyService } from '../CosmicNotifyService';
+import { NgxSpinnerService } from 'ngx-spinner';
 @Component({
     selector: 'app-homelayout',
     templateUrl: './homelayout.component.html',
@@ -64,11 +65,13 @@ export class HomelayoutComponent implements AfterViewInit, OnDestroy, OnInit {
     menuClick: boolean;
 
     topMenuButtonClick: boolean;
+    loadingMessage: string;
 
 
 
     constructor(private api: ApiService, private router: Router, public renderer: Renderer2, private ss: StoreService,
         private packagePurchaseHelper: PackagePurchaseHelper, private confirmationService: ConfirmationService,
+        private spinner: NgxSpinnerService,
         protected cosmicNotifyService: CosmicNotifyService) {
 
 
@@ -76,9 +79,8 @@ export class HomelayoutComponent implements AfterViewInit, OnDestroy, OnInit {
         if (this.companyName == '' || this.companyName == null) {
             this.companyName = "No company is connected, Connect a company from Switch Company menu";
         }
-
-        this.getSubscribedPlan();
         this.packagePurchaseHelper.getSubscribedPlan();
+        this.getSubscribedPlan1();
 
         this.CheckAvailablePDFCount();
     }
@@ -221,6 +223,12 @@ export class HomelayoutComponent implements AfterViewInit, OnDestroy, OnInit {
             error => this.failedGetSubscribedPlan(<any>error));
     }
 
+    getSubscribedPlan1() {
+        this.api.get('Plan/GetAccountSubscribedPlan', '').subscribe(
+            (res: {}) => this.sucessGetSubscribedPlan1(res),
+            error => this.failedGetSubscribedPlan(<any>error));
+    }
+
     sucessGetSubscribedPlan(res: any) {
         this.subscribedPlan = res.Data;
 
@@ -233,42 +241,68 @@ export class HomelayoutComponent implements AfterViewInit, OnDestroy, OnInit {
                 this.ss.storeTrialPdfCount(this.totalTrialPdf, true);
                 this.wheatherShowAutoRenewMessage();
             }
-            else{
+            else {
                 this.getTotalTrialPdfUsed();
             }
         } else {
-            //if auto renew is on then only proced
+            //if auto renew is on then only proceed
             //if this is less than 365 days to continue the flow else make avail pdf count to 0
 
             let PlanStartDateTime = new Date(this.subscribedPlan.StartDateTime);
-            console.log("PlanStartDateTime is:"+PlanStartDateTime);
+            console.log("PlanStartDateTime is:" + PlanStartDateTime);
             let todayDate = new Date();
-            console.log("todayDate is:"+todayDate);
+            console.log("todayDate is:" + todayDate);
             const diffTime = Math.abs(todayDate.getTime() - PlanStartDateTime.getTime());
             const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-            console.log("days diff is:"+diffDays);
+            console.log("days diff is:" + diffDays);
             // var diff=Math.ceil(todaydate-cdate1);
+            // check for if plan subscription is older than
             if (diffDays <= 365) {
                 if (this.subscribedPlan.IsAutoRenew) {
                     console.log("flow 0");
                     this.getTotalPaidPdfUsed();
+
+                    //[x] When (auto renew is ture) && (diffDays <=365 is true) && (new month start)
+                    //[] then auto renew the subsciption plan
+                    // console.log("//[] then auto renew the subsciption plan");
+                    // this.spinner.show();
+                    //call auto renew after month change
+                    // if((this.subscribedPlan.StartMonth+1) == todayDate.getMonth()+1)
+                    // {
+                    //     console.log("this.ss.fetchUserName() is:"+this.ss.fetchUserName());
+
+                    //     if(this.ss.fetchUserName()==="Aceaj95a58"){
+                    //         //get the remaining pdf count
+                    //         let remainPDF= this.ss.fetchPaidPdfCount();
+
+                    //         console.log("past month pdf is: "+ remainPDF);
+                    //     // console.log("this.ss.fetchUserName() is:"+this.ss.fetchUserName());
+
+                    //         this.callAutorenewal(remainPDF);
+                    //         //add to the new one
+
+                    //          //[] then add unsedPdfScans on top of renewed pdf
+                    // console.log("//[] then add unsedPdfScans on top of renewed");
+
+
+                    //     }
+                    // }
                 }
                 else {
-                    console.log("this.subscribedPlan.StartMonth:"+this.subscribedPlan.StartMonth);
-                    console.log("todayDate.getMonth():"+(todayDate.getMonth()+1));
-                    console.log("this.subscribedPlan.StartYear:"+this.subscribedPlan.StartYear);
-                    console.log("todayDate.getFullYear():"+todayDate.getFullYear());
-                    if(this.subscribedPlan.StartMonth == todayDate.getMonth()+1
-                    && this.subscribedPlan.StartYear == todayDate.getFullYear())
-                    {
+                    console.log("this.subscribedPlan.StartMonth:" + this.subscribedPlan.StartMonth);
+                    console.log("todayDate.getMonth():" + (todayDate.getMonth() + 1));
+                    console.log("this.subscribedPlan.StartYear:" + this.subscribedPlan.StartYear);
+                    console.log("todayDate.getFullYear():" + todayDate.getFullYear());
+                    if (this.subscribedPlan.StartMonth == todayDate.getMonth() + 1
+                        && this.subscribedPlan.StartYear == todayDate.getFullYear()) {
                         console.log("flow 1");
                         this.getTotalPaidPdfUsed();
                     }
-                    else{
+                    else {
                         console.log("flow 2");
                         this.totalPaidPdf = 0;
-                                        this.ss.storePaidPdfCount(this.totalPaidPdf, true);
-                                        this.wheatherShowAutoRenewMessage();
+                        this.ss.storePaidPdfCount(this.totalPaidPdf, true);
+                        this.wheatherShowAutoRenewMessage();
                     }
                 }
             }
@@ -282,6 +316,119 @@ export class HomelayoutComponent implements AfterViewInit, OnDestroy, OnInit {
         }
 
     }
+
+    sucessGetSubscribedPlan1(res: any) {
+        this.subscribedPlan = res.Data;
+
+        console.log('subscribedPlan' + this.subscribedPlan);
+        if (!this.subscribedPlan.IsPaidPlan) {
+            //if the user has subscribed for paid version ever then the count should be 0 else continue.
+            //if(everSubvScribedPlan) then tottal avail =0 else getTotalTrialPdfUsed
+            if (this.subscribedPlan.everSubPlan) {
+                this.totalTrialPdf = 0;
+                this.ss.storeTrialPdfCount(this.totalTrialPdf, true);
+                this.wheatherShowAutoRenewMessage();
+            }
+            else {
+                this.getTotalTrialPdfUsed();
+            }
+        } else {
+            //if auto renew is on then only proceed
+            //if this is less than 365 days to continue the flow else make avail pdf count to 0
+
+            let PlanStartDateTime = new Date(this.subscribedPlan.StartDateTime);
+            console.log("PlanStartDateTime is:" + PlanStartDateTime);
+            let todayDate = new Date();
+            console.log("todayDate is:" + todayDate);
+            const diffTime = Math.abs(todayDate.getTime() - PlanStartDateTime.getTime());
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            console.log("days diff is:" + diffDays);
+            // var diff=Math.ceil(todaydate-cdate1);
+            // check for if plan subscription is older than
+            if (diffDays <= 365) {
+                if (this.subscribedPlan.IsAutoRenew) {
+                    console.log("flow 0");
+                    this.getTotalPaidPdfUsed();
+
+                    //[x] When (auto renew is ture) && (diffDays <=365 is true) && (new month start)
+                    //[] then auto renew the subsciption plan
+                    console.log("//[] then auto renew the subsciption plan");
+                    // this.spinner.show();
+                    //call auto renew after month change
+                    if ((this.subscribedPlan.StartMonth + 1) == todayDate.getMonth() + 1) {
+                        console.log("this.ss.fetchUserName() is:" + this.ss.fetchUserName());
+
+                        if (this.ss.fetchUserName() === "Aceaj95a58") {
+                            //get the remaining pdf count
+
+                            let remainPDF = this.ss.fetchPaidPdfCount();
+
+                            console.log("past month pdf is: " + remainPDF);
+                            // console.log("this.ss.fetchUserName() is:"+this.ss.fetchUserName());
+
+                            this.callAutorenewal(remainPDF);
+                            //add to the new one
+
+                            //[] then add unsedPdfScans on top of renewed pdf
+                            console.log("//[] then add unsedPdfScans on top of renewed");
+
+
+                        }
+                    }
+                }
+                else {
+                    console.log("this.subscribedPlan.StartMonth:" + this.subscribedPlan.StartMonth);
+                    console.log("todayDate.getMonth():" + (todayDate.getMonth() + 1));
+                    console.log("this.subscribedPlan.StartYear:" + this.subscribedPlan.StartYear);
+                    console.log("todayDate.getFullYear():" + todayDate.getFullYear());
+                    if (this.subscribedPlan.StartMonth == todayDate.getMonth() + 1
+                        && this.subscribedPlan.StartYear == todayDate.getFullYear()) {
+                        console.log("flow 1");
+                        this.getTotalPaidPdfUsed();
+                    }
+                    else {
+                        console.log("flow 2");
+                        this.totalPaidPdf = 0;
+                        this.ss.storePaidPdfCount(this.totalPaidPdf, true);
+                        this.wheatherShowAutoRenewMessage();
+                    }
+                }
+            }
+            else {
+                this.totalPaidPdf = 0;
+                console.log("flow 3");
+                this.ss.storePaidPdfCount(this.totalPaidPdf, true);
+                this.wheatherShowAutoRenewMessage();
+            }
+
+        }
+
+    }
+
+    async callAutorenewal(remainPDF) {
+        if (this.packagePurchaseHelper.IsAutoRenewal && this.packagePurchaseHelper.IsPaidPlan) {
+            this.loadingMessage = "Auto Renewal...";
+            console.log(" IsAutoRenewal true");
+            this.api.post('Admin/AutoRenewal', null).subscribe(
+                (res1: {}) => { console.log("homelayout TS autorenewalSuccess"); console.log(res1); },
+                error => { console.log("homelayout TS autorenewalfailed"); console.log(error); }
+
+            );
+            await this.delay(15000);
+            this.packagePurchaseHelper.getSubscribedPlan();
+            await this.delay(4000);
+            var availableTotalPdfCount = this.packagePurchaseHelper.GetAvailablePDf() + remainPDF;
+            this.totalPaidPdf = availableTotalPdfCount;
+            this.ss.storePaidPdfCount(this.totalPaidPdf, true);
+            this.wheatherShowAutoRenewMessage();
+            console.log("new availableTotalPdfCOunt:" + availableTotalPdfCount);
+
+            if (availableTotalPdfCount < 1 || availableTotalPdfCount == undefined) {
+                return;
+            }
+        }
+    }
+
     getTotalPaidPdfUsed() {
         this.api.get('Plan/GetTotalPaidPdfUsed', '').subscribe(
             (res: {}) => this.sucessGetTotalPaidPdfUsed(res),
@@ -319,7 +466,7 @@ export class HomelayoutComponent implements AfterViewInit, OnDestroy, OnInit {
 
     wheatherShowAutoRenewMessage() {
         var availableTotalPdfCount = this.packagePurchaseHelper.GetAvailablePDf();
-        console.log("availableTotalPdfCount is:"+availableTotalPdfCount)
+        console.log("availableTotalPdfCount is:" + availableTotalPdfCount)
 
         if (availableTotalPdfCount < 1 || availableTotalPdfCount == undefined) {
             if (this.packagePurchaseHelper.IsAutoRenewal && this.packagePurchaseHelper.IsPaidPlan) {
