@@ -11,7 +11,7 @@
                 <div *ngIf ="showAutoRenewwalMessage">
                     Please keep on processing you are on Auto Renewal we will populate your subscribed Bills. <a style="color:rgb(236, 236, 215)" [routerLink]="" (click)="NavigateToPaymentApp($event)"> <u> </u></a>
                     </div>
-        </div> 
+        </div>
 
   <div  class="topbar clearfix">
       <a id="omega-menu-button" href="#" (click)="toggleMenu($event)">
@@ -22,16 +22,16 @@
           <span class="fa fa-ellipsis-h"></span>
       </a>
       <div id="topbar-icons" class="animated" [ngClass]="{'topbar-icons-visible flipInX':topMenuActive,'flipOutX':topMenuLeaving}">
-            
+
          <span class="topbar-item-text">{{companyName}}</span>
-                    
+
           <!-- <span class="topbar-search" (click)="onSearchClick()">
               <input type="text" placeholder="Search" />
               <span class="topbar-search-icon fa fa-search"></span>
           </span> -->
           <a href="https://login.xero.com/" target="_blank">Login into Xero</a>
-         
-        
+
+
       </div>
   </div>
   <div class="sidebar" (click)="onMenuClick()">
@@ -39,10 +39,10 @@
           <div class="sidebar-scroll-content">
               <div class="logo">
                  <!-- <img src="../../assets/images/cosmic bills_logo_white_smaller.gif" alt=""> -->
-                 <h2 style="color:wheat" >CosmicBills</h2> 
+                 <h2 style="color:wheat" >CosmicBills</h2>
               </div>
-             
-              
+
+
            <!--   <div class="profile">
                   <img src="assets/layout/images/profile.png" alt="" />
                   <a id="profile-button" href="#" (click)="toggleProfile($event)">
@@ -64,5 +64,5 @@
   </div>
 
   <!-- <app-doc-review (childEvent)="test(message)"></app-doc-review> -->
-  
+
 </div>

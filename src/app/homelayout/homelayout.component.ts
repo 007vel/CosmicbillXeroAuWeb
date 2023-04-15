@@ -336,6 +336,7 @@ export class HomelayoutComponent implements AfterViewInit, OnDestroy, OnInit {
                 this.wheatherShowAutoRenewMessage();
             }
             else {
+                console.log("we have to get 20 trial pdfs");
                 this.getTotalTrialPdfUsed();
             }
         } else {
@@ -370,8 +371,8 @@ export class HomelayoutComponent implements AfterViewInit, OnDestroy, OnInit {
                         console.log("this.ss.fetchUserName() is:" + this.ss.fetchUserName());
 
                         // locking auto renewal for test user. Do remove this when making this feature live for all
-                            this.callAutorenewal();
-                            console.log("//[] then add unsedPdfScans on top of renewed");
+                        this.callAutorenewal();
+                        console.log("//[] then add unsedPdfScans on top of renewed");
                     }
                 }
                 else {
@@ -394,22 +395,20 @@ export class HomelayoutComponent implements AfterViewInit, OnDestroy, OnInit {
             else {
                 console.log("flow 3");
 
-				// greater than 365
-				// check is auto renew for latest startdatetime
-				// if it is true then auto renew it and return the data according to
+                // greater than 365
+                // check is auto renew for latest startdatetime
+                // if it is true then auto renew it and return the data according to
 
-                if(this.subscribedPlan.IsAutoRenew)
-                {
+                if (this.subscribedPlan.IsAutoRenew) {
                     console.log("you are here coz 365 days are up");
 
                     //call auto renew
                     //again get the data for total used and allocated
-                        this.callAutorenewal();
-                        console.log("this triggerd after 365 days are up");
+                    this.callAutorenewal();
+                    console.log("this triggerd after 365 days are up");
 
                 }
-                else
-                {
+                else {
                     this.setTotalPaidPdfToZero();
                 }
             }
@@ -419,7 +418,7 @@ export class HomelayoutComponent implements AfterViewInit, OnDestroy, OnInit {
     }
 
     async callAutorenewal() {
-        console.log("is auto renewal: "+this.subscribedPlan.IsAutoRenew+" & isPaid plan? : "+this.subscribedPlan.IsPaidPlan);
+        console.log("is auto renewal: " + this.subscribedPlan.IsAutoRenew + " & isPaid plan? : " + this.subscribedPlan.IsPaidPlan);
 
         if (this.subscribedPlan.IsAutoRenew && this.subscribedPlan.IsPaidPlan) {
             this.loadingMessage = "Auto Renewal...";
@@ -485,6 +484,7 @@ export class HomelayoutComponent implements AfterViewInit, OnDestroy, OnInit {
     }
 
     sucessGetTotalTrialPdfUsed(res: any) {
+        console.log("this.subscribedPlan.TrialPdf  is:"+this.subscribedPlan.TrialPdf+" and res.Data.TotalTrialUsed is:"+res.Data.TotalTrialUsed);
         if (res.Data != null) {
             this.totalTrialPdf = this.subscribedPlan.TrialPdf - res.Data.TotalTrialUsed;
             this.ss.storeTrialPdfCount(this.totalTrialPdf, true);
