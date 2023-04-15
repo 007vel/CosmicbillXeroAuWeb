@@ -29,7 +29,20 @@
         >
             <p-header> </p-header>
             <div *ngIf="!subscribedPlan.IsPaidPlan">
-                <b> You are using trial plan!</b>
+                <div
+                    *ngIf="
+                        subscribedPlan.everSubPlan;
+                        else trial_plan_message
+                    "
+                >
+                    <b
+                        >You have no Subscribed Plan. Consider Buying a new
+                        plan</b
+                    >
+                </div>
+                <ng-template #trial_plan_message>
+                    <b> You are using trial plan!</b></ng-template
+                >
             </div>
             <div *ngIf="subscribedPlan.IsPaidPlan">
                 <span style="color: green"
@@ -38,10 +51,15 @@
             </div>
             <p-footer>
                 <div *ngIf="!subscribedPlan.IsPaidPlan">
-                    <span style="color: red">
-                        You have scanned {{ totalTrialPdfUsed }} bills out of
-                        {{ subscribedPlan.TrialPdf }} trials
-                    </span>
+                    <div *ngIf="subscribedPlan.everSubPlan;else trial_plan_message_red">
+                        <span style="color: red">You have 0 PDF count left.</span>
+                        </div>
+                        <ng-template #trial_plan_message_red>
+                            <span style="color: red">
+                                You have scanned {{ totalTrialPdfUsed }} bills out of
+                                {{ subscribedPlan.TrialPdf }} trials
+                            </span>
+                        </ng-template>
                 </div>
 
                 <div *ngIf="subscribedPlan.IsPaidPlan">

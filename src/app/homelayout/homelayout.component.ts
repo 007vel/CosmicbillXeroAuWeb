@@ -370,10 +370,8 @@ export class HomelayoutComponent implements AfterViewInit, OnDestroy, OnInit {
                         console.log("this.ss.fetchUserName() is:" + this.ss.fetchUserName());
 
                         // locking auto renewal for test user. Do remove this when making this feature live for all
-                        if (this.ss.fetchUserName() === "Aceaj95a58") {
                             this.callAutorenewal();
                             console.log("//[] then add unsedPdfScans on top of renewed");
-                        }
                     }
                 }
                 else {
@@ -406,10 +404,8 @@ export class HomelayoutComponent implements AfterViewInit, OnDestroy, OnInit {
 
                     //call auto renew
                     //again get the data for total used and allocated
-                    if (this.ss.fetchUserName() === "Aceaj95a58") {
                         this.callAutorenewal();
                         console.log("this triggerd after 365 days are up");
-                    }
 
                 }
                 else
