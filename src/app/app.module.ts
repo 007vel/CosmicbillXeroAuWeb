@@ -138,7 +138,6 @@ import { CacheInterceptor } from './CacheInterceptor';
 import { PackagePurchaseHelper } from './PackagePurchaseHelper';
 import { CosmicNotifyService } from './CosmicNotifyService';
 import { RecaptchaModule } from "ng-recaptcha";
-// import { NgxCaptchaModule } from 'ngx-captcha';
 
 
 
@@ -146,7 +145,6 @@ import { RecaptchaModule } from "ng-recaptcha";
     imports: [
         RecaptchaModule,
         ReactiveFormsModule,
-        // NgxCaptchaModule,
         BrowserModule,
         FormsModule,
         ReactiveFormsModule,

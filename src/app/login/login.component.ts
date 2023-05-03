@@ -8,12 +8,6 @@ import { EncryptingService } from '../encrypting.service';
 import { StoreService } from '../store.service';
 import './login.component.css';
 
-//-- added for re captcha setup
-import { AppModule } from "../app.module";
-import { platformBrowserDynamic } from '@angular/platform-browser-dynamic'
-
-// platformBrowserDynamic().bootstrapModule(AppModule);
-
 @Component({
     selector: 'app-login',
     templateUrl: './login.component.html',
@@ -33,25 +27,15 @@ export class LoginComponent implements OnInit {
     public resXero: any;
 
     public Recaptcha: boolean;
-    public enableSubmitButton:boolean;
 
     @Output() talk: EventEmitter<string> = new EventEmitter<string>();
 
     constructor(private fb: FormBuilder, private router: Router, private spinner: NgxSpinnerService,
         private api: ApiService, private encrypt: EncryptingService, private ss: StoreService) {
-        // this.Recaptcha = false;
         this.loginform = this.fb.group({
             UserName: ["", Validators.required],
             Password: ["", Validators.required],
         });
-        this.enableSubmitButton=this.Recaptcha&&this.loginform.valid;
-
-    }
-
-
-    resolved(captchaResponse: string) {
-        console.log(`Resolved captcha with response: ${captchaResponse}`);
-        this.Recaptcha = true;
 
     }
 
@@ -62,6 +46,11 @@ export class LoginComponent implements OnInit {
 
     }
 
+    resolved(captchaResponse: string) {
+        console.log(`Resolved captcha with response: ${captchaResponse}`);
+        this.Recaptcha = true;
+
+    }
 
     txtFocus() {
         this.msgs = [];
