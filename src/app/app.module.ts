@@ -1,7 +1,7 @@
 import {NgModule} from '@angular/core';
 import {FormsModule,ReactiveFormsModule } from '@angular/forms';
 
-import { HttpModule } from '@angular/http';
+// import { HttpModule } from '@angular/http';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import {BrowserModule} from '@angular/platform-browser';
 import {LocationStrategy, HashLocationStrategy} from '@angular/common';
@@ -137,17 +137,21 @@ import { ParameterHashLocationStrategy } from './ParameterHashLocationStrategy';
 import { CacheInterceptor } from './CacheInterceptor';
 import { PackagePurchaseHelper } from './PackagePurchaseHelper';
 import { CosmicNotifyService } from './CosmicNotifyService';
+import { RecaptchaModule } from "ng-recaptcha";
+// import { NgxCaptchaModule } from 'ngx-captcha';
 
 
 
 @NgModule({
     imports: [
+        RecaptchaModule,
+        ReactiveFormsModule,
+        // NgxCaptchaModule,
         BrowserModule,
         FormsModule,
         ReactiveFormsModule,
         AppRoutes,
         HttpClientModule,
-        HttpModule,
         AccordionModule,
         AutoCompleteModule,
         BreadcrumbModule,
@@ -222,7 +226,7 @@ import { CosmicNotifyService } from './CosmicNotifyService';
         NgxSpinnerModule,
         SimplePdfViewerModule,
         ProgressSpinnerModule
-        
+
     ],
     declarations: [
         AppComponent,
@@ -275,10 +279,10 @@ import { CosmicNotifyService } from './CosmicNotifyService';
 		} /*,
         {
             provide: HTTP_INTERCEPTORS,
-			useClass: CacheInterceptor,multi: true 
+			useClass: CacheInterceptor,multi: true
         } */
     ],
-    
+
     bootstrap: [AppComponent]
 })
 export class AppModule { }

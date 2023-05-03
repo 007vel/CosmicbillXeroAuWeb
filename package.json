@@ -35,6 +35,7 @@
     "intl": "1.2.5",
     "jquery": "^3.6.0",
     "moment": "^2.29.1",
+    "ng-recaptcha": "^6.1.0",
     "ngx-spinner": "^6.1.2",
     "ngx-store": "^2.0.0",
     "openid-client": "^2.1.0",
