@@ -29,6 +29,8 @@ export class SignupComponent implements OnInit {
   loadingMessage: string = "Please wait...";
   public termAndCondsion: boolean;
 
+  public Recaptcha: boolean;
+
   constructor(private fb: FormBuilder,
     private ss: StoreService,
     private router: Router,
@@ -53,6 +55,12 @@ export class SignupComponent implements OnInit {
     this.termAndCondsion = false;
     this.bindCountries();
   }
+
+  resolved(captchaResponse: string) {
+    console.log(`Resolved captcha with response: ${captchaResponse}`);
+    this.Recaptcha = true;
+
+}
 
   onSubmit(value: any) {
     this.msgs = [];
@@ -133,7 +141,7 @@ export class SignupComponent implements OnInit {
 
       this.ss.storeEmail(res.Data.EmailAddress.toString());
      // this.router.navigate(['/initlogin/' + res.Data.Token.toString() + '/0/login']);
-      this.router.navigate(['/initlogin/'], { queryParams: { IsLoginFlow: true }, queryParamsHandling: 'merge' });  
+      this.router.navigate(['/initlogin/'], { queryParams: { IsLoginFlow: true }, queryParamsHandling: 'merge' });
 
     } else {
       this.msgs.push({ severity: 'error', summary: 'Oops..', detail: 'Incorrect credentials' });

@@ -30,7 +30,7 @@
 
             <img src="../../assets/images/cosmic bills_logo_white_smaller.gif">
             <p-messages [(value)]="msgs"></p-messages>
-            <div id="login-container">
+            <div id="login-container" style="height:fit-content">
 
                 <span class="title">
                     <h5 style="color:#0081c2"> Create your CosmicBills Account</h5>
@@ -92,10 +92,19 @@
                         <p-checkbox label="Terms of Use and Privacy Policy" (onChange)="handleData($event)">
                         </p-checkbox>
                     </div>
+
+                    <!-- Insert captcha UI code here -->
+                    <div class="ui-g-12 align-items-center">
+                            <re-captcha
+                                (resolved)="resolved($event)"
+                                siteKey="6LcGXtklAAAAADKsTZVxZH3mQrzS4AXIEHWLFjsT"
+                            ></re-captcha>
+                    </div>
+
                     <div class="ui-g-12">
                         <button type="submit"
                             class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-left"
-                            [disabled]="!signupform.valid">
+                            [disabled]="!(signupform.valid&&Recaptcha)">
                             <span class="ui-button-icon-left ui-c fa fa-fw ui-icon-person"></span>
                             <span class="ui-button-text ui-c">Register Me</span>
                         </button>
