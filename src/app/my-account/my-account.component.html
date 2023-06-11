@@ -25,7 +25,7 @@ type="ball-elastic-dots"><p style="text-align: center; background-color:#0081c2;
         </div>
 
         <div *ngIf="subscribedPlan.IsPaidPlan">
-            <div *ngIf="diffDays <= 365; else pack_expired">
+            <div *ngIf="diffDays <= 365 && AutoRenewalEnable; else pack_expired">
                 <span style="color:blue"> You have scanned <b>{{totalPdfUsed}}</b> bills out of <b> {{subscribedPlan.TotalAllocatePDF}} </b> </span>
             </div>
             <ng-template #pack_expired> <span style="color:red"> Your Subscription Plan has expired please buy a new plan. </span>
