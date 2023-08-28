@@ -1,12 +1,14 @@
 import { NgModule, Component, OnInit, Output, EventEmitter, ViewEncapsulation } from '@angular/core';
 import { Validators, ReactiveFormsModule, FormControl, FormGroup, FormBuilder } from '@angular/forms';
-import { Message, SelectItem, MessagesModule, Captcha, CaptchaModule } from 'primeng/primeng';
+import { Message, SelectItem, MessagesModule, Captcha, CaptchaModule, ConfirmationService } from 'primeng/primeng';
 import { Router, ActivatedRoute, Params, Data } from '@angular/router';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { ApiService } from '../api.service';
 import { EncryptingService } from '../encrypting.service';
 import { StoreService } from '../store.service';
 import './login.component.css';
+import { ParameterHashLocationStrategy } from '../ParameterHashLocationStrategy';
+import { AppComponent } from '../app.component';
 
 @Component({
     selector: 'app-login',
@@ -31,7 +33,7 @@ export class LoginComponent implements OnInit {
     @Output() talk: EventEmitter<string> = new EventEmitter<string>();
 
     constructor(private fb: FormBuilder, private router: Router, private spinner: NgxSpinnerService,
-        private api: ApiService, private encrypt: EncryptingService, private ss: StoreService) {
+        private api: ApiService, private encrypt: EncryptingService, private confirmationService: ConfirmationService, private ss: StoreService, private appComponent: AppComponent) {
         this.loginform = this.fb.group({
             UserName: ["", Validators.required],
             Password: ["", Validators.required],
@@ -59,11 +61,12 @@ export class LoginComponent implements OnInit {
 
     onSubmit(value: any) {
         this.msgs = [];
-        if (this.loginform.valid) {
+        if (this.loginform.valid || true) {
             event.preventDefault();
             this.loading = true;
             this.spinner.show();
-            console.log("*******onSubmit*******:" + this.encrypt.decrypt('Xtxh5b/xZY7KyuW5h/RYgw=='));
+            console.log("*******onSubmit*******:" + this.encrypt.decrypt("BiFm0/MWLspQSo7lwbuCgw=="));
+            //  debugger;
             var encryptPassword = this.encrypt.encrypt(this.loginform.value.Password);
             var loginData = { 'UserName': this.loginform.value.UserName, 'Password': encryptPassword }
             this.ss.storePassword(encryptPassword);
@@ -81,13 +84,29 @@ export class LoginComponent implements OnInit {
             error => this.failedGetAccount(<any>error));
     }
     SaveAccount(res: any, accountRes: any) {
+        debugger;
         console.log("res ", JSON.stringify(res));
+
         if (res.Data != null) {
 
             if (res.Data.length > 0) {
                 this.ss.storeXeroConnectID(res.Data[0].XeroID);
                 this.ss.storeCompanyName(res.Data[0].CompanyName);
-                this.router.navigate(['/initlogin/' + accountRes.Data.Token.toString() + '/0/login']);
+                if (res.Data[0] != null && res.Data[0] != undefined && res.Data[0].IsAuthrorize != true) {
+                    debugger;
+                    // this.confirmationService.confirm({
+                    //     message: "Can you confirm if you would like to disconnect from Xero?",
+                    //     accept: () => {                            
+                    //         this.appComponent.ReAuthXeroUI();
+                    //     },
+                    //     reject: () => {
+                    //     }
+                    // });
+                    this.appComponent.ReAuthXeroUI();
+
+                } else {
+                    this.router.navigate(['/initlogin/' + accountRes.Data.Token.toString() + '/0/login']);
+                }
             }
         }
 
@@ -114,8 +133,6 @@ export class LoginComponent implements OnInit {
             this.ss.storeEmail(res.Data.EmailAddress.toString());
             this.resXero = res.Data;
             this.GetAccount(res);
-
-
 
         } else {
             this.msgs.push({ severity: 'error', summary: 'Oops..', detail: 'Incorrect credentials' });

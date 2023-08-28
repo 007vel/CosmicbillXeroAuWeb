@@ -1,0 +1,8 @@
+.xero-btn {
+    cursor: pointer;
+    padding-top: 20px;
+}
+
+.mat-ripple-wrapper {
+    position: relative;
+}

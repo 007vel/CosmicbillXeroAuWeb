@@ -14,6 +14,7 @@ import { CosmicNotifyService } from '../CosmicNotifyService';
 import { MessagesModule } from 'primeng/messages';
 import { MessageModule } from 'primeng/message';
 import { Message, SelectItem } from 'primeng/primeng';
+import { AppComponent } from '../app.component';
 @Component({
   selector: 'app-doc-upload',
   templateUrl: './doc-upload.component.html',
@@ -33,7 +34,7 @@ export class DocUploadComponent implements OnInit {
   indexOfFileInProgress: number = 0;
   progress: any;
   Scanning: any;
-  connectCompanyMessage: string = "";
+
   clientFiles: any = [];
   fileIndex: number = 0;
   AsyncBackEndScanning: boolean = false;
@@ -47,23 +48,20 @@ export class DocUploadComponent implements OnInit {
   constructor(private router: Router, private store: StoreService,
     private http: HttpClient, private api: ApiService,
     private spinner: NgxSpinnerService
-    , private confirmationService: ConfirmationService, private packagePurchaseHelper: PackagePurchaseHelper, protected cosmicNotifyService: CosmicNotifyService) {
+    , private confirmationService: ConfirmationService, private packagePurchaseHelper: PackagePurchaseHelper, protected cosmicNotifyService: CosmicNotifyService, private appComponent: AppComponent) {
+
     this.postDocApiUrl = api.apiBaseUrl + "scan/UploadDocumentXero?sessionID=1"
 
   }
 
   validateConnectCompany() {
     this.getXeroDetail();
-    var companyName = this.store.fetchCompanyName();
-    if (companyName == '' || companyName == null) {
-      this.connectCompanyMessage = "No company is connected, Connect a company from Switch Company menu";
-    } else {
 
-    }
+
   }
 
   ngOnInit() {
-    // this.checkXeroToken();
+
     this.validateConnectCompany();
 
     this.steps = [
@@ -116,9 +114,7 @@ export class DocUploadComponent implements OnInit {
       this.store.storeCompanyName(res.Data[0].CompanyName);
 
       var companyName = res.Data[0].CompanyName;
-      if (companyName == '' || companyName === null) {
-        this.connectCompanyMessage = "No company is connected, Connect a company from Switch Company menu";
-      }
+
       this.AsyncBackEndScanning = res.Data[0].AsyncBackEndScanning;
       this.DirectPostfromEmail = res.Data[0].DirectPostfromEmail
     }
@@ -137,7 +133,8 @@ export class DocUploadComponent implements OnInit {
     if (res.StatusCode == 0) {
 
       if (res.Data.XeroTokenMinute < 0) {
-        window.location.href = this.api._xeroConnectUrl + token.toString();
+        //window.location.href = this.api._xeroConnectUrl + token.toString();
+        alert("Error in validateCheckXeroToken");
       }
 
     }

@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewEncapsulation,Output,EventEmitter, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation, Output, EventEmitter, ViewChild } from '@angular/core';
 import { StepsModule } from 'primeng/steps';
 import { MenuItem } from 'primeng/api';
 import { Message, SelectItem, ConfirmationService } from 'primeng/primeng';
@@ -9,6 +9,7 @@ import { SimplePdfViewerComponent, SimplePDFBookmark } from 'simple-pdf-viewer';
 import { HttpHeaders, HttpClient } from '@angular/common/http';
 import { StoreService } from '../store.service';
 import { CosmicNotifyService } from '../CosmicNotifyService';
+import { AppComponent } from '../app.component';
 
 
 
@@ -17,7 +18,7 @@ import { CosmicNotifyService } from '../CosmicNotifyService';
   templateUrl: './doc-review.component.html',
   styleUrls: ['./doc-review.component.css'],
   encapsulation: ViewEncapsulation.None,
-  providers: [ApiService,ConfirmationService]
+  providers: [ApiService, ConfirmationService]
 })
 export class DocReviewComponent implements OnInit {
 
@@ -27,9 +28,9 @@ export class DocReviewComponent implements OnInit {
   xeroDocumentLines: any = [];
   xeroDocumentLinesEdit: any = [];
   rowGroupMetadata: any;
-  allDeleteSelected=false;
-  allApproveSelected=false;
-  xeroDocumentToDelete:any=[];
+  allDeleteSelected = false;
+  allApproveSelected = false;
+  xeroDocumentToDelete: any = [];
   xeroVendors: SelectItem[] = [];
   xeroVendorsTemp: any = [];
   xeroAccountsTemp: any = [];
@@ -38,11 +39,10 @@ export class DocReviewComponent implements OnInit {
   totalDocToScan: any;
   documentScanIndex: any;
   loadingMessage: any;
-  connectCompanyMessage: string = "";
-  isViewerHidden:any= false; 
+  isViewerHidden: any = false;
   display: boolean = false;
   dialogEditVisible: boolean = false;
-  editTotal:any=0;
+  editTotal: any = 0;
 
   editRefNumber: string = "";
   editSupplierName: string = "";
@@ -55,13 +55,16 @@ export class DocReviewComponent implements OnInit {
 
 
   constructor(private router: Router, private api: ApiService, private http: HttpClient,
-              private spinner: NgxSpinnerService, private ss: StoreService,
-              private confirmationService: ConfirmationService, protected cosmicNotifyService: CosmicNotifyService) { }
+    private spinner: NgxSpinnerService, private ss: StoreService,
+    private confirmationService: ConfirmationService, protected cosmicNotifyService: CosmicNotifyService, private appComponent: AppComponent) { }
 
   validateConnectCompany() {
     var companyName = this.ss.fetchCompanyName();
-    if (companyName == '' || companyName == null) {
-      this.connectCompanyMessage = "No company is connected, Connect a company from Switch Company menu";
+    var IsAuthorize = this.ss.fetchIsAuthorize();
+    if (!IsAuthorize) {
+      this.appComponent.connectCompanyMessage = "No company is connected, Connect a company";
+    } else {
+      this.appComponent.connectCompanyMessage = "";
     }
   }
 
@@ -102,34 +105,35 @@ export class DocReviewComponent implements OnInit {
         }
       }
       // ,
-		  // {
-			// label: 'Post to Authorised',
-			// command: (event: any) => {
-			//   this.activeIndex = 4;
-			//   this.router.navigateByUrl('/docauth');
-			// }
-		  // }
+      // {
+      // label: 'Post to Authorised',
+      // command: (event: any) => {
+      //   this.activeIndex = 4;
+      //   this.router.navigateByUrl('/docauth');
+      // }
+      // }
     ];
   }
 
   checkXeroToken() {
-    var xeroID =this.ss.fetchXeroConnectID();
-    this.api.get('Xero/CheckXeroToken?XeroID='+ xeroID,"").subscribe(
+    var xeroID = this.ss.fetchXeroConnectID();
+    this.api.get('Xero/CheckXeroToken?XeroID=' + xeroID, "").subscribe(
       (res: {}) => this.validateCheckXeroToken(res),
       error => this.failedCheckXeroToken(<any>error));
   }
-  
+
   validateCheckXeroToken(res: any) {
-   var token = this.ss.fetchToken();
+    var token = this.ss.fetchToken();
     if (res.StatusCode == 0) {
-  
+
       if (res.Data.XeroTokenMinute < 0) {
-        window.location.href = this.api._xeroConnectUrl + token.toString();
+        //window.location.href = this.api._xeroConnectUrl + token.toString();
+        alert("Error in validateCheckXeroToken review");
       }
-      
+
     }
   }
-  
+
   failedCheckXeroToken(res: any) {
     var token = this.ss.fetchToken();
     this.router.navigate(['/initlogin/' + token.toString() + '/0/login']);
@@ -170,13 +174,13 @@ export class DocReviewComponent implements OnInit {
     if (this.xeroDocumentLines) {
       for (let i = 0; i < this.xeroDocumentLines.length; i++) {
         let rowData = this.xeroDocumentLines[i];
-        if(rowData.SelectToBill==true){
-        if(rowData.ApproveDocAs==3)
-            rowData.SelectToBill1=true;
-        else if(rowData.ApproveDocAs==1)
-            rowData.SelectToBill2=true;
-        else if(rowData.ApproveDocAs==2)
-            rowData.SelectToBill3=true;
+        if (rowData.SelectToBill == true) {
+          if (rowData.ApproveDocAs == 3)
+            rowData.SelectToBill1 = true;
+          else if (rowData.ApproveDocAs == 1)
+            rowData.SelectToBill2 = true;
+          else if (rowData.ApproveDocAs == 2)
+            rowData.SelectToBill3 = true;
         }
         let brand = rowData.DocumentID;
         if (i == 0) {
@@ -214,7 +218,7 @@ export class DocReviewComponent implements OnInit {
 
           this.totalDocToScan = resp.Data.length;
           this.documentScanIndex = 1;
-         // this.loadingMessage = "Scanning " + this.documentScanIndex + " / " + this.totalDocToScan;
+          // this.loadingMessage = "Scanning " + this.documentScanIndex + " / " + this.totalDocToScan;
 
           resp.Data.forEach(element => {
             this.scanDocument(element);
@@ -252,13 +256,13 @@ export class DocReviewComponent implements OnInit {
 
           this.documentScanIndex = this.documentScanIndex + 1;
 
-        //  this.loadingMessage = "Scanning " + this.documentScanIndex + " / " + this.totalDocToScan;
+          //  this.loadingMessage = "Scanning " + this.documentScanIndex + " / " + this.totalDocToScan;
 
           if ((this.documentScanIndex - 1) == this.totalDocToScan) {
 
             this.documentScanIndex = this.documentScanIndex - 1;
 
-           /// this.loadingMessage = "Scanning " + this.documentScanIndex + " / " + this.totalDocToScan;
+            /// this.loadingMessage = "Scanning " + this.documentScanIndex + " / " + this.totalDocToScan;
 
             setTimeout(() => {
               this.spinner.hide();
@@ -291,7 +295,7 @@ export class DocReviewComponent implements OnInit {
   sucessDocumentToBill(resp: any) {
     console.log("59656565");
     console.log(resp);
-    this.allDeleteSelected=false;
+    this.allDeleteSelected = false;
 
     this.xeroDocumentLines = resp.Data;
     this.spinner.hide();
@@ -301,7 +305,7 @@ export class DocReviewComponent implements OnInit {
   failedDocumentToBill(resp: any) {
     console.log(resp);
     this.spinner.hide();
-    this.allDeleteSelected=false;
+    this.allDeleteSelected = false;
 
   }
 
@@ -315,7 +319,7 @@ export class DocReviewComponent implements OnInit {
     const fileReader: FileReader = new FileReader();
     fileReader.onload = () => {
 
-    this.pdfViewer.openDocument(new Uint8Array(fileReader.result));
+      this.pdfViewer.openDocument(new Uint8Array(fileReader.result));
     };
     fileReader.readAsArrayBuffer(document);
   }
@@ -332,14 +336,13 @@ export class DocReviewComponent implements OnInit {
 
   }
 
-  deleteRecord(record:any)
-  {
+  deleteRecord(record: any) {
     this.confirmationService.confirm({
       message: 'Are you sure want to remove this record ?',
       accept: () => {
         this.spinner.show();
         this.loadingMessage = "Delete to Record..";
-        this.api.post('Xero/DeleteXeroDocument', {'DocumentID':record.DocumentID, 'Deleted':true }).subscribe(
+        this.api.post('Xero/DeleteXeroDocument', { 'DocumentID': record.DocumentID, 'Deleted': true }).subscribe(
           (res1: {}) => this.successDeleteRecord(res1),
           error => this.failedDeleteRecord(<any>error));
       },
@@ -350,102 +353,101 @@ export class DocReviewComponent implements OnInit {
 
   }
 
-  successDeleteRecord(res:any)
-  {
+  successDeleteRecord(res: any) {
     this.spinner.hide();
-      if(res.StatusCode == 0){
-        this.getDocumentToBill() ;
-      }
-      else
-        this.allDeleteSelected=false;
+    if (res.StatusCode == 0) {
+      this.getDocumentToBill();
+    }
+    else
+      this.allDeleteSelected = false;
   }
 
-  failedDeleteRecord(res:any){
+  failedDeleteRecord(res: any) {
     this.spinner.hide();
-    this.allDeleteSelected=false;
+    this.allDeleteSelected = false;
 
   }
-  onChangeDeleteAll(event:any){
-    
-    if(event.target.checked==true){
-      this.allDeleteSelected=true;
+  onChangeDeleteAll(event: any) {
+
+    if (event.target.checked == true) {
+      this.allDeleteSelected = true;
 
       var distinctDoc = this.getUniqueValues("DocumentID");
       distinctDoc.forEach(element => {
         var qboDocument = this.xeroDocumentLines.filter(xx => xx.DocumentID == element)
-        qboDocument[0].Deleted=true;
+        qboDocument[0].Deleted = true;
         this.xeroDocumentToDelete.push(qboDocument[0]);
       });
     }
-    else{
-      this.allDeleteSelected=false;
+    else {
+      this.allDeleteSelected = false;
       var distinctDoc = this.getUniqueValues("DocumentID");
       distinctDoc.forEach(element => {
         var qboDocument = this.xeroDocumentLines.filter(xx => xx.DocumentID == element)
-        qboDocument[0].Deleted=false;
+        qboDocument[0].Deleted = false;
       });
-      if(this.xeroDocumentToDelete.length>0)
-            this.xeroDocumentToDelete.splice(0,this.xeroDocumentToDelete.length);
+      if (this.xeroDocumentToDelete.length > 0)
+        this.xeroDocumentToDelete.splice(0, this.xeroDocumentToDelete.length);
     }
-    
+
 
   }
-  onDeleteClicked(){
-    this.msgs=[];
-   // debugger;
-  //  var qboDocument = this.qboDocumentLines.filter(xx => xx.Deleted == true);
+  onDeleteClicked() {
+    this.msgs = [];
+    // debugger;
+    //  var qboDocument = this.qboDocumentLines.filter(xx => xx.Deleted == true);
     //if(qboDocument.length>0)
-    if(this.xeroDocumentToDelete.length>0){
+    if (this.xeroDocumentToDelete.length > 0) {
       if (confirm("Are you sure want to remove this document ?")) {
-      this.api.post('Xero/DeleteMultipleXeroDocument', this.xeroDocumentToDelete).subscribe(
-        (res1: {}) => this.successDeleteRecord(res1),
-        error => this.failedDeleteRecord(<any>error));
+        this.api.post('Xero/DeleteMultipleXeroDocument', this.xeroDocumentToDelete).subscribe(
+          (res1: {}) => this.successDeleteRecord(res1),
+          error => this.failedDeleteRecord(<any>error));
       }
     }
-    else{
+    else {
       this.msgs.push({ severity: 'Info', summary: 'Please select document to delete', detail: 'Mandatory Field' });
 
       return;
     }
   }
   onChangeDelete(event: any, hdr: any) {
-   // debugger;
+    // debugger;
     this.msgs = [];
     var qboDocument = this.xeroDocumentLines.filter(xx => xx.DocumentID == hdr.DocumentID);
-    qboDocument[0].Deleted=event.target.checked;
-       
+    qboDocument[0].Deleted = event.target.checked;
+
     if (event.target.checked) {
       this.xeroDocumentToDelete.push(qboDocument[0]);
     }
-    else{
-      if(this.xeroDocumentToDelete.length>0){
-      const index: number = this.xeroDocumentToDelete.indexOf(qboDocument);
-      console.log(index);
-      this.xeroDocumentToDelete.splice(index, 1);
+    else {
+      if (this.xeroDocumentToDelete.length > 0) {
+        const index: number = this.xeroDocumentToDelete.indexOf(qboDocument);
+        console.log(index);
+        this.xeroDocumentToDelete.splice(index, 1);
       }
     }
-  //  var deletedDoc=this.qboDocumentLines.filter(xx => xx.Deleted == event.target.checked);
+    //  var deletedDoc=this.qboDocumentLines.filter(xx => xx.Deleted == event.target.checked);
 
     var distinctDoc = this.getUniqueValues("DocumentID");
-    console.log(distinctDoc.size+" "+this.xeroDocumentToDelete.length );
-    if(distinctDoc.size==this.xeroDocumentToDelete.length && event.target.checked==true){
-       this.allDeleteSelected=true;
+    console.log(distinctDoc.size + " " + this.xeroDocumentToDelete.length);
+    if (distinctDoc.size == this.xeroDocumentToDelete.length && event.target.checked == true) {
+      this.allDeleteSelected = true;
     }
-    else{
-      this.allDeleteSelected=false;
+    else {
+      this.allDeleteSelected = false;
     }
-    
-   
+
+
     //console.log(this.qboDocumentToDelete);
 
 
   }
-  
+
   // onChangeApproveAll(event: any) {
   //   this.msgs = [];
   //   let isOK = false;
   //   var distinctDoc = this.getUniqueValues("DocumentID");
-  
+
   //   this.allApproveSelected=event.target.checked;
   //   if (event.target.checked) {
 
@@ -532,12 +534,12 @@ export class DocReviewComponent implements OnInit {
       error => this.failedUpdateXeroDoc(<any>error));
   }
 
-  
-  openEditScreen(record:any){
+
+  openEditScreen(record: any) {
     //this.router.navigateByUrl('/docedit/'+ record.DocumentID);
-    this.router.navigate(['docedit',  record.DocumentID]);
+    this.router.navigate(['docedit', record.DocumentID]);
   }
-  
+
   onChangeAccount(event: any, record: any) {
 
     //var acct = this.XeroAccountsTemp.find(xx=> xx.idField == event.value);
@@ -568,154 +570,151 @@ export class DocReviewComponent implements OnInit {
 
 
   onChangeApprove(event: any, hdr: any) {
-    if(hdr.Duplicate>0){
+    if (hdr.Duplicate > 0) {
       this.msgs = [];
       this.msgs.push({ severity: 'Error', summary: 'Failed to approve', detail: 'Document with same InvoiceNumber already exist..' });
-      event.target.checked=false;
+      event.target.checked = false;
       //hdr.SelectToBill2=false;
       //hdr.SelectToBill3=false;
-    }else{
-    if(event.target.checked==true)
-    {
-      hdr.SelectToBill1=true;
-      hdr.SelectToBill2=false;
-      hdr.SelectToBill3=false;
-    }
-    else{
-      hdr.SelectToBill1=false;
-      hdr.SelectToBill2=false;
-      hdr.SelectToBill3=false;
-    }
-  
-  
+    } else {
+      if (event.target.checked == true) {
+        hdr.SelectToBill1 = true;
+        hdr.SelectToBill2 = false;
+        hdr.SelectToBill3 = false;
+      }
+      else {
+        hdr.SelectToBill1 = false;
+        hdr.SelectToBill2 = false;
+        hdr.SelectToBill3 = false;
+      }
 
-    //check if Vendor and Expense Account is selected 
 
-    this.msgs = [];
-    var lines = this.xeroDocumentLines.filter(xx => xx.DocumentID == hdr.DocumentID)
-    console.log(lines);
 
-    var vend = lines.find(xx => xx.XeroVendorID == 0);
-    if (vend != null) {
-      this.msgs.push({ severity: 'Info', summary: 'Vendor is a required field', detail: 'Mandatory Field' });
-      event.target.checked = false;
-      return;
-    }
+      //check if Vendor and Expense Account is selected 
 
-    if (lines.find(xx => xx.XeroAccountID == 0) != null) {
-      this.msgs.push({ severity: 'Info', summary: 'Expense Account is a required field', detail: 'Mandatory Field' });
-      event.target.checked = false;
-      return;
-    }
+      this.msgs = [];
+      var lines = this.xeroDocumentLines.filter(xx => xx.DocumentID == hdr.DocumentID)
+      console.log(lines);
 
-    hdr.SelectToBill = event.target.checked;
-    if(event.target.checked==true)
-      hdr.ApproveDocAs=3;
+      var vend = lines.find(xx => xx.XeroVendorID == 0);
+      if (vend != null) {
+        this.msgs.push({ severity: 'Info', summary: 'Vendor is a required field', detail: 'Mandatory Field' });
+        event.target.checked = false;
+        return;
+      }
 
-    //Approve the bill
-    this.api.post('Xero/ApproveXeroDocument', hdr).subscribe(
-      (res1: {}) => this.successApproveDoc(res1),
-      error => this.failedApproveDoc(<any>error,hdr));
+      if (lines.find(xx => xx.XeroAccountID == 0) != null) {
+        this.msgs.push({ severity: 'Info', summary: 'Expense Account is a required field', detail: 'Mandatory Field' });
+        event.target.checked = false;
+        return;
+      }
+
+      hdr.SelectToBill = event.target.checked;
+      if (event.target.checked == true)
+        hdr.ApproveDocAs = 3;
+
+      //Approve the bill
+      this.api.post('Xero/ApproveXeroDocument', hdr).subscribe(
+        (res1: {}) => this.successApproveDoc(res1),
+        error => this.failedApproveDoc(<any>error, hdr));
     }
 
   }
 
 
   onChangeApproveAsDraft(event: any, hdr: any) {
-    if(hdr.Duplicate>0){
+    if (hdr.Duplicate > 0) {
       this.msgs = [];
       this.msgs.push({ severity: 'Error', summary: 'Failed to approve', detail: 'Document with same InvoiceNumber already exist..' });
-      event.target.checked=false;
+      event.target.checked = false;
       //hdr.SelectToBill2=false;
-     // hdr.SelectToBill3=false;
-    }else{
-    if(event.target.checked==true)
-    {
-      hdr.SelectToBill2=true;
-      hdr.SelectToBill1=false;
-      hdr.SelectToBill3=false;
-    }
-    else{
-      hdr.SelectToBill1=false;
-      hdr.SelectToBill2=false;
-      hdr.SelectToBill3=false;
-    }
-  
-    //check if Vendor and Expense Account is selected 
+      // hdr.SelectToBill3=false;
+    } else {
+      if (event.target.checked == true) {
+        hdr.SelectToBill2 = true;
+        hdr.SelectToBill1 = false;
+        hdr.SelectToBill3 = false;
+      }
+      else {
+        hdr.SelectToBill1 = false;
+        hdr.SelectToBill2 = false;
+        hdr.SelectToBill3 = false;
+      }
 
-    this.msgs = [];
-    var lines = this.xeroDocumentLines.filter(xx => xx.DocumentID == hdr.DocumentID)
-    console.log(lines);
+      //check if Vendor and Expense Account is selected 
 
-    var vend = lines.find(xx => xx.XeroVendorID == 0);
-    if (vend != null) {
-      this.msgs.push({ severity: 'Info', summary: 'Vendor is a required field', detail: 'Mandatory Field' });
-      event.target.checked = false;
-      return;
-    }
+      this.msgs = [];
+      var lines = this.xeroDocumentLines.filter(xx => xx.DocumentID == hdr.DocumentID)
+      console.log(lines);
 
-    if (lines.find(xx => xx.XeroAccountID == 0) != null) {
-      this.msgs.push({ severity: 'Info', summary: 'Expense Account is a required field', detail: 'Mandatory Field' });
-      event.target.checked = false;
-      return;
-    }
+      var vend = lines.find(xx => xx.XeroVendorID == 0);
+      if (vend != null) {
+        this.msgs.push({ severity: 'Info', summary: 'Vendor is a required field', detail: 'Mandatory Field' });
+        event.target.checked = false;
+        return;
+      }
 
-    hdr.SelectToBill = event.target.checked;
-    if(event.target.checked==true)
-        hdr.ApproveDocAs=1;
-    //Approve the bill
-    this.api.post('Xero/ApproveXeroDocument', hdr).subscribe(
-      (res1: {}) => this.successApproveDoc(res1),
-      error => this.failedApproveDoc(<any>error,hdr));
+      if (lines.find(xx => xx.XeroAccountID == 0) != null) {
+        this.msgs.push({ severity: 'Info', summary: 'Expense Account is a required field', detail: 'Mandatory Field' });
+        event.target.checked = false;
+        return;
+      }
+
+      hdr.SelectToBill = event.target.checked;
+      if (event.target.checked == true)
+        hdr.ApproveDocAs = 1;
+      //Approve the bill
+      this.api.post('Xero/ApproveXeroDocument', hdr).subscribe(
+        (res1: {}) => this.successApproveDoc(res1),
+        error => this.failedApproveDoc(<any>error, hdr));
     }
   }
 
   onChangeApproveAsWA(event: any, hdr: any) {
 
     //check if Vendor and Expense Account is selected 
-    if(hdr.Duplicate>0){
+    if (hdr.Duplicate > 0) {
       this.msgs = [];
       this.msgs.push({ severity: 'Error', summary: 'Failed to approve', detail: 'Document with same InvoiceNumber already exist..' });
-      event.target.checked=false;
+      event.target.checked = false;
       //hdr.SelectToBill2=false;
       //hdr.SelectToBill3=false;
-    }else{
-    if(event.target.checked==true)
-    {
-      hdr.SelectToBill3=true;
-      hdr.SelectToBill1=false;
-      hdr.SelectToBill2=false;
-    }
-    else{
-      hdr.SelectToBill1=false;
-      hdr.SelectToBill2=false;
-      hdr.SelectToBill3=false;
-    }
-  
-    this.msgs = [];
-    var lines = this.xeroDocumentLines.filter(xx => xx.DocumentID == hdr.DocumentID)
-    console.log(lines);
+    } else {
+      if (event.target.checked == true) {
+        hdr.SelectToBill3 = true;
+        hdr.SelectToBill1 = false;
+        hdr.SelectToBill2 = false;
+      }
+      else {
+        hdr.SelectToBill1 = false;
+        hdr.SelectToBill2 = false;
+        hdr.SelectToBill3 = false;
+      }
 
-    var vend = lines.find(xx => xx.XeroVendorID == 0);
-    if (vend != null) {
-      this.msgs.push({ severity: 'Info', summary: 'Vendor is a required field', detail: 'Mandatory Field' });
-      event.target.checked = false;
-      return;
-    }
+      this.msgs = [];
+      var lines = this.xeroDocumentLines.filter(xx => xx.DocumentID == hdr.DocumentID)
+      console.log(lines);
 
-    if (lines.find(xx => xx.XeroAccountID == 0) != null) {
-      this.msgs.push({ severity: 'Info', summary: 'Expense Account is a required field', detail: 'Mandatory Field' });
-      event.target.checked = false;
-      return;
-    }
+      var vend = lines.find(xx => xx.XeroVendorID == 0);
+      if (vend != null) {
+        this.msgs.push({ severity: 'Info', summary: 'Vendor is a required field', detail: 'Mandatory Field' });
+        event.target.checked = false;
+        return;
+      }
 
-    hdr.SelectToBill = event.target.checked;
-    if(event.target.checked==true)
-        hdr.ApproveDocAs=2;
-    //Approve the bill
-    this.api.post('Xero/ApproveXeroDocument', hdr).subscribe(
-      (res1: {}) => this.successApproveDoc(res1),
-      error => this.failedApproveDoc(<any>error,hdr));
+      if (lines.find(xx => xx.XeroAccountID == 0) != null) {
+        this.msgs.push({ severity: 'Info', summary: 'Expense Account is a required field', detail: 'Mandatory Field' });
+        event.target.checked = false;
+        return;
+      }
+
+      hdr.SelectToBill = event.target.checked;
+      if (event.target.checked == true)
+        hdr.ApproveDocAs = 2;
+      //Approve the bill
+      this.api.post('Xero/ApproveXeroDocument', hdr).subscribe(
+        (res1: {}) => this.successApproveDoc(res1),
+        error => this.failedApproveDoc(<any>error, hdr));
     }
 
   }
@@ -734,7 +733,7 @@ export class DocReviewComponent implements OnInit {
     let isOK = false;
     var distinctDoc = this.getUniqueValues("DocumentID");
 
-    this.allApproveSelected=event.target.checked;
+    this.allApproveSelected = event.target.checked;
 
     if (event.target.checked) {
 
@@ -754,10 +753,10 @@ export class DocReviewComponent implements OnInit {
 
         if (isOK) {
           lines[0].SelectToBill = true;
-          lines[0].ApproveDocAs=3;
+          lines[0].ApproveDocAs = 3;
           this.api.post('Xero/ApproveXeroDocument', lines[0]).subscribe(
             (res1: {}) => this.successApproveDoc(res1),
-            error => this.failedApproveDoc(<any>error,lines[0]));
+            error => this.failedApproveDoc(<any>error, lines[0]));
         }
       });
     }
@@ -770,7 +769,7 @@ export class DocReviewComponent implements OnInit {
 
         this.api.post('Xero/ApproveXeroDocument', lines[0]).subscribe(
           (res1: {}) => this.successApproveDoc(res1),
-          error => this.failedApproveDoc(<any>error,lines[0]));
+          error => this.failedApproveDoc(<any>error, lines[0]));
 
       });
 
@@ -779,28 +778,26 @@ export class DocReviewComponent implements OnInit {
 
 
   successApproveDoc(resp: any) {
-    setTimeout(() => 
-    {
+    setTimeout(() => {
       this.router.navigate(['docpost']);
     },
-    10000);
+      10000);
 
   }
 
-  failedApproveDoc(resp: any,hdr:any) {
-    console.log("RESP "+resp);
+  failedApproveDoc(resp: any, hdr: any) {
+    console.log("RESP " + resp);
 
     this.msgs = [];
-    if(resp.indexOf("409"))
-    {
+    if (resp.indexOf("409")) {
       this.msgs.push({ severity: 'Error', summary: 'Failed to approve', detail: 'Document with same InvoiceNumber already exist..' });
       alert('Document with same InvoiceNumber already exist..');
-    }else{
+    } else {
       this.msgs.push({ severity: 'Error', summary: 'Failed to approve', detail: 'Failed to approve document.' });
-      hdr.SelectToBill=false;
+      hdr.SelectToBill = false;
       alert('Failed to approve document.');
     }
-   
+
   }
 
 
@@ -883,12 +880,12 @@ export class DocReviewComponent implements OnInit {
     this.bindAccounts();
   }
 
-  showHideViewer(){
+  showHideViewer() {
     this.isViewerHidden = !this.isViewerHidden;
   }
 
-  openEditWindow(record:any) {
-    
+  openEditWindow(record: any) {
+
     var lines = this.xeroDocumentLines.filter(xx => xx.DocumentID == record.DocumentID);
     this.xeroDocumentLinesEdit = [];
 
@@ -898,20 +895,21 @@ export class DocReviewComponent implements OnInit {
 
     lines.forEach(element => {
       this.xeroDocumentLinesEdit.push(
-        {'DocumentID':element.DocumentID,
-        'DocumentLineID':element.DocumentLineID,
-        'Scan_Quantity' : element.Scan_Quantity,
-        'ScanUnit_Price' : element.ScanUnit_Price,
-        'ScanGST' : element.ScanGST,
-        'Scan_Total' : element.Scan_Total,
-        'ScanInvoiceTotal' : element.ScanInvoiceTotal,
-        'ScanDescription' :element.ScanDescription,
-        'ScanRefNumber':element.ScanRefNumber
-       }  );
+        {
+          'DocumentID': element.DocumentID,
+          'DocumentLineID': element.DocumentLineID,
+          'Scan_Quantity': element.Scan_Quantity,
+          'ScanUnit_Price': element.ScanUnit_Price,
+          'ScanGST': element.ScanGST,
+          'Scan_Total': element.Scan_Total,
+          'ScanInvoiceTotal': element.ScanInvoiceTotal,
+          'ScanDescription': element.ScanDescription,
+          'ScanRefNumber': element.ScanRefNumber
+        });
 
-       total = element.ScanInvoiceTotal;
-       refNumber = element.ScanRefNumber;
-       supplier = element.XeroVendorName;
+      total = element.ScanInvoiceTotal;
+      refNumber = element.ScanRefNumber;
+      supplier = element.XeroVendorName;
     });
 
 
@@ -922,10 +920,10 @@ export class DocReviewComponent implements OnInit {
     this.dialogEditVisible = true;
   }
 
-  onChangeQty(record:any){
+  onChangeQty(record: any) {
     console.log("onChangeQty >>>>>>>>>>>>>");
     record.Scan_Total = record.Scan_Quantity * record.ScanUnit_Price;
-    record.ScanGST = ((record.Scan_Quantity * record.ScanUnit_Price)  * 10) / 100;
+    record.ScanGST = ((record.Scan_Quantity * record.ScanUnit_Price) * 10) / 100;
 
     var total = 0;
     this.xeroDocumentLinesEdit.forEach(element => {
@@ -933,17 +931,17 @@ export class DocReviewComponent implements OnInit {
     });
 
     this.xeroDocumentLinesEdit.forEach(element => {
-       element.ScanInvoiceTotal = total;
+      element.ScanInvoiceTotal = total;
     });
 
 
     this.editTotal = total;
   }
 
-  onChangePrice(record:any){
-console.log("onChangePrice >>>>>>>>>>>>>");
+  onChangePrice(record: any) {
+    console.log("onChangePrice >>>>>>>>>>>>>");
     record.Scan_Total = record.Scan_Quantity * record.ScanUnit_Price;
-    record.ScanGST = ((record.Scan_Quantity * record.ScanUnit_Price)  * 10) / 100;
+    record.ScanGST = ((record.Scan_Quantity * record.ScanUnit_Price) * 10) / 100;
 
     var total = 0;
     this.xeroDocumentLinesEdit.forEach(element => {
@@ -951,12 +949,12 @@ console.log("onChangePrice >>>>>>>>>>>>>");
     });
 
     this.xeroDocumentLinesEdit.forEach(element => {
-       element.ScanInvoiceTotal = total;
+      element.ScanInvoiceTotal = total;
     });
 
 
     this.editTotal = total;
-    
+
   }
 
   onChangeRefNumber(record: any) {
@@ -967,60 +965,59 @@ console.log("onChangePrice >>>>>>>>>>>>>");
     });
   }
 
-  saveEditChanges(){
+  saveEditChanges() {
 
     this.api.post('Xero/SaveXeroDocumentEditChanges', this.xeroDocumentLinesEdit).subscribe(
       (res1: {}) => this.successSaveEditChanges(res1),
       error => this.failedSaveEditChanges(<any>error));
   }
 
-  successSaveEditChanges(res:any){
+  successSaveEditChanges(res: any) {
 
-    if(res.StatusCode == 0){
-      
+    if (res.StatusCode == 0) {
+
       var lines = this.xeroDocumentLines.filter(xx => xx.DocumentID == res.Data);
-      
+
       lines.forEach(element => {
 
-          var editLine = this.xeroDocumentLinesEdit.find(ff=> ff.DocumentLineID == element.DocumentLineID);
+        var editLine = this.xeroDocumentLinesEdit.find(ff => ff.DocumentLineID == element.DocumentLineID);
 
-          element.Scan_Quantity  = editLine.Scan_Quantity ,
-          element.ScanUnit_Price= editLine.ScanUnit_Price ,
-          element.ScanGST= editLine.ScanGST ,
-          element.Scan_Total= editLine.Scan_Total ,
-          element.ScanInvoiceTotal= editLine.ScanInvoiceTotal ,
-          element.ScanDescription= editLine.ScanDescription ,
+        element.Scan_Quantity = editLine.Scan_Quantity,
+          element.ScanUnit_Price = editLine.ScanUnit_Price,
+          element.ScanGST = editLine.ScanGST,
+          element.Scan_Total = editLine.Scan_Total,
+          element.ScanInvoiceTotal = editLine.ScanInvoiceTotal,
+          element.ScanDescription = editLine.ScanDescription,
           element.ScanRefNumber = editLine.ScanRefNumber
-        
-        } );
 
-        this.dialogEditVisible = false;
-       
+      });
+
+      this.dialogEditVisible = false;
+
     }
     else {
       this.msgs = [];
       this.msgs.push({ severity: 'Error', summary: 'Failed to save your changes', detail: 'Failes..' });
     }
-    
+
   }
 
-  failedSaveEditChanges(res:any){
-    
+  failedSaveEditChanges(res: any) {
+
   }
 
-  getRecordClass(index:any, docType:any,Duplicate:any)
-  {
-    if(Duplicate>0){
+  getRecordClass(index: any, docType: any, Duplicate: any) {
+    if (Duplicate > 0) {
       return 'duplicate'
-    }else{
-    if (docType == "CreditNote") {
-      return 'creditNote'
+    } else {
+      if (docType == "CreditNote") {
+        return 'creditNote'
+      }
+      else {
+        return (index % 2 === 0) ? 'odd' : 'even';
+      }
     }
-    else {
-      return (index % 2 === 0) ? 'odd' : 'even';
-    }
-  }
-    
+
   }
 
 

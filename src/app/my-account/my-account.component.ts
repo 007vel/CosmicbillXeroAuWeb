@@ -328,7 +328,8 @@ export class MyAccountComponent implements OnInit {
         var token = this.ss.fetchToken();
         if (res.StatusCode == 0) {
             if (res.Data.XeroTokenMinute < 0) {
-                window.location.href = this.api._xeroConnectUrl + token.toString();
+                //window.location.href = this.api._xeroConnectUrl + token.toString();
+                alert("Error in validateCheckXeroToken my account ");
             }
         }
     }

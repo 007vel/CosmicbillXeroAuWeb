@@ -85,7 +85,9 @@ export class SwitchcompanyComponent implements OnInit {
       (res: {}) => this.sucess(res),
       error => this.failed(<any>error));
 
-    window.location.href = this.api._xeroConnectUrl + token.toString();
+    //window.location.href = this.api._xeroConnectUrl + token.toString();
+
+    alert("Error in companyReAouth");
   }
 
 
@@ -124,7 +126,8 @@ export class SwitchcompanyComponent implements OnInit {
         message: companyMessage,
         accept: () => {
           var token = this.ss.fetchToken();
-          window.location.href = this.api._xeroConnectUrl + token;
+          //window.location.href = this.api._xeroConnectUrl + token;
+          alert("Error in addNewCompany");
         },
         reject: () => {
           //this.XeroAccountIDSelected = 0;
@@ -133,7 +136,8 @@ export class SwitchcompanyComponent implements OnInit {
 
     } else {
       var token = this.ss.fetchToken();
-      window.location.href = this.api._xeroConnectUrl + token;
+      //window.location.href = this.api._xeroConnectUrl + token;
+      alert("Error in addNewCompany");
     }
   }
 

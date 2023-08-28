@@ -2,23 +2,30 @@
 <p-steps [model]="steps" [(activeIndex)]="activeIndex" styleClass="steps-custom" [readonly]="false"></p-steps>
 <br>
 <p-growl [(value)]="msgs"></p-growl>
-<p-confirmDialog header="Please confirm" icon="pi pi-exclamation-triangle" width="425"></p-confirmDialog>
+<!--<p-confirmDialog header="Please confirm" icon="pi pi-exclamation-triangle" width="425"></p-confirmDialog> -->
 
 <ngx-spinner bdColor="rgba(87, 109, 142, 0.10)" size="medium" color="#0081c2" type="ball-elastic-dots">
-    <p style="text-align: center; background-color:#0081c2; font-size: 20px; color: white; height: 30px; width:200px;  ">
-        {{loadingMessage}} </p>
+    <p
+        style="text-align: center; background-color:#0081c2; font-size: 20px; color: white; height: 30px; width:200px;  ">
+        {{loadingMessage}}
+    </p>
 </ngx-spinner>
 
 <p-dialog [(visible)]="display" [modal]="true" [responsive]="true" [width]="950" [minWidth]="200" [positionTop]="50"
     [maximizable]="true" [baseZIndex]="10000">
     <p-header>
 
-        <button pButton type="button" icon="fa fa-search-plus" class="ui-button-rounded" (click)="pdfViewer.zoomIn()"></button>&nbsp;
-        <button pButton type="button" icon="fa fa-search-minus" class="ui-button-rounded" (click)="pdfViewer.zoomOut()"></button>&nbsp;
-        <button pButton type="button" icon="fa fa-search" class="ui-button-rounded" (click)="pdfViewer.zoomReset()"></button>&nbsp;
+        <button pButton type="button" icon="fa fa-search-plus" class="ui-button-rounded"
+            (click)="pdfViewer.zoomIn()"></button>&nbsp;
+        <button pButton type="button" icon="fa fa-search-minus" class="ui-button-rounded"
+            (click)="pdfViewer.zoomOut()"></button>&nbsp;
+        <button pButton type="button" icon="fa fa-search" class="ui-button-rounded"
+            (click)="pdfViewer.zoomReset()"></button>&nbsp;
 
-        <button pButton type="button" icon="fa fa-arrow-circle-o-left" class="ui-button-rounded" (click)="pdfViewer.nextPage()"></button>&nbsp;
-        <button pButton type="button" icon="fa fa-arrow-circle-o-right" class="ui-button-rounded" (click)="pdfViewer.prevPage()"></button>
+        <button pButton type="button" icon="fa fa-arrow-circle-o-left" class="ui-button-rounded"
+            (click)="pdfViewer.nextPage()"></button>&nbsp;
+        <button pButton type="button" icon="fa fa-arrow-circle-o-right" class="ui-button-rounded"
+            (click)="pdfViewer.prevPage()"></button>
     </p-header>
 
 
@@ -42,7 +49,7 @@
         </div>
         <div *ngIf="isaouthrize">
             <h1>
-            Authorized or Revoked Company... Please go to SwitchCompany!
+                Authorized or Revoked Company... Please go to SwitchCompany!
             </h1>
         </div>
 
@@ -83,7 +90,8 @@
 
 
 
-<h2 style="color: red">{{connectCompanyMessage}}</h2>
+<h2 style="color: red">{{appComponent.connectCompanyMessage}}</h2>
+<p-confirmDialog header="Confirmation" icon="pi pi-exclamation-triangle"></p-confirmDialog>
 <p-accordion>
     <p-accordionTab header="Help">
         <p>Select document(s) which you want to post to Xero </p>
@@ -102,17 +110,20 @@
             <p-header>
 
                 <div class="ui-helper-clearfix">
-                    <button pButton type="button" icon="pi pi-check" label="Post To Accounting System as Draft" [style]="{'float':'right'}"
-                        (click)="postToXero()"></button> &nbsp;&nbsp;&nbsp;
+                    <button pButton type="button" icon="pi pi-check" label="Post To Accounting System as Draft"
+                        [style]="{'float':'right'}" (click)="postToXero()"></button> &nbsp;&nbsp;&nbsp;
 
 
-                    <button pButton class="ui-button-info" type="button" icon="pi pi-check" label="Post To Accounting System as Waiting Approval"
-                        [style]="{'float':'right'}" (click)="postToApr()"></button> &nbsp;&nbsp;&nbsp;
+                    <button pButton class="ui-button-info" type="button" icon="pi pi-check"
+                        label="Post To Accounting System as Waiting Approval" [style]="{'float':'right'}"
+                        (click)="postToApr()"></button> &nbsp;&nbsp;&nbsp;
 
-                    <button pButton class="ui-button-success" type="button" icon="pi pi-check" label="Post To Accounting System as Approved"
-                        [style]="{'float':'right'}" (click)="postToAuth()"></button>
+                    <button pButton class="ui-button-success" type="button" icon="pi pi-check"
+                        label="Post To Accounting System as Approved" [style]="{'float':'right'}"
+                        (click)="postToAuth()"></button>
 
-                    &nbsp;&nbsp;&nbsp; <span class="ui-panel-title" style="font-size:16px;display:inline-block;margin-top:2px;margin-top:5px">Approved
+                    &nbsp;&nbsp;&nbsp; <span class="ui-panel-title"
+                        style="font-size:16px;display:inline-block;margin-top:2px;margin-top:5px">Approved
                         Documents [Select To Create Bill in Xero]</span>
                 </div>
 
@@ -150,7 +161,8 @@
                             [attr.rowspan]="rowGroupMetadata[rowData.DocumentID].size">
 
                             <label class="container">
-                                <input type="checkbox" [ngModel]="rowData.SelectToBill" (change)="onChangeApprove($event,rowData)">
+                                <input type="checkbox" [ngModel]="rowData.SelectToBill"
+                                    (change)="onChangeApprove($event,rowData)">
                                 <span class="checkmark"></span>
                             </label>
 
@@ -159,19 +171,22 @@
 
                         <td style="vertical-align: top;" *ngIf="rowGroupMetadata[rowData.DocumentID].index === rowIndex"
                             [attr.rowspan]="rowGroupMetadata[rowData.DocumentID].size">
-                            <button pButton type="button" icon="fa fa-file" class="ui-button-rounded ui-button-secondary"
-                                aria-hidden="true" (click)="showPdf(rowData)"></button>
+                            <button pButton type="button" icon="fa fa-file"
+                                class="ui-button-rounded ui-button-secondary" aria-hidden="true"
+                                (click)="showPdf(rowData)"></button>
                         </td>
 
                         <td style="vertical-align: top;" *ngIf="rowGroupMetadata[rowData.DocumentID].index === rowIndex"
                             [attr.rowspan]="rowGroupMetadata[rowData.DocumentID].size">
-                            <button pButton type="button" icon="fa fa-undo" class="ui-button-rounded ui-button-secondary"
-                                aria-hidden="true" (click)="DeAproveRecord(rowData)"></button>
+                            <button pButton type="button" icon="fa fa-undo"
+                                class="ui-button-rounded ui-button-secondary" aria-hidden="true"
+                                (click)="DeAproveRecord(rowData)"></button>
                         </td>
 
 
 
-                        <td style="vertical-align: top; word-wrap: break-word;" *ngIf="rowGroupMetadata[rowData.DocumentID].index === rowIndex"
+                        <td style="vertical-align: top; word-wrap: break-word;"
+                            *ngIf="rowGroupMetadata[rowData.DocumentID].index === rowIndex"
                             [attr.rowspan]="rowGroupMetadata[rowData.DocumentID].size">
                             {{rowData.ScanRefNumber}}
                             <!-- Ref : {{rowData.ScanRefNumber}} -->
@@ -189,7 +204,8 @@
                         <td style="width: 5em; text-align: right">{{rowData.ScanGST | currency}}</td>
                         <td style="width: 6em; text-align: right">{{rowData.Scan_Total | currency}}</td>
 
-                        <td style="vertical-align: center;text-align: right" *ngIf="rowGroupMetadata[rowData.DocumentID].index === rowIndex"
+                        <td style="vertical-align: center;text-align: right"
+                            *ngIf="rowGroupMetadata[rowData.DocumentID].index === rowIndex"
                             [attr.rowspan]="rowGroupMetadata[rowData.DocumentID].size">
 
                             <table>

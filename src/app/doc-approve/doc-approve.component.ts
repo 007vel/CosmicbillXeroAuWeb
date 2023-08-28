@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewEncapsulation, CUSTOM_ELEMENTS_SCHEMA ,ViewChild} from '@angular/core';
+import { Component, OnInit, ViewEncapsulation, CUSTOM_ELEMENTS_SCHEMA, ViewChild } from '@angular/core';
 import { StepsModule } from 'primeng/steps';
 import { MenuItem } from 'primeng/api';
 import { Router } from '@angular/router';
@@ -6,7 +6,7 @@ import { PanelModule } from 'primeng/panel';
 import { Message, SelectItem, ConfirmationService } from 'primeng/primeng';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { StoreService } from '../store.service';
-import {DialogModule} from 'primeng/dialog';
+import { DialogModule } from 'primeng/dialog';
 
 
 import { ApiService } from '../api.service';
@@ -30,23 +30,23 @@ export class DocApproveComponent implements OnInit {
   steps: MenuItem[];
   activeIndex: number = 1;
 
- xeroDocuments: any = [];
- xeroDocumentLines: any = [];
- xeroVendors: SelectItem[] = [];
- xeroAccounts: SelectItem[] = [];
+  xeroDocuments: any = [];
+  xeroDocumentLines: any = [];
+  xeroVendors: SelectItem[] = [];
+  xeroAccounts: SelectItem[] = [];
 
- xeroDocumentSelected: any; //Selected Xero Document
- xeroVendorSelected: any = {xeroVendorID:0, Addr1:'',City:'',State:'', Zip:'',Country:'' }; //Selected Xero Document
- xeroVendor: any = { line1Field: '', cityField: '', countrySubDivisionCodeField: '', postalCodeField: '', countryField: '' };
+  xeroDocumentSelected: any; //Selected Xero Document
+  xeroVendorSelected: any = { xeroVendorID: 0, Addr1: '', City: '', State: '', Zip: '', Country: '' }; //Selected Xero Document
+  xeroVendor: any = { line1Field: '', cityField: '', countrySubDivisionCodeField: '', postalCodeField: '', countryField: '' };
 
- xeroVendorsTemp : any = [];
+  xeroVendorsTemp: any = [];
   public msgs: Message[] = [];
 
   display: boolean = false;
-  public ScanPdfPath : "https://ezzydoc.blob.core.windows.net/docs/1877022.pdf?sv=2014-02-14&sr=b&sig=2qUuACRgoCrFkgW%2FincJ6DMvsl7i7gl36G%2Bd%2F98pPfQ%3D&st=2018-09-09T08%3A30%3A47Z&se=2118-09-09T08%3A35%3A47Z&sp=r"; 
-     
+  public ScanPdfPath: "https://ezzydoc.blob.core.windows.net/docs/1877022.pdf?sv=2014-02-14&sr=b&sig=2qUuACRgoCrFkgW%2FincJ6DMvsl7i7gl36G%2Bd%2F98pPfQ%3D&st=2018-09-09T08%3A30%3A47Z&se=2118-09-09T08%3A35%3A47Z&sp=r";
 
-  constructor(private router: Router, private api: ApiService, private ss: StoreService, private http: HttpClient, 
+
+  constructor(private router: Router, private api: ApiService, private ss: StoreService, private http: HttpClient,
     private spinner: NgxSpinnerService) {
 
   }
@@ -61,35 +61,35 @@ export class DocApproveComponent implements OnInit {
     this.getDocumentToApprove();
   }
 
- 
- checkXeroToken() {
 
-   var xeroID =this.ss.fetchXeroConnectID();
-    this.api.get('Xero/CheckXeroToken?XeroID='+ xeroID,"").subscribe(
+  checkXeroToken() {
+
+    var xeroID = this.ss.fetchXeroConnectID();
+    this.api.get('Xero/CheckXeroToken?XeroID=' + xeroID, "").subscribe(
       (res: {}) => this.validateCheckXeroToken(res),
       error => this.failedCheckXeroToken(<any>error));
-}
+  }
 
-validateCheckXeroToken(res: any) {
-  var token = this.ss.fetchToken();
-  var xeroCoonnectID = this.ss.fetchXeroConnectID();
-   if (res.StatusCode == 0) {
- 
-     if (res.Data.XeroTokenMinute < 0) {
-      window.location.href = this.api._xeroConnectUrl + token.toString();
-      //  window.location.href = this.api.xeroConnectUrl + token.toString()+"&xeroCoonnectID="+xeroCoonnectID.toString();
-     }
-   }
- }
+  validateCheckXeroToken(res: any) {
+    var token = this.ss.fetchToken();
+    var xeroCoonnectID = this.ss.fetchXeroConnectID();
+    if (res.StatusCode == 0) {
 
-failedCheckXeroToken(res: any) {
-  var token = this.ss.fetchToken();
-  this.router.navigate(['/initlogin/' + token.toString() + '/0/login']);
-}
+      if (res.Data.XeroTokenMinute < 0) {
+        //window.location.href = this.api._xeroConnectUrl + token.toString();
+        alert("Error in validateCheckXeroToken approve");
+      }
+    }
+  }
+
+  failedCheckXeroToken(res: any) {
+    var token = this.ss.fetchToken();
+    this.router.navigate(['/initlogin/' + token.toString() + '/0/login']);
+  }
 
 
   bindVendors() {
-    
+
     this.xeroVendors.push({ label: '', value: '' });
     this.xeroVendorsTemp.forEach(element => {
       this.xeroVendors.push({ label: element.displayNameField, value: element.idField });
@@ -138,14 +138,14 @@ failedCheckXeroToken(res: any) {
         this.router.navigateByUrl('/docpost');
       }
     }
-    // ,
-    // {
-    // label: 'Post to Authorised',
-    // command: (event: any) => {
-    //   this.activeIndex = 3;
-    //   this.router.navigateByUrl('/docauth');
-    // }
-    // }
+      // ,
+      // {
+      // label: 'Post to Authorised',
+      // command: (event: any) => {
+      //   this.activeIndex = 3;
+      //   this.router.navigateByUrl('/docauth');
+      // }
+      // }
     ];
 
   }
@@ -183,71 +183,72 @@ failedCheckXeroToken(res: any) {
     }
   }
 
-  onChangeApprove(event: any, hdr:any) {
+  onChangeApprove(event: any, hdr: any) {
 
 
     //check if Vendor and Expense Account is selected 
-  
-     this.msgs = [];
-     console.log(event);
-     console.log(hdr);
-     if((hdr.XeroVendorID === 0 || hdr.XeroVendorID === null) && event.target.checked === true){
+
+    this.msgs = [];
+    console.log(event);
+    console.log(hdr);
+    if ((hdr.XeroVendorID === 0 || hdr.XeroVendorID === null) && event.target.checked === true) {
       this.msgs.push({ severity: 'Info', summary: 'Vendor is a required field', detail: 'Please select a vendor.' });
       hdr.Approved = false;
       event.target.checked = false;
       return;
-     }
+    }
 
-     //check if expense account is seleced in all lines
-     if(event.target.checked ){
+    //check if expense account is seleced in all lines
+    if (event.target.checked) {
 
-      if(hdr.DocumentLine == null){
+      if (hdr.DocumentLine == null) {
         this.msgs.push({ severity: 'Info', summary: 'Expense Account is a required field', detail: 'Please select a Expense Account for bill lines.' });
         event.target.checked = false;
         return;
       }
 
-      if(hdr.DocumentLine.length == 0){
+      if (hdr.DocumentLine.length == 0) {
         this.msgs.push({ severity: 'Info', summary: 'Expense Account is a required field', detail: 'Please select a Expense Account for bill lines.' });
         event.target.checked = false;
         return;
       }
 
-       hdr.DocumentLine.forEach(element => {
-       if(element.XeroAccountID == 0){
-        this.msgs.push({ severity: 'Info', summary: 'Expense Account is a required field', detail: 'Please select a Expense Account for bill lines.' });
-        event.target.checked = false;
-        return;
-       }});
-      }
+      hdr.DocumentLine.forEach(element => {
+        if (element.XeroAccountID == 0) {
+          this.msgs.push({ severity: 'Info', summary: 'Expense Account is a required field', detail: 'Please select a Expense Account for bill lines.' });
+          event.target.checked = false;
+          return;
+        }
+      });
+    }
 
-      hdr.Approved = event.target.checked;
-     //Approve the bill
-     this.api.post('Xero/ApproveXeroDocument', hdr).subscribe(
+    hdr.Approved = event.target.checked;
+    //Approve the bill
+    this.api.post('Xero/ApproveXeroDocument', hdr).subscribe(
       (res1: {}) => this.successApproveDoc(res1),
       error => this.failedApproveDoc(<any>error));
 
-     
- }
 
- successApproveDoc(resp:any){
-   console.log("successApproveDoc=>111111111111111");
- }
+  }
 
- failedApproveDoc(resp:any){
-  this.msgs = [];
-  this.msgs.push({ severity: 'Error', summary: 'Failed to approve', detail: 'Failed to approve document.' });
- }
+  successApproveDoc(resp: any) {
+    console.log("successApproveDoc=>111111111111111");
+  }
+
+  failedApproveDoc(resp: any) {
+    this.msgs = [];
+    this.msgs.push({ severity: 'Error', summary: 'Failed to approve', detail: 'Failed to approve document.' });
+  }
 
 
- // how to open PDF document
- openDocument1(document: File) {
-  const fileReader: FileReader = new FileReader();
-  fileReader.onload = () => {
-  this.pdfViewer.openDocument(new Uint8Array(fileReader.result));
-  };
-  fileReader.readAsArrayBuffer(document);
-}
+  // how to open PDF document
+  openDocument1(document: File) {
+    const fileReader: FileReader = new FileReader();
+    fileReader.onload = () => {
+      this.pdfViewer.openDocument(new Uint8Array(fileReader.result));
+    };
+    fileReader.readAsArrayBuffer(document);
+  }
 
 
   viewdPdf(value: any) {
@@ -261,24 +262,24 @@ failedCheckXeroToken(res: any) {
 
     let headers = new HttpHeaders();
     headers = headers.set('Accept', 'application/pdf');
-    
-    this.http.get(this.api.apiBaseUrl+'Scan/GetQbDocumentFile?XeroDocumentID='+value,{ headers: headers, responseType: 'blob' }).subscribe(
-        (res: {}) => this.sucessDocumentFile(res),
-        error => this.failedDocumentFile(<any>error));
 
-    
+    this.http.get(this.api.apiBaseUrl + 'Scan/GetQbDocumentFile?XeroDocumentID=' + value, { headers: headers, responseType: 'blob' }).subscribe(
+      (res: {}) => this.sucessDocumentFile(res),
+      error => this.failedDocumentFile(<any>error));
+
+
   }
 
-  sucessDocumentFile(resp:any){
-   this.display = true;
-   this.openDocument1(resp);
+  sucessDocumentFile(resp: any) {
+    this.display = true;
+    this.openDocument1(resp);
   }
 
-  failedDocumentFile(resp:any){
-//    this.display = true;
+  failedDocumentFile(resp: any) {
+    //    this.display = true;
 
 
-  // this.openDocument1(resp);
+    // this.openDocument1(resp);
   }
 
 
@@ -288,7 +289,7 @@ failedCheckXeroToken(res: any) {
 
     //alert(event.value);
     var vend = this.xeroVendorsTemp.find(xx => xx.idField == event.value)
-    if(vend){
+    if (vend) {
       console.log(vend);
       this.xeroVendorSelected.Addr1 = vend.billAddrField.line1Field;
       this.xeroVendorSelected.City = vend.billAddrField.cityField;
@@ -297,16 +298,16 @@ failedCheckXeroToken(res: any) {
       this.xeroVendorSelected.Country = vend.billAddrField.countryField;
       this.xeroVendorSelected.XeroVendorName = vend.displayNameField;
 
-      
+
     }
   }
 
   onChangeAccount(line: any, accountlst: any) {
-		if (line) {
-			line.XeroAccountID = accountlst.XeroAccountID;
-			line.XeroAccountName = accountlst.XeroAccountName;
-		}
-	}
+    if (line) {
+      line.XeroAccountID = accountlst.XeroAccountID;
+      line.XeroAccountName = accountlst.XeroAccountName;
+    }
+  }
 
   onXeroDocumentSelect(event) {
 
@@ -317,25 +318,25 @@ failedCheckXeroToken(res: any) {
 
   openPdfDocument(document: any) {
     alert('123123');
-      this.pdfViewer.openDocument(this.api.apiBaseUrl+"TempPdfDownload/temp.pdf");
+    this.pdfViewer.openDocument(this.api.apiBaseUrl + "TempPdfDownload/temp.pdf");
   }
 
-  
 
-    // how to open PDF document
-  openDocument(File: any) {
 
   // how to open PDF document
-  
-    
-      this.pdfViewer.openDocument(File);
-    
+  openDocument(File: any) {
+
+    // how to open PDF document
+
+
+    this.pdfViewer.openDocument(File);
+
   }
 
   // how to create bookmark
   createBookmark() {
     this.pdfViewer.createBookmark().then(bookmark => {
-      if(bookmark) {
+      if (bookmark) {
         this.bookmarks.push(bookmark);
       }
     })

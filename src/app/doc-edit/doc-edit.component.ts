@@ -25,7 +25,7 @@ export class DocEditComponent implements OnInit {
   msgs: Message[] = [];
   loadingMessage: any = "Loading...";
   documentID: any = 0;
-  documentMemo: any ="";
+  documentMemo: any = "";
   xeroDocumentLinesEdit: any = [];
   xeroDocumentLinesEditToDelete: any = [];
   ScanPdfPath: any;
@@ -37,15 +37,14 @@ export class DocEditComponent implements OnInit {
 
   allDeleteSelected = false;  // header delete all checkbox
 
-  deleteSelectedAllLine=false; // line item delete all checkbox
+  deleteSelectedAllLine = false; // line item delete all checkbox
   documentVendor: "";
   billingAddress = "";
   reportViaTPAR = false;
   billNumber = "";
   invoiceNumber = "";
-  invoiceDate:Date;
+  invoiceDate: Date;
 
-  connectCompanyMessage: string = "";
 
   saveClicked: boolean = false;
   scanBlobUrl = "";
@@ -60,7 +59,7 @@ export class DocEditComponent implements OnInit {
     private spinner: NgxSpinnerService, private ss: StoreService,
     private confirmationService: ConfirmationService, private route: ActivatedRoute) {
 
-      console.log('InitLoginComponent3');
+    console.log('InitLoginComponent3');
     var xeroSetting = this.ss.fetchXeroAccounts();
 
 
@@ -129,7 +128,7 @@ export class DocEditComponent implements OnInit {
   }
   onCheckBoxChangeDeleteAllLine(event: any) {
 
-    console.log("onCheckBoxChangeDeleteAllLine:"+event.target.checked);
+    console.log("onCheckBoxChangeDeleteAllLine:" + event.target.checked);
     if (event.target.checked == true) {
       this.deleteSelectedAllLine = true;
 
@@ -181,13 +180,7 @@ export class DocEditComponent implements OnInit {
 
   }
 
-  validateConnectCompany() {
-    var companyName = this.ss.fetchCompanyName();
-    if (companyName == '' || companyName == null) {
-      this.connectCompanyMessage = "No company is connected, Connect a company from Switch Company menu";
-    }
-  }
-  
+
   bindVendors() {
 
     this.xeroVendorsTemp = this.ss.fetchXeroVendors();
@@ -213,7 +206,7 @@ export class DocEditComponent implements OnInit {
 
   }
   successGetDocument(resp: any) {
-   // debugger;
+    // debugger;
     this.spinner.hide();
     this.xeroDocumentLinesEdit = resp.Data;
 
@@ -239,7 +232,7 @@ export class DocEditComponent implements OnInit {
     this.invoiceDate = this.xeroDocumentLinesEdit[0].ScanInvoiceDate;
     this.scanBlobUrl = this.xeroDocumentLinesEdit[0].ScanBlob_Url;
     this.documentMemo = this.xeroDocumentLinesEdit[0].Memo;
-   
+
     this.CalculateTotal();
   }
   failedtoGetDocument(error: any) {
@@ -268,10 +261,10 @@ export class DocEditComponent implements OnInit {
 
     });
     this.invoiceDate = this.xeroDocumentLinesEdit[0].ScanInvoiceDate;
-    
+
 
   }
- 
+
   saveEditChanges() {
     this.msgs = [];
 
@@ -280,17 +273,17 @@ export class DocEditComponent implements OnInit {
       element.DocumentID = this.documentID;
       element.ScanInvoiceDate = this.invoiceDate;
     });
-    if(this.invoiceNumber==""){
+    if (this.invoiceNumber == "") {
       this.msgs.push({ severity: 'error', summary: 'Supplier Invoice Number is a required field', detail: 'Mandatory Field' });
-   return;
+      return;
     }
-    if(this.invoiceDate==null){
+    if (this.invoiceDate == null) {
       this.msgs.push({ severity: 'error', summary: 'Invoice Date is a required field', detail: 'Mandatory Field' });
-   return;
+      return;
     }
-    if(this.documentVendor==""){
+    if (this.documentVendor == "") {
       this.msgs.push({ severity: 'error', summary: 'Supplier is a required field', detail: 'Mandatory Field' });
-   return;
+      return;
     }
     var newRecord = this.xeroDocumentLinesEdit.filter(a => a.DocumentLineID == 0);
     if (newRecord.length > 0 && (newRecord[0].ScanDescription == '' || newRecord[0].Scan_Quantity == 0 || newRecord[0].ScanUnit_Price == 0)) {
@@ -337,10 +330,10 @@ export class DocEditComponent implements OnInit {
     console.log(record);
 
   }
-  successUpdateXeroDoc(res1:any){
+  successUpdateXeroDoc(res1: any) {
 
   }
-  failedUpdateXeroDoc(error:any){
+  failedUpdateXeroDoc(error: any) {
 
   }
 
@@ -351,20 +344,20 @@ export class DocEditComponent implements OnInit {
     this.xeroDocumentLinesEdit.forEach(element => {
       total = total + element.Scan_Total;
       gstTotal = gstTotal + element.ScanGST;
-      var subt = (element.ScanUnit_Price*element.Scan_Quantity);
-      subTotal = subTotal + subt ;
-      console.log("========>lineitem "+   (element.ScanUnit_Price*element.Scan_Quantity));
+      var subt = (element.ScanUnit_Price * element.Scan_Quantity);
+      subTotal = subTotal + subt;
+      console.log("========>lineitem " + (element.ScanUnit_Price * element.Scan_Quantity));
     });
 
-  
-    this.editSubTotal = Math.round(subTotal*100)/100;
+
+    this.editSubTotal = Math.round(subTotal * 100) / 100;
     this.editGstTotal = gstTotal;
     this.editTotal = this.editSubTotal + this.editGstTotal;
 
-    console.log("========>subTotal "+    subTotal);
-    console.log("========>editSubTotal "+    this.editSubTotal);
-    console.log("========>editGstTotal "+    this.editGstTotal);
-    console.log("========>editTotal "+    this.editTotal);
+    console.log("========>subTotal " + subTotal);
+    console.log("========>editSubTotal " + this.editSubTotal);
+    console.log("========>editGstTotal " + this.editGstTotal);
+    console.log("========>editTotal " + this.editTotal);
 
     this.xeroDocumentLinesEdit.forEach(element => {
       element.ScanInvoiceTotal = this.editTotal;
@@ -372,50 +365,44 @@ export class DocEditComponent implements OnInit {
       element.ScanTaxTotal = this.editGstTotal;
     });
 
-    
+
   }
-  private SetupTaxCode(docClassification:string, totalTax:Number ) : any
-  {
+  private SetupTaxCode(docClassification: string, totalTax: Number): any {
 
-      switch (docClassification)
-      {
-          case "UNIT_PRICE_INCLUSIVE_OF_TAX_AND_CHARGES":
-          case "GST_IN_TABLE_CHARGE_INCLUDES_GST":
-          case "GST_IN_TABLE":
-          case "NO_TABLE":
-              return "Inclusive";
+    switch (docClassification) {
+      case "UNIT_PRICE_INCLUSIVE_OF_TAX_AND_CHARGES":
+      case "GST_IN_TABLE_CHARGE_INCLUDES_GST":
+      case "GST_IN_TABLE":
+      case "NO_TABLE":
+        return "Inclusive";
 
-          case "HEADER_TABLE_NO_TABLE_VALIDATION":
-          case "HEADER_TABLE_TOTAL_ONLY_VALIDATION":
+      case "HEADER_TABLE_NO_TABLE_VALIDATION":
+      case "HEADER_TABLE_TOTAL_ONLY_VALIDATION":
 
-              if ( totalTax > 0)
-              {
-                  return "Inclusive";
-              }
-              else
-              {
-                  return "Exclusive";
-              }
+        if (totalTax > 0) {
+          return "Inclusive";
+        }
+        else {
+          return "Exclusive";
+        }
 
 
-          case "GST_NOT_IN_TABLE":
-          case "CHARGE_INCLUDES_TAX":
-          default:
-            return "Exclusive";
-      }
+      case "GST_NOT_IN_TABLE":
+      case "CHARGE_INCLUDES_TAX":
+      default:
+        return "Exclusive";
+    }
   }
 
-  deleteAllLineItem()
-  {
-    if(!this.deleteSelectedAllLine)
-    {
-     // return;
+  deleteAllLineItem() {
+    if (!this.deleteSelectedAllLine) {
+      // return;
     }
     this.deleteSelectedAllLine = false;
-    
+
     this.xeroDocumentLinesEditToDelete.forEach(element => {
       console.log(JSON.stringify(element));
-    //  if(element.DocumentID == this.documentID)
+      //  if(element.DocumentID == this.documentID)
       {
         this.api.post('Xero/DeleteXeroDocumentLine', { 'DocumentLineID': element.DocumentLineID }).subscribe(
           (res1: {}) => this.successDeleteLineRecord(res1, element, true),
@@ -424,11 +411,11 @@ export class DocEditComponent implements OnInit {
 
     });
 
-    this.deleteSelectedAllLine=false;
+    this.deleteSelectedAllLine = false;
   }
 
   onDeleteCheckBoxClick(event: any, hdr: any) {
-    
+
     this.msgs = [];
     var qboDocument = this.xeroDocumentLinesEdit.filter(xx => xx.DocumentID == hdr.DocumentID);
     qboDocument.Deleted = event.target.checked;
@@ -444,7 +431,7 @@ export class DocEditComponent implements OnInit {
       }
     }
 
-    if ( this.xeroDocumentLinesEditToDelete.length== this.xeroDocumentLinesEdit.length && event.target.checked == true) {
+    if (this.xeroDocumentLinesEditToDelete.length == this.xeroDocumentLinesEdit.length && event.target.checked == true) {
       this.deleteSelectedAllLine = true;
     }
     else {
@@ -452,9 +439,8 @@ export class DocEditComponent implements OnInit {
     }
 
   }
-  private NumberRoundUp(num: any) : any
-  {
-    return Math.round((( num)*100)+Number.EPSILON)/100;
+  private NumberRoundUp(num: any): any {
+    return Math.round(((num) * 100) + Number.EPSILON) / 100;
   }
   onChangeTax(record: any) {
 
@@ -479,7 +465,7 @@ export class DocEditComponent implements OnInit {
   onChangePrice(record: any) {
 
     record.Scan_Total = record.Scan_Quantity * record.ScanUnit_Price;
-    record.ScanUnit_Price = Math.round(    record.ScanUnit_Price * 100) / 100;
+    record.ScanUnit_Price = Math.round(record.ScanUnit_Price * 100) / 100;
     if (record.ScanTax > 0)
       record.ScanGST = ((record.Scan_Quantity * record.ScanUnit_Price) * record.ScanTax) / 100;
     else
@@ -490,17 +476,17 @@ export class DocEditComponent implements OnInit {
   successDeleteLineRecord(res: any, record: any, isbulkdelete: boolean) {
     this.spinner.hide();
     if (res.StatusCode == 0) {
-     // debugger;
+      // debugger;
       const index: number = this.xeroDocumentLinesEdit.indexOf(record);
       console.log(index);
       this.xeroDocumentLinesEdit.splice(index, 1);
-     // debugger;
+      // debugger;
 
       this.CalculateTotal();
 
       this.api.post('Xero/EditScanTotal', { 'DocumentID': this.documentID, 'ScanInvoiceTotal': this.editTotal }).subscribe(
-        (res1: {}) => !isbulkdelete?alert('Updated Successfully'):"",
-        error => !isbulkdelete? alert('Error in Update'):"");
+        (res1: {}) => !isbulkdelete ? alert('Updated Successfully') : "",
+        error => !isbulkdelete ? alert('Error in Update') : "");
 
     }
 
@@ -516,7 +502,7 @@ export class DocEditComponent implements OnInit {
     console.log(record.DocumentLineID);
     if (confirm("Are you sure want to remove this line ?")) {
       if (record.DocumentLineID == 0) {
-       // debugger;
+        // debugger;
         const index: number = this.xeroDocumentLinesEdit.indexOf(record);
         console.log(index);
         this.xeroDocumentLinesEdit.splice(index, 1);
@@ -538,9 +524,9 @@ export class DocEditComponent implements OnInit {
     this.router.navigateByUrl("/docreview");
   }
 
-  
 
-  
+
+
   sucessDocumentFilePath(resp: any, valu: any) {
     debugger;
     console.log(this.api.apiPreBaseUrl + resp);
@@ -552,7 +538,7 @@ export class DocEditComponent implements OnInit {
     this.display = true;
     this.openDocument1(resp);
   }
- 
+
   showPdf(value: any) {
     let headers = new HttpHeaders();
     headers = headers.set('Accept', 'application/pdf');
@@ -571,11 +557,11 @@ export class DocEditComponent implements OnInit {
       error => this.failedDocumentFile(<any>error));
   }
 
-  
+
   openDocument1(document: File) {
     const fileReader: FileReader = new FileReader();
     fileReader.onload = () => {
-    this.pdfViewer.openDocument(new Uint8Array(fileReader.result));
+      this.pdfViewer.openDocument(new Uint8Array(fileReader.result));
     };
     fileReader.readAsArrayBuffer(document);
   }
@@ -645,8 +631,7 @@ export class DocEditComponent implements OnInit {
       var refNumber = '';
       var supplier = '';
       //var invoiceDate=this.xeroDocumentLinesEdit[0].ScanInvoiceDate;
-      if(this.xeroDocumentLinesEdit!=null && this.xeroDocumentLinesEdit.length>0)
-      {
+      if (this.xeroDocumentLinesEdit != null && this.xeroDocumentLinesEdit.length > 0) {
         this.xeroDocumentLinesEdit.push(
           {
             'DocumentID': this.documentID,
@@ -663,19 +648,19 @@ export class DocEditComponent implements OnInit {
             'XeroAccountName': this.xeroDocumentLinesEdit[0].XeroAccountName,
             'ScanABNNumber': this.xeroDocumentLinesEdit[0].ScanABNNumber,
             'ScanRefNumber': this.xeroDocumentLinesEdit[0].ScanRefNumber,
-            'scanBlobUrl': this.xeroDocumentLinesEdit[0].ScanBlob_Url ,
-             'ScanTax': 0
-  
+            'scanBlobUrl': this.xeroDocumentLinesEdit[0].ScanBlob_Url,
+            'ScanTax': 0
+
           });
 
-          var acct = this.xeroVendorsTemp.find(xx => xx.XeroVendorID == this.documentVendor);
-          this.xeroDocumentLinesEdit.forEach(element => {
-            element.XeroVendorID = acct.XeroVendorID;
-            element.XeroVendorName = acct.DisplayNameField;
-          });
+        var acct = this.xeroVendorsTemp.find(xx => xx.XeroVendorID == this.documentVendor);
+        this.xeroDocumentLinesEdit.forEach(element => {
+          element.XeroVendorID = acct.XeroVendorID;
+          element.XeroVendorName = acct.DisplayNameField;
+        });
 
 
-      }else{
+      } else {
         this.xeroDocumentLinesEdit.push(
           {
             'DocumentID': this.documentID,
@@ -686,25 +671,25 @@ export class DocEditComponent implements OnInit {
             'Scan_Total': 0.0,
             'ScanInvoiceTotal': 0,
             'ScanDescription': "",
-            'XeroVendorID': this.documentVendor ,
-            'ScanInvoiceDate':this.invoiceDate,
+            'XeroVendorID': this.documentVendor,
+            'ScanInvoiceDate': this.invoiceDate,
             'XeroAccountID': "",
             'ScanABNNumber': this.billNumber,
             'ScanRefNumber': this.invoiceNumber,
-             'ScanTax': 0,
-             'scanBlobUrl':this.scanBlobUrl ,
-             'Memo':this.documentMemo
+            'ScanTax': 0,
+            'scanBlobUrl': this.scanBlobUrl,
+            'Memo': this.documentMemo
           });
 
-          var acct = this.xeroVendorsTemp.find(xx => xx.XeroVendorID == this.documentVendor);
-          this.xeroDocumentLinesEdit.forEach(element => {
-            element.XeroVendorID = acct.XeroVendorID;
-            element.XeroVendorName = acct.DisplayNameField;
-          });
+        var acct = this.xeroVendorsTemp.find(xx => xx.XeroVendorID == this.documentVendor);
+        this.xeroDocumentLinesEdit.forEach(element => {
+          element.XeroVendorID = acct.XeroVendorID;
+          element.XeroVendorName = acct.DisplayNameField;
+        });
       }
-     
 
-      console.log(this.xeroDocumentLinesEdit+" New line added");
+
+      console.log(this.xeroDocumentLinesEdit + " New line added");
     }
 
   }
@@ -715,7 +700,7 @@ export class DocEditComponent implements OnInit {
     if (res.StatusCode == 0) {
       alert("Successfully updated invoice");
       this.router.navigateByUrl("/docreview");
-     // this.getUpdatedDocument(this.documentID);
+      // this.getUpdatedDocument(this.documentID);
     }
 
 

@@ -10,6 +10,7 @@ import { Message, ConfirmationService } from 'primeng/primeng';
 import { Alert } from 'selenium-webdriver';
 import { StoreService } from '../store.service';
 import { CosmicNotifyService } from '../CosmicNotifyService';
+import { AppComponent } from '../app.component';
 
 
 @Component({
@@ -30,7 +31,6 @@ export class DocPostComponent implements OnInit {
   msgs: Message[] = [];
   ScanPdfPath: any;
   loadingMessage: any = "Loading...";
-  connectCompanyMessage: any = "";
   isViewerHidden: any = false;
   display: boolean = false;
 
@@ -38,18 +38,20 @@ export class DocPostComponent implements OnInit {
   bookmarks: SimplePDFBookmark[] = [];
 
   constructor(private router: Router, private api: ApiService, private http: HttpClient, private spinner: NgxSpinnerService,
-    private confirmationService: ConfirmationService, private ss: StoreService, protected cosmicNotifyService: CosmicNotifyService) { }
+    private confirmationService: ConfirmationService, private ss: StoreService, protected cosmicNotifyService: CosmicNotifyService, private appComponent: AppComponent) { }
 
   validateConnectCompany() {
     var companyName = this.ss.fetchCompanyName();
-    if (companyName == '' || companyName == null) {
-      this.connectCompanyMessage = "No company is connected, Connect a company from Switch Company menu";
+    var IsAuthorize = this.ss.fetchIsAuthorize();
+    if (!IsAuthorize) {
+      this.appComponent.connectCompanyMessage = "No company is connected, Connect a company";
+    } else {
+      this.appComponent.connectCompanyMessage = "";
     }
   }
 
   ngOnInit() {
 
-    // this.checkXeroToken();
     this.validateConnectCompany();
     this.steps = [
       {
@@ -110,7 +112,8 @@ export class DocPostComponent implements OnInit {
     if (res.StatusCode == 0) {
 
       if (res.Data.XeroTokenMinute < 0) {
-        window.location.href = this.api._xeroConnectUrl + token.toString();
+        //window.location.href = this.api._xeroConnectUrl + token.toString();
+        alert("Error in validateCheckXeroToken post");
       }
 
     }
@@ -198,11 +201,10 @@ export class DocPostComponent implements OnInit {
 
 
   DeAproveRecord(record: any) {
-
     this.confirmationService.confirm({
       message: 'Are you sure want to send the selected record back to review again?',
       accept: () => {
-       this.spinner.show();
+        this.spinner.show();
         this.loadingMessage = "Please wait..";
         this.api.post('Xero/ApproveXeroDocument', { 'DocumentID': record.DocumentID, 'Approve': false }).subscribe(
           (res1: {}) => this.successDeleteRecord(res1),
@@ -270,16 +272,16 @@ export class DocPostComponent implements OnInit {
   }
 
   postToAuth() {
-  
+
     this.CreateBill("WAP");
   }
 
   postToXero() {
-   
+
     this.CreateBill("DR");
   }
   postToApr() {
-   
+
     this.CreateBill("AP");
   }
 
@@ -308,7 +310,7 @@ export class DocPostComponent implements OnInit {
           error => this.failedCreateBill(<any>error));
       },
       reject: () => {
-        //this.XeroAccountIDSelected = 0;
+
       }
     });
 
@@ -346,7 +348,7 @@ export class DocPostComponent implements OnInit {
       if (element.IsAuthrorize == true) {
         this.isaouthrize = element.IsAuthrorize;
 
-        this.api.post('Xero/UpdateReAuthrorizeByAccountID?isReaouth='+ element.IsAuthrorize,"").subscribe(
+        this.api.post('Xero/UpdateReAuthrorizeByAccountID?isReaouth=' + element.IsAuthrorize, "").subscribe(
           (res: {}) => this.sucess(res),
           error => this.failed(<any>error));
       }
@@ -362,7 +364,7 @@ export class DocPostComponent implements OnInit {
 
   failed(resp: any) {
     console.log(resp);
-   
+
   }
 
   showHideViewer() {

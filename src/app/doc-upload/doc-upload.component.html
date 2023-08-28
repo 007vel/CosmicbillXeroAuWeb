@@ -4,19 +4,22 @@
 
 <p-messages [(value)]="msgs"></p-messages>
 
-<div *ngIf="totalFiles>0">
-<ngx-spinner bdColor="rgba(87, 109, 142, 0.10)" size="medium" color="#0081c2" type="ball-elastic-dots">
-    <p style="text-align: center; background-color:#0081c2; font-size: 20px; color: white; height: 30px; width:200px;  ">
-        {{loadingMessage}}</p>
-</ngx-spinner>
+<div>
+    <ngx-spinner bdColor="rgba(87, 109, 142, 0.10)" size="medium" color="#0081c2" type="ball-elastic-dots">
+        <p
+            style="text-align: center; background-color:#0081c2; font-size: 20px; color: white; height: 30px; width:200px;  ">
+            {{loadingMessage}}
+        </p>
+    </ngx-spinner>
 </div>
 
-<h3 style="color: red">{{connectCompanyMessage}}</h3>
+<h3 style="color: red">{{appComponent.connectCompanyMessage}}</h3>
 <p-confirmDialog header="Confirmation" icon="pi pi-exclamation-triangle"></p-confirmDialog>
 
 <p-accordion>
     <p-accordionTab header="Help">
-        <p>Select document(s) to upload by either click on [+ Choose PDFs for scan] button or drag drop your documents </p>
+        <p>Select document(s) to upload by either click on [+ Choose PDFs for scan] button or drag drop your documents
+        </p>
         <p>Click on [Cancel/Reset] button to reset screen</p>
         <p>Click on [Upload] button to upload your document(s) </p>
     </p-accordionTab>
@@ -24,29 +27,27 @@
 </p-accordion>
 <div>
 
-        <p-fileUpload name="clientFiles" url="{{postDocApiUrl}}" customUpload="true" (onUpload)="onUpload($event)"
-           chooseLabel = "Upload PDFs to scan"  [(disabled)]="disableUploadButton"
-           uploadLabel = "Start Scanning"
-           
-            cancelLabel = "Cancel / Reset"
-            (onBeforeSend)="onBeforeSend($event)" multiple="multiple" form-data="formdata" accept=".pdf" maxFileSize="10000000"
-            (onProgress)="onProgress($event)" (onSelect)="onSelect($event)" (uploadHandler)="myUploader($event)" (onClear)="clearAll($event)" >
+    <p-fileUpload name="clientFiles" url="{{postDocApiUrl}}" customUpload="true" (onUpload)="onUpload($event)"
+        chooseLabel="Upload PDFs to scan" [(disabled)]="disableUploadButton" uploadLabel="Start Scanning"
+        cancelLabel="Cancel / Reset" (onBeforeSend)="onBeforeSend($event)" multiple="multiple" form-data="formdata"
+        accept=".pdf,.PDF" maxFileSize="10000000" (onProgress)="onProgress($event)" (onSelect)="onSelect($event)"
+        (uploadHandler)="myUploader($event)" (onClear)="clearAll($event)">
 
-      
 
-      <ng-template let-my pTemplate="file">
+
+        <ng-template let-my pTemplate="file">
             <div>
-              
+
             </div>
         </ng-template>
-            <ng-template let-my pTemplate="content">
-                <div>
-                    <h3 style="color:#0081c2"> Drag & Drop your document(s) here...</h3>
-                 
-                        
-        <table *ngIf="uploadedFiles.length">
-                <tr>
-                        <th style="text-align:left" >Index</th>
+        <ng-template let-my pTemplate="content">
+            <div>
+                <h3 style="color:#0081c2"> Drag & Drop your document(s) here...</h3>
+
+
+                <table *ngIf="uploadedFiles.length">
+                    <tr>
+                        <th style="text-align:left">Index</th>
                         <th style="text-align:left">File Name</th>
                         <th style="text-align:left">File Size</th>
                         <!-- <th style="text-align:left">Cancel</th> -->
@@ -54,21 +55,23 @@
                         <th></th>
                     </tr>
 
-                <tr *ngFor="let my of uploadedFiles">
-                    <td style="width: 4em">{{my.fileId}}</td>
-                    <td style="width: 40em">{{my.myfile.name}}</td>
-                    <td style="width: 10em">{{my.myfile.size}} bytes</td>
-                    <td style="width: 4em">
+                    <tr *ngFor="let my of uploadedFiles">
+                        <td style="width: 4em">{{my.fileId}}</td>
+                        <td style="width: 40em">{{my.myfile.name}}</td>
+                        <td style="width: 10em">{{my.myfile.size}} bytes</td>
+                        <td style="width: 4em">
                             <!-- <img src="../../assets/images/green_progress.gif" > -->
-                            <p-progressSpinner *ngIf="my.status == 1 || my.status == 2" [style]="{width: '22px', height: '22px'}" strokeWidth="8" fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>
-                            <img *ngIf="my.status == 3" src="../../assets/images/done.png" >
-                     </td>
-                     <td>{{my.progressMessage}}</td>
+                            <p-progressSpinner *ngIf="my.status == 1 || my.status == 2"
+                                [style]="{width: '22px', height: '22px'}" strokeWidth="8" fill="#EEEEEE"
+                                animationDuration=".5s"></p-progressSpinner>
+                            <img *ngIf="my.status == 3" src="../../assets/images/done.png">
+                        </td>
+                        <td>{{my.progressMessage}}</td>
 
-                </tr>
-            </table>
-                </div>
-            </ng-template>
+                    </tr>
+                </table>
+            </div>
+        </ng-template>
 
-        </p-fileUpload>
-    </div>
+    </p-fileUpload>
+</div>
