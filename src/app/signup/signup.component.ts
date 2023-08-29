@@ -9,6 +9,7 @@ import { ApiService } from '../api.service';
 import './signup.component.css';
 import { EncryptingService } from '../encrypting.service';
 import { ParameterHashLocationStrategy } from '../ParameterHashLocationStrategy';
+import { stringhelper } from '../stringhelper';
 
 
 
@@ -60,7 +61,7 @@ export class SignupComponent implements OnInit {
     console.log(`Resolved captcha with response: ${captchaResponse}`);
     this.Recaptcha = true;
 
-}
+  }
 
   onSubmit(value: any) {
     this.msgs = [];
@@ -76,14 +77,14 @@ export class SignupComponent implements OnInit {
 
       this.ss.storeEmail(this.signupform.value.Email);
       this.ss.storeUserName(this.signupform.value.UserName);
-      var encryptPassword =  this.encApi.encrypt(this.signupform.value.Password);
-      this.ss.storePassword(encryptPassword );
+      var encryptPassword = this.encApi.encrypt(this.signupform.value.Password);
+      this.ss.storePassword(encryptPassword);
       if (this.signupform.value.Password != this.signupform.value.NewPassword) {
         this.msgs.push({ severity: 'warn', summary: 'Confirm Password', detail: 'Password does not match.' });
         return;
       }
 
-      this.signupform.value.Password =encryptPassword;
+      this.signupform.value.Password = encryptPassword;
 
       event.preventDefault();
       this.loading = true;
@@ -140,9 +141,13 @@ export class SignupComponent implements OnInit {
     if (res.StatusCode == 0) {
 
       this.ss.storeEmail(res.Data.EmailAddress.toString());
-     // this.router.navigate(['/initlogin/' + res.Data.Token.toString() + '/0/login']);
-      this.router.navigate(['/initlogin/'], { queryParams: { IsLoginFlow: true }, queryParamsHandling: 'merge' });
-
+      var xeroAuthenicatedURL = this.ss.fetchXeroAuthUrl();
+      if (!stringhelper.IsNullOrEmptyOrDefault(xeroAuthenicatedURL)) {
+        this.ss.storeXeroAuthUrl("");
+        window.location.href = xeroAuthenicatedURL;
+      } else {
+        this.router.navigate(['/initlogin/'], { queryParams: { IsLoginFlow: true }, queryParamsHandling: 'merge' });
+      }
     } else {
       this.msgs.push({ severity: 'error', summary: 'Oops..', detail: 'Incorrect credentials' });
     }

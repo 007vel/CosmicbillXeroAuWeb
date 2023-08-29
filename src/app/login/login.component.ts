@@ -84,7 +84,7 @@ export class LoginComponent implements OnInit {
             error => this.failedGetAccount(<any>error));
     }
     SaveAccount(res: any, accountRes: any) {
-        debugger;
+        // debugger;
         console.log("res ", JSON.stringify(res));
 
         if (res.Data != null) {
@@ -93,7 +93,7 @@ export class LoginComponent implements OnInit {
                 this.ss.storeXeroConnectID(res.Data[0].XeroID);
                 this.ss.storeCompanyName(res.Data[0].CompanyName);
                 if (res.Data[0] != null && res.Data[0] != undefined && res.Data[0].IsAuthrorize != true) {
-                    debugger;
+                    //   debugger;
                     // this.confirmationService.confirm({
                     //     message: "Can you confirm if you would like to disconnect from Xero?",
                     //     accept: () => {                            

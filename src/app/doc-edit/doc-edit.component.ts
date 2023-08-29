@@ -528,7 +528,7 @@ export class DocEditComponent implements OnInit {
 
 
   sucessDocumentFilePath(resp: any, valu: any) {
-    debugger;
+    // debugger;
     console.log(this.api.apiPreBaseUrl + resp);
     const win = window.open(this.api.apiPreBaseUrl + resp, 'View Pdf', 'width=800,height=700');
     win.focus();

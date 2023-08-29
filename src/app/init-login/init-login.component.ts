@@ -12,6 +12,7 @@ import { ParameterHashLocationStrategy } from '../ParameterHashLocationStrategy'
 import { HomelayoutComponent } from '../homelayout/homelayout.component';
 import { Console } from 'console';
 import { AppComponent } from '../app.component';
+import { stringhelper } from '../stringhelper';
 
 
 @Component({
@@ -51,7 +52,7 @@ export class InitLoginComponent implements OnInit, OnDestroy {
       ParameterHashLocationStrategy.signinFlow = false;
       this.IsloginFlow = params['IsLoginFlow'];
       this.ReAuthXeroUI = params['ReAuthXeroUI'];
-      debugger;
+      //  debugger;
       console.log("Auth code:" + this.code);
       this.delay(1000);
       var accessTokenFromStore = this.ss.fetchToken();
@@ -69,14 +70,24 @@ export class InitLoginComponent implements OnInit, OnDestroy {
 
         if (this.code && this.code.length > 20) {
           console.log("Init flow 2 ==========>");
-          this.ReAuthXeroUI = this.ss.fetchIsReAuthFlow();
-          this.getToken();
-          this.ss.storeIsReAuthFlow(false);
+          var email = this.ss.fetchEmail();
+          debugger;
+          if (!stringhelper.IsNullOrEmptyOrDefault(email)) {
+            this.ReAuthXeroUI = this.ss.fetchIsReAuthFlow();
+            this.getToken();
+            this.ss.storeIsReAuthFlow(false);
+          } else {
+            this.ss.storeXeroAuthUrl(ParameterHashLocationStrategy.authUrl);
+            this.router.navigate(['/login']);
+          }
+
         } else if (this.IsloginFlow) {
           console.log("Init flow 3 ==========>");
           this.ss.storeIsReAuthFlow(this.ReAuthXeroUI);
           this.delay(1000);
-          window.location.href = "https://login.xero.com/identity/connect/authorize?response_type=code&client_id=" + this.api.xeroclientId + "&redirect_uri=" + this.api.xeroCallbackUrl + "&scope=" + this.api.xeroScope;
+          var connectUrl = "https://login.xero.com/identity/connect/authorize?response_type=code&client_id=" + this.api.xeroclientId + "&redirect_uri=" + this.api.xeroCallbackUrl + "&scope=" + this.api.xeroScope;
+          console.log(connectUrl);
+          window.location.href = connectUrl;
         } else {
           console.log("Init flow 4 ==========>");
           this.router.navigate(['/login']);
@@ -130,7 +141,7 @@ export class InitLoginComponent implements OnInit, OnDestroy {
   }
 
   SaveLoginresponse(res: any) {
-    debugger;
+    // debugger;
     console.log("SaveLoginresponse" + JSON.stringify(res));
     if (res.StatusCode == 0) {
 

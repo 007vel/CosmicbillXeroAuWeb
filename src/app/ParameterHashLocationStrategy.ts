@@ -4,12 +4,16 @@ import { HashLocationStrategy } from '@angular/common';
 @Injectable()
 export class ParameterHashLocationStrategy extends HashLocationStrategy {
     public static authCode: string = null;
+    public static authUrl: string = null;
     public static planId: string = null;
     public static signinFlow: boolean = null;
     prepareExternalUrl(internal: string): string {
         //debugger;
         console.log('preparing external url', "1>>>> " + window.location.search, "2>>>> " + super.prepareExternalUrl(internal)); // log
 
+
+        console.log("Full URL: " + window.location.href);
+        ParameterHashLocationStrategy.authUrl = window.location.href
         var querParams = window.location.search.split('&');
         if (window.location.search != null && window.location.search != '') {
             querParams = window.location.search.split('&');

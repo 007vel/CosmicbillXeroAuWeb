@@ -21,6 +21,8 @@ const XERO_ACCOUNT_KEY = 'local_XeroAccount';
 const PAID_PDF_COUNT = 'paid_pdf_count';
 const TRIAL_PDF_COUNT = 'trial_pdf_count';
 
+const XeroAuthUrl = 'XeroAuthUrl';
+
 const TOTAL_ALLOCATED_PDF_KEY = 'total_allocated_pdf';
 
 @Injectable({
@@ -136,6 +138,9 @@ export class StoreService {
     this.storage.set(XERO_VENDOR_KEY, data);
     console.log(this.storage.get(XERO_VENDOR_KEY) || 'LocaL storage is empty');
   }
+  public storeXeroAuthUrl(data: string): void {
+    this.storage.set(XeroAuthUrl, data);
+  }
 
   public fetchXeroVendors(): any {
     return this.storage.get(XERO_VENDOR_KEY)
@@ -163,6 +168,9 @@ export class StoreService {
   }
   public fetchPaidPdfCount(): any {
     return this.storage.get(PAID_PDF_COUNT)
+  }
+  public fetchXeroAuthUrl(): string {
+    return this.storage.get(XeroAuthUrl)
   }
   public storePaidPdfCount(value: any, invalidateTrialCount: boolean): void {
     this.storage.set(PAID_PDF_COUNT, value);
