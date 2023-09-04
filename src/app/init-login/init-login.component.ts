@@ -78,7 +78,7 @@ export class InitLoginComponent implements OnInit, OnDestroy {
             this.ss.storeIsReAuthFlow(false);
           } else {
             this.ss.storeXeroAuthUrl(ParameterHashLocationStrategy.authUrl);
-            this.router.navigate(['/login']);
+            this.router.navigate(['/signup']);
           }
 
         } else if (this.IsloginFlow) {

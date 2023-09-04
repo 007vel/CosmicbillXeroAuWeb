@@ -138,6 +138,7 @@ import { CacheInterceptor } from './CacheInterceptor';
 import { PackagePurchaseHelper } from './PackagePurchaseHelper';
 import { CosmicNotifyService } from './CosmicNotifyService';
 import { RecaptchaModule } from "ng-recaptcha";
+import { AutoxignupxeroComponent } from './AutoSignupXero/autoxignupxero.component';
 
 
 
@@ -267,7 +268,8 @@ import { RecaptchaModule } from "ng-recaptcha";
         ManageProductComponent,
         ManageItemComponent,
         DocEditComponent,
-        DocAuthComponent
+        DocAuthComponent,
+        AutoxignupxeroComponent
     ],
     providers: [
         CarService, CountryService, ConfirmDialogModule, EventService, ConfirmationService, NodeService, ApiService, StoreService, EncryptingService, CosmicNotifyService,
