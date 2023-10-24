@@ -58,6 +58,8 @@ export class DocReviewComponent implements OnInit {
     private spinner: NgxSpinnerService, private ss: StoreService,
     private confirmationService: ConfirmationService, protected cosmicNotifyService: CosmicNotifyService, private appComponent: AppComponent) { }
 
+    debugger;
+    
   validateConnectCompany() {
     var companyName = this.ss.fetchCompanyName();
     var IsAuthorize = this.ss.fetchIsAuthorize();

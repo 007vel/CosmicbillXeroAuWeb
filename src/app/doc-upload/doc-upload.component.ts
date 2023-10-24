@@ -1,3 +1,5 @@
+
+import { style } from '@angular/animations';
 import { Component, Injectable, OnInit, ViewEncapsulation } from '@angular/core';
 import { MenuItem, ConfirmationService } from 'primeng/api';
 import { Router } from '@angular/router';
@@ -15,6 +17,7 @@ import { MessagesModule } from 'primeng/messages';
 import { MessageModule } from 'primeng/message';
 import { Message, SelectItem } from 'primeng/primeng';
 import { AppComponent } from '../app.component';
+import { ok } from 'assert';
 @Component({
   selector: 'app-doc-upload',
   templateUrl: './doc-upload.component.html',
@@ -43,23 +46,60 @@ export class DocUploadComponent implements OnInit {
   loadingMessage: any = "Loading...";
   disableUploadButton: boolean = false;
 
+  public companyName: String = "No company is connected, Connect a company ";
+
+
   msgs: Message[] = [];
 
   constructor(private router: Router, private store: StoreService,
     private http: HttpClient, private api: ApiService,
     private spinner: NgxSpinnerService
-    , private confirmationService: ConfirmationService, private packagePurchaseHelper: PackagePurchaseHelper, protected cosmicNotifyService: CosmicNotifyService, private appComponent: AppComponent) {
+    , private confirmationService: ConfirmationService, private packagePurchaseHelper: PackagePurchaseHelper, protected cosmicNotifyService: CosmicNotifyService, private appComponent: AppComponent, private ss: StoreService) {
 
     this.postDocApiUrl = api.apiBaseUrl + "scan/UploadDocumentXero?sessionID=1"
+
+
+    this.companyName = this.ss.fetchCompanyName();
+    
+    debugger;
+    var IsAuthorize = this.ss.fetchIsAuthorize();
+    if (!this.companyName) {
+        this.companyName = "No company is connected, Connect a company";
+    }
+
 
   }
 
   validateConnectCompany() {
+
     this.getXeroDetail();
 
+    var companyName = this.ss.fetchCompanyName();
+    var IsAuthorize = this.ss.fetchIsAuthorize();
+  //   debugger;
+  //   if (!IsAuthorize) {
+  //     this.appComponent.connectCompanyMessage = "No company is connected, Connect a company";
+  //   } else {
+  //     this.appComponent.connectCompanyMessage = "";
+  // }
 
-  }
+  debugger;
+  this.confirmationService.confirm({
+    message: 'No company is connected, Connect a company',
+    accept: () => {
+    },
+    
+    header : 'Error',
+    acceptLabel: 'Ok',
+    rejectVisible: false,
+    
+   
+  });
 
+}
+
+
+  
   ngOnInit() {
 
     this.validateConnectCompany();
@@ -147,6 +187,7 @@ export class DocUploadComponent implements OnInit {
 
   onUpload(event) {
 
+    debugger;
     this.totalFiles = 0;
     this.spinner.hide();
 

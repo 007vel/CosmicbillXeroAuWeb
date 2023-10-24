@@ -40,6 +40,8 @@ export class DocPostComponent implements OnInit {
   constructor(private router: Router, private api: ApiService, private http: HttpClient, private spinner: NgxSpinnerService,
     private confirmationService: ConfirmationService, private ss: StoreService, protected cosmicNotifyService: CosmicNotifyService, private appComponent: AppComponent) { }
 
+
+    debugger;
   validateConnectCompany() {
     var companyName = this.ss.fetchCompanyName();
     var IsAuthorize = this.ss.fetchIsAuthorize();

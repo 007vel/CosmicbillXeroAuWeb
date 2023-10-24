@@ -25,3 +25,22 @@
 .ui-steps.steps-custom .ui-steps-item .ui-steps-title {
     color: #0081c2;
 }
+
+.center-dialog {
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+  }
+  
+
+  .centered-dialog {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 9999; /* Set a high z-index to ensure it's on top of other elements */
+}
+
+
+
+

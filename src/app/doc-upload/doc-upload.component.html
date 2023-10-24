@@ -1,3 +1,4 @@
+
 <br>
 <p-steps [model]="steps" [(activeIndex)]="activeIndex" styleClass="steps-custom" [readonly]="false"></p-steps>
 <br>
@@ -13,8 +14,12 @@
     </ngx-spinner>
 </div>
 
-<h3 style="color: red">{{appComponent.connectCompanyMessage}}</h3>
-<p-confirmDialog header="Confirmation" icon="pi pi-exclamation-triangle"></p-confirmDialog>
+
+
+
+<h3 style="color: red">{{ companyName }}</h3>
+<p-confirmDialog  header="Error" icon="pi pi-exclamation-triangle" ></p-confirmDialog>
+
 
 <p-accordion>
     <p-accordionTab header="Help">
@@ -74,4 +79,6 @@
         </ng-template>
 
     </p-fileUpload>
+
+    
 </div>
