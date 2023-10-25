@@ -1,3 +1,5 @@
+
+import { style } from '@angular/animations';
 import { Component, Injectable, OnInit, ViewEncapsulation } from '@angular/core';
 import { MenuItem, ConfirmationService } from 'primeng/api';
 import { Router } from '@angular/router';
@@ -14,6 +16,8 @@ import { CosmicNotifyService } from '../CosmicNotifyService';
 import { MessagesModule } from 'primeng/messages';
 import { MessageModule } from 'primeng/message';
 import { Message, SelectItem } from 'primeng/primeng';
+import { AppComponent } from '../app.component';
+import { ok } from 'assert';
 @Component({
   selector: 'app-doc-upload',
   templateUrl: './doc-upload.component.html',
@@ -33,7 +37,7 @@ export class DocUploadComponent implements OnInit {
   indexOfFileInProgress: number = 0;
   progress: any;
   Scanning: any;
-  connectCompanyMessage: string = "";
+
   clientFiles: any = [];
   fileIndex: number = 0;
   AsyncBackEndScanning: boolean = false;
@@ -42,28 +46,62 @@ export class DocUploadComponent implements OnInit {
   loadingMessage: any = "Loading...";
   disableUploadButton: boolean = false;
 
+  public companyName: String = "No company is connected, Connect a company ";
+
+
   msgs: Message[] = [];
 
   constructor(private router: Router, private store: StoreService,
     private http: HttpClient, private api: ApiService,
     private spinner: NgxSpinnerService
-    , private confirmationService: ConfirmationService, private packagePurchaseHelper: PackagePurchaseHelper, protected cosmicNotifyService: CosmicNotifyService) {
+    , private confirmationService: ConfirmationService, private packagePurchaseHelper: PackagePurchaseHelper, protected cosmicNotifyService: CosmicNotifyService, private appComponent: AppComponent, private ss: StoreService) {
+
     this.postDocApiUrl = api.apiBaseUrl + "scan/UploadDocumentXero?sessionID=1"
+
+
+    this.companyName = this.ss.fetchCompanyName();
+    
+    debugger;
+    var IsAuthorize = this.ss.fetchIsAuthorize();
+    if (!this.companyName) {
+        this.companyName = "No company is connected, Connect a company";
+    }
+
 
   }
 
   validateConnectCompany() {
+
     this.getXeroDetail();
-    var companyName = this.store.fetchCompanyName();
-    if (companyName == '' || companyName == null) {
-      this.connectCompanyMessage = "No company is connected, Connect a company from Switch Company menu";
-    } else {
 
-    }
-  }
+    var companyName = this.ss.fetchCompanyName();
+    var IsAuthorize = this.ss.fetchIsAuthorize();
+  //   debugger;
+  //   if (!IsAuthorize) {
+  //     this.appComponent.connectCompanyMessage = "No company is connected, Connect a company";
+  //   } else {
+  //     this.appComponent.connectCompanyMessage = "";
+  // }
 
+  debugger;
+  this.confirmationService.confirm({
+    message: 'No company is connected, Connect a company',
+    accept: () => {
+    },
+    
+    header : 'Error',
+    acceptLabel: 'Ok',
+    rejectVisible: false,
+    
+   
+  });
+
+}
+
+
+  
   ngOnInit() {
-    // this.checkXeroToken();
+
     this.validateConnectCompany();
 
     this.steps = [
@@ -116,9 +154,7 @@ export class DocUploadComponent implements OnInit {
       this.store.storeCompanyName(res.Data[0].CompanyName);
 
       var companyName = res.Data[0].CompanyName;
-      if (companyName == '' || companyName === null) {
-        this.connectCompanyMessage = "No company is connected, Connect a company from Switch Company menu";
-      }
+
       this.AsyncBackEndScanning = res.Data[0].AsyncBackEndScanning;
       this.DirectPostfromEmail = res.Data[0].DirectPostfromEmail
     }
@@ -137,7 +173,8 @@ export class DocUploadComponent implements OnInit {
     if (res.StatusCode == 0) {
 
       if (res.Data.XeroTokenMinute < 0) {
-        window.location.href = this.api._xeroConnectUrl + token.toString();
+        //window.location.href = this.api._xeroConnectUrl + token.toString();
+        alert("Error in validateCheckXeroToken");
       }
 
     }
@@ -150,6 +187,7 @@ export class DocUploadComponent implements OnInit {
 
   onUpload(event) {
 
+    debugger;
     this.totalFiles = 0;
     this.spinner.hide();
 

@@ -1,4 +1,4 @@
-import { Component, OnInit,ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { StoreService } from '../store.service';
 import { Router } from '@angular/router';
 import { ApiService } from '../api.service';
@@ -25,14 +25,14 @@ export class MapAccountComponent implements OnInit {
   xeroAccountIDSelected: any = 0;
   qboaccountsTemp: any = [];
   msgs: Message[] = [];
-  loadingMessage:any = "Loading...";
+  loadingMessage: any = "Loading...";
   filteredAccount: any[];
   constructor(private router: Router, private api: ApiService, private spinner: NgxSpinnerService, private ss: StoreService,
     private confirmationService: ConfirmationService) { }
 
   ngOnInit() {
-   // this.checkXeroToken();
-    
+    // this.checkXeroToken();
+
     this.bindAccounts();
     this.bindVendAcctDefault();
 
@@ -42,76 +42,41 @@ export class MapAccountComponent implements OnInit {
         command: (event: any) => {
           this.activeIndex = 0;
           this.router.navigateByUrl('/mapaccount');
-         }
+        }
       },
       {
-      label: 'Upload Document',
-      command: (event: any) => {
-        this.activeIndex = 1;
-        this.router.navigateByUrl('/docupload');
-       }
-    },
-    {
-      label: 'Review and Approve',
-      command: (event: any) => {
-        this.activeIndex = 2;
-        this.router.navigateByUrl('/docreview');
+        label: 'Upload Document',
+        command: (event: any) => {
+          this.activeIndex = 1;
+          this.router.navigateByUrl('/docupload');
+        }
+      },
+      {
+        label: 'Review and Approve',
+        command: (event: any) => {
+          this.activeIndex = 2;
+          this.router.navigateByUrl('/docreview');
+        }
+      },
+      {
+        label: 'Post To Accounting System',
+        command: (event: any) => {
+          this.activeIndex = 3;
+          this.router.navigateByUrl('/docpost');
+        }
       }
-    },
-    {
-      label: 'Post To Accounting System',
-      command: (event: any) => {
-        this.activeIndex = 3;
-        this.router.navigateByUrl('/docpost');
-      }
-    }
-    // ,
-    // {
-    // label: 'Post to Authorised',
-    // command: (event: any) => {
-    //   this.activeIndex = 4;
-    //   this.router.navigateByUrl('/docauth');
-    // }
-    // }
+      // ,
+      // {
+      // label: 'Post to Authorised',
+      // command: (event: any) => {
+      //   this.activeIndex = 4;
+      //   this.router.navigateByUrl('/docauth');
+      // }
+      // }
     ];
 
-    
+
   }
-
-  // checkXeroToken() {
-  //   var xeroID =this.ss.fetchXeroConnectID();
-  //   this.api.get('Xero/CheckXeroToken?XeroID='+ xeroID,"").subscribe(
-  //     (res: {}) => this.validateCheckXeroToken(res),
-  //     error => this.failedCheckXeroToken(<any>error));
-  // }
-  
-  // validateCheckXeroToken(res: any) {
-  //   var token = this.ss.fetchToken();
-  //    if (res.StatusCode == 0) {
-   
-  //      if (res.Data.XeroTokenMinute < 0) {
-  //        window.location.href = this.api.xeroConnectUrl + token.toString();
-  //      }
-       
-  //    }
-  //  }
-  
-  // failedCheckXeroToken(res: any) {
-  //   var token = this.ss.fetchToken();
-  //   this.router.navigate(['/initlogin/' + token.toString() + '/0/login']);
-  // }
-
-
-
-
-  // bindVendors() {
-
-  //   var tmpVendor = this.ss.fetchXeroVendors();
-  //   this.XeroVendors.push({ label: '', value: '' });
-  //   tmpVendor.forEach(element => {
-  //     this.XeroVendors.push({ label: element.DisplayNameField, value: element.XeroVendorID });
-  //   });
-  // }
 
 
 
@@ -121,7 +86,7 @@ export class MapAccountComponent implements OnInit {
     var tmpAccounts = this.ss.fetchXeroAccounts();
     console.log('this.qboaccountsTemp')
     console.log(this.qboaccountsTemp)
-    if(tmpAccounts == null) return;
+    if (tmpAccounts == null) return;
 
     this.xeroAccounts.push({ label: '', value: '' });
 
@@ -135,14 +100,14 @@ export class MapAccountComponent implements OnInit {
     let filtered: any[] = [];
     let query = event.query;
     if (query == null || query.length >= 3) {
-    for (let i = 0; i < this.qboaccountsTemp.length; i++) {
-      let country = this.qboaccountsTemp[i];
+      for (let i = 0; i < this.qboaccountsTemp.length; i++) {
+        let country = this.qboaccountsTemp[i];
 
-      if(country.FullyQualifiedNameField.toLowerCase().includes(event.query.toLowerCase())){
-        filtered.push(country);
+        if (country.FullyQualifiedNameField.toLowerCase().includes(event.query.toLowerCase())) {
+          filtered.push(country);
         }
+      }
     }
-  }
 
     this.filteredAccount = filtered;
     console.log('this.filteredAccount')
@@ -200,14 +165,14 @@ export class MapAccountComponent implements OnInit {
         this.loadingMessage = "Saving changes...";
 
         var acct = this.qboaccountsTemp.find(xx => xx.XeroAccountID == this.xeroAccountIDSelected);
-              
+
 
         this.xeroVendAcctDefault.forEach(element => {
-          if(element.Select){
+          if (element.Select) {
             element.XeroAccountID = this.xeroAccountIDSelected;
             element.XeroAccountName = acct.FullyQualifiedNameField
           }
-          
+
         });
 
         //Actual logic to perform a confirmation
@@ -223,11 +188,11 @@ export class MapAccountComponent implements OnInit {
     });
   }
 
-  successSaveAll(resp:any){
+  successSaveAll(resp: any) {
     this.spinner.hide();
   }
 
-  failedSaveAll(resp:any){
+  failedSaveAll(resp: any) {
     this.spinner.hide();
   }
 
@@ -244,15 +209,15 @@ export class MapAccountComponent implements OnInit {
   }
 
   onChangeAccount(event: any, hdr: any) {
-    
-    
+
+
     this.api.post('Xero/SaveVendAcctDefault', hdr).subscribe(
       (res1: {}) => this.successSaveAll(res1),
       error => this.failedSaveAll(<any>error));
   }
 
   onChangeAccountDropdown(event: any, hdr: any) {
-    
+
     var acct = this.qboaccountsTemp.find(xx => xx.XeroAccountID == event.XeroAccountID);
     hdr.XeroAccountName = acct.FullyQualifiedNameField;
     hdr.XeroAccountID = acct.XeroAccountID;
@@ -262,11 +227,11 @@ export class MapAccountComponent implements OnInit {
   }
 
 
-  onChangeSelectAll(event:any){
-    
+  onChangeSelectAll(event: any) {
+
     this.xeroVendAcctDefault.forEach(element => {
       element.Select = event.target.checked;
-      
+
     });
   }
 

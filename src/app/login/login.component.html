@@ -1,15 +1,13 @@
 <!DOCTYPE html>
 <html>
+
     <head>
         <script>
             document.write('<base href="' + document.location + '" />');
         </script>
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-        <meta
-            name="viewport"
-            content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"
-        />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <title>CosmicBills - Login</title>
         <script src="https://www.google.com/recaptcha/api.js" async></script>
@@ -17,21 +15,15 @@
     </head>
 
     <!-- 3. Display the application -->
-    <ngx-spinner
-        bdColor="rgba(87, 109, 142, 0.10)"
-        size="medium"
-        color="#0081c2"
-        type="ball-elastic-dots"
-        ><p
-            style="
+    <ngx-spinner bdColor="rgba(87, 109, 142, 0.10)" size="medium" color="#0081c2" type="ball-elastic-dots">
+        <p style="
                 text-align: center;
                 background-color: #0081c2;
                 font-size: 20px;
                 color: white;
                 height: 30px;
                 width: 200px;
-            "
-        >
+            ">
             Please wait...
         </p>
     </ngx-spinner>
@@ -39,41 +31,28 @@
     <body class="login-body">
         <form [formGroup]="loginform" (ngSubmit)="onSubmit(loginform)">
             <div id="login-wrapper">
-                <img
-                    src="../../assets/images/cosmic bills_logo_white_smaller.gif"
-                />
+                <img src="../../assets/images/cosmic bills_logo_white_smaller.gif" />
 
                 <p-messages [(value)]="msgs"></p-messages>
 
                 <div id="login-container">
-                    <span class="title"
-                        ><h5 style="color: #0081c2">
+                    <span class="title">
+                        <h5 style="color: #0081c2">
                             Login into Cosmic Bills
-                        </h5></span
-                    >
+                        </h5>
+                    </span>
 
                     <div class="ui-g ui-fluid">
                         <div class="ui-g-12">
-                            <input
-                                type="text"
-                                autocomplete="off"
-                                class="ui-inputtext ui-corner-all ui-state-default ui-widget"
-                                placeholder="Username"
-                                formControlName="UserName"
-                                (focusout)="txtFocus()"
-                                (focus)="txtFocus()"
-                            />
+                            <input type="text" autocomplete="off"
+                                class="ui-inputtext ui-corner-all ui-state-default ui-widget" placeholder="Username"
+                                formControlName="UserName" (focusout)="txtFocus()" (focus)="txtFocus()" />
                         </div>
 
                         <div class="ui-g-12">
-                            <input
-                                type="password"
-                                autocomplete="off"
-                                class="ui-inputtext ui-corner-all ui-state-default ui-widget"
-                                placeholder="Password"
-                                formControlName="Password"
-                                (focus)="txtFocus()"
-                            />
+                            <input type="password" autocomplete="off"
+                                class="ui-inputtext ui-corner-all ui-state-default ui-widget" placeholder="Password"
+                                formControlName="Password" (focus)="txtFocus()" />
                         </div>
 
                         <br />
@@ -83,46 +62,39 @@
                             <input type="checkbox" />
                         </div>
                         <div class="ui-g-12 ui-md-6">
-                            <a href="#" [routerLink]="['/forgotpass']"
-                                >Forgot Password</a
-                            >
+                            <a href="#" [routerLink]="['/forgotpass']">Forgot Password</a>
                         </div>
                         <!-- Insert captcha UI code here -->
                         <div class="ui-g-12 align-items-center">
                             <!-- <div class="ui-c"> -->
-                                <re-captcha
-                                    (resolved)="resolved($event)"
-                                    siteKey="6LcGXtklAAAAADKsTZVxZH3mQrzS4AXIEHWLFjsT"
-                                ></re-captcha>
+                            <re-captcha (resolved)="resolved($event)"
+                                siteKey="6LcGXtklAAAAADKsTZVxZH3mQrzS4AXIEHWLFjsT"></re-captcha>
                             <!-- </div> -->
                         </div>
                         <div class="ui-g-12">
-                            <button
-                                type="submit"
+                            <button type="submit"
                                 class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-left"
-                                [disabled]="!(loginform.valid && Recaptcha)"
-                            >
-                                <span
-                                    class="ui-button-icon-left ui-c fa fa-fw ui-icon-person"
-                                ></span>
+                                [disabled]="!(loginform.valid && Recaptcha)">
+                                <span class="ui-button-icon-left ui-c fa fa-fw ui-icon-person"></span>
                                 <span class="ui-button-text ui-c">Sign In</span>
                             </button>
                         </div>
 
                         <div class="ui-g-12">
                             <button [routerLink]="['/signup']">
-                                <span class="ui-button-text ui-c"
-                                    >New user? Create Account</span
-                                >
+                                <span class="ui-button-text ui-c">New user? Create Account</span>
                             </button>
                         </div>
                         <div class="ui-g-12">
-                            <a
-                                href="https://cosmicbills.com/terms-of-use-and-privacy-statements-for-all-cosmic-bills-users/"
-                                target="_blank"
-                                >Terms of Use and Privacy Policy</a
-                            >
+                            <a href="https://cosmicbills.com/terms-of-use-and-privacy-statements-for-all-cosmic-bills-users/"
+                                target="_blank">Terms of Use and Privacy Policy</a>
+
+
                         </div>
+
+                    </div>
+                    <div>
+                        <a style="padding-top: 50px; color: black; font-size: 13px;">Version 1.23.7.2</a>
                     </div>
                 </div>
 
@@ -130,4 +102,5 @@
             </div>
         </form>
     </body>
+
 </html>

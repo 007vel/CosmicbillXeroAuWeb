@@ -9,6 +9,7 @@ import { HttpHeaders, HttpClient } from '@angular/common/http';
 import { Message, ConfirmationService } from 'primeng/primeng';
 import { Alert } from 'selenium-webdriver';
 import { StoreService } from '../store.service';
+import { AppComponent } from '../app.component';
 
 @Component({
 	selector: 'app-doc-auth',
@@ -26,233 +27,237 @@ export class DocAuthComponent implements OnInit {
 	msgs: Message[] = [];
 	ScanPdfPath: any;
 	loadingMessage: any = "Loading...";
-	connectCompanyMessage: any = "";
-	isViewerHidden:any= false; 
+	isViewerHidden: any = false;
 	display: boolean = false;
-  
+
 	@ViewChild(SimplePdfViewerComponent) private pdfViewer: SimplePdfViewerComponent;
 	bookmarks: SimplePDFBookmark[] = [];
 
 	constructor(private router: Router, private api: ApiService, private http: HttpClient, private spinner: NgxSpinnerService,
-		private confirmationService: ConfirmationService, private ss: StoreService) { }
+		private confirmationService: ConfirmationService, private ss: StoreService, private appComponent: AppComponent) { }
 
-		validateConnectCompany() {
-			var companyName = this.ss.fetchCompanyName();
-			if (companyName == '' || companyName == null) {
-			  this.connectCompanyMessage = "No company is connected, Connect a company from Switch Company menu";
-			}
-		  }
-		
-	  ngOnInit() {
+		debugger;
+	validateConnectCompany() {
+		var companyName = this.ss.fetchCompanyName();
+		var IsAuthorize = this.ss.fetchIsAuthorize();
+		debugger;
+		if (!IsAuthorize) {
+			this.appComponent.connectCompanyMessage = "No company is connected, Connect a company";
+		} else {
+			this.appComponent.connectCompanyMessage = "";
+		}
+	}
+
+	ngOnInit() {
 		// this.checkXeroToken();
 		this.validateConnectCompany();
 		this.steps = [
-		  {
-			label: 'Map Supplier Default Account',
-			command: (event: any) => {
-			  this.activeIndex = 0;
-			  this.router.navigateByUrl('/mapaccount');
+			{
+				label: 'Map Supplier Default Account',
+				command: (event: any) => {
+					this.activeIndex = 0;
+					this.router.navigateByUrl('/mapaccount');
+				}
+			},
+			{
+				label: 'Upload Document',
+				command: (event: any) => {
+					this.activeIndex = 1;
+					this.router.navigateByUrl('/docupload');
+				}
+			},
+			{
+				label: 'Review and Approve',
+				command: (event: any) => {
+					this.activeIndex = 2;
+					this.router.navigateByUrl('/docreview');
+				}
+			},
+			{
+				label: 'Post to Draft',
+				command: (event: any) => {
+					this.activeIndex = 3;
+					this.router.navigateByUrl('/docpost');
+				}
 			}
-		  },
-		  {
-			label: 'Upload Document',
-			command: (event: any) => {
-			  this.activeIndex = 1;
-			  this.router.navigateByUrl('/docupload');
-			}
-		  },
-		  {
-			label: 'Review and Approve',
-			command: (event: any) => {
-			  this.activeIndex = 2;
-			  this.router.navigateByUrl('/docreview');
-			}
-		  },
-		  {
-			label: 'Post to Draft',
-			command: (event: any) => {
-			  this.activeIndex = 3;
-			  this.router.navigateByUrl('/docpost');
-			}
-		  }
-		  ,
-			  {
+			,
+			{
 				label: 'Post to Authorised',
 				command: (event: any) => {
-				  this.activeIndex = 4;
-				  this.router.navigateByUrl('/docauth');
+					this.activeIndex = 4;
+					this.router.navigateByUrl('/docauth');
 				}
-			  }
+			}
 		];
-	
+
 		this.getDocumentToBill();
-	 }
+	}
 
-	 checkXeroToken() {
+	checkXeroToken() {
 
-		var xeroID =this.ss.fetchXeroConnectID();
-		this.api.get('Xero/CheckXeroToken?XeroID='+ xeroID,"").subscribe(
-		  (res: {}) => this.validateCheckXeroToken(res),
-		  error => this.failedCheckXeroToken(<any>error));
-	  }
-	  
-	  validateCheckXeroToken(res: any) {
+		var xeroID = this.ss.fetchXeroConnectID();
+		this.api.get('Xero/CheckXeroToken?XeroID=' + xeroID, "").subscribe(
+			(res: {}) => this.validateCheckXeroToken(res),
+			error => this.failedCheckXeroToken(<any>error));
+	}
+
+	validateCheckXeroToken(res: any) {
 		var token = this.ss.fetchToken();
-		 if (res.StatusCode == 0) {
-	   
-		   if (res.Data.XeroTokenMinute < 0) {
-			 window.location.href = this.api._xeroConnectUrl + token.toString();
-		   }
-		   
-		 }
-	   }
-	  
-	  failedCheckXeroToken(res: any) {
+		if (res.StatusCode == 0) {
+
+			if (res.Data.XeroTokenMinute < 0) {
+				//window.location.href = this.api._xeroConnectUrl + token.toString();
+				alert("Error in validateCheckXeroToken auth");
+			}
+
+		}
+	}
+
+	failedCheckXeroToken(res: any) {
 		var token = this.ss.fetchToken();
 		this.router.navigate(['/initlogin/' + token.toString() + '/0/login']);
-	  }
+	}
 
 
-	  getDocumentToBill() {
+	getDocumentToBill() {
 
 		this.spinner.show();
 		this.api.get('Scan/GetXeroDocumentToAuth', '').subscribe(
-		  (res: {}) => this.sucessDocumentToBill(res),
-		  error => this.failedDocumentToBill(<any>error));
-	
-	  }
-	
-	  sucessDocumentToBill(resp: any) {
+			(res: {}) => this.sucessDocumentToBill(res),
+			error => this.failedDocumentToBill(<any>error));
+
+	}
+
+	sucessDocumentToBill(resp: any) {
 		console.log(resp);
 		this.xeroDocumentLines = resp.Data;
 		this.spinner.hide();
 		this.updateRowGroupMetaData();
-	
+
 		this.selectAllAsDefault();
-	  }
-	
-	  failedDocumentToBill(resp: any) {
+	}
+
+	failedDocumentToBill(resp: any) {
 		console.log(resp);
 		this.spinner.hide();
-	  }
+	}
 
-	  onSort() {
+	onSort() {
 		this.updateRowGroupMetaData();
-	  }
-	  updateRowGroupMetaData() {
+	}
+	updateRowGroupMetaData() {
 		this.rowGroupMetadata = {};
 		if (this.xeroDocumentLines) {
-		  for (let i = 0; i < this.xeroDocumentLines.length; i++) {
-			let rowData = this.xeroDocumentLines[i];
-			let brand = rowData.DocumentID;
-			if (i == 0) {
-			  this.rowGroupMetadata[brand] = { index: 0, size: 1 };
+			for (let i = 0; i < this.xeroDocumentLines.length; i++) {
+				let rowData = this.xeroDocumentLines[i];
+				let brand = rowData.DocumentID;
+				if (i == 0) {
+					this.rowGroupMetadata[brand] = { index: 0, size: 1 };
+				}
+				else {
+					let previousRowData = this.xeroDocumentLines[i - 1];
+					let previousRowGroup = previousRowData.DocumentID;
+					if (brand === previousRowGroup)
+						this.rowGroupMetadata[brand].size++;
+					else
+						this.rowGroupMetadata[brand] = { index: i, size: 1 };
+				}
 			}
-			else {
-			  let previousRowData = this.xeroDocumentLines[i - 1];
-			  let previousRowGroup = previousRowData.DocumentID;
-			  if (brand === previousRowGroup)
-				this.rowGroupMetadata[brand].size++;
-			  else
-				this.rowGroupMetadata[brand] = { index: i, size: 1 };
-			}
-		  }
 		}
-	  }
-
-
-	  
-  selectAllAsDefault(){
-    this.xeroDocumentLines.forEach(element => {
-      element.SelectToBill = true;
-
-    });
 	}
-	
+
+
+
+	selectAllAsDefault() {
+		this.xeroDocumentLines.forEach(element => {
+			element.SelectToBill = true;
+
+		});
+	}
+
 	postToXero() {
 
 
-    var xeroSelectedDocument = this.xeroDocumentLines.filter(xx => xx.SelectToBill == true);
+		var xeroSelectedDocument = this.xeroDocumentLines.filter(xx => xx.SelectToBill == true);
 
-    if (xeroSelectedDocument == null) {
+		if (xeroSelectedDocument == null) {
 
-      this.msgs = [];
-      this.msgs.push({ severity: 'Info', summary: 'Please select a document atleast', detail: 'Mandatory.' });
-      return;
-    }
+			this.msgs = [];
+			this.msgs.push({ severity: 'Info', summary: 'Please select a document atleast', detail: 'Mandatory.' });
+			return;
+		}
 
 
-    
 
-    this.confirmationService.confirm({
-      message: 'Are you sure that you want to post all selected document(s) to Auth',
-      accept: () => {
-        this.spinner.show();
-        this.loadingMessage = "Posting to Auth...";
-        this.api.post('Xero/BillAuthProcess', xeroSelectedDocument).subscribe(
-          (res1: {}) => this.successCreateBill(res1),
-          error => this.failedCreateBill(<any>error));
-      },
-      reject: () => {
-        //this.XeroAccountIDSelected = 0;
-      }
-    });
 
-  }
+		this.confirmationService.confirm({
+			message: 'Are you sure that you want to post all selected document(s) to Auth',
+			accept: () => {
+				this.spinner.show();
+				this.loadingMessage = "Posting to Auth...";
+				this.api.post('Xero/BillAuthProcess', xeroSelectedDocument).subscribe(
+					(res1: {}) => this.successCreateBill(res1),
+					error => this.failedCreateBill(<any>error));
+			},
+			reject: () => {
+				//this.XeroAccountIDSelected = 0;
+			}
+		});
 
-  successCreateBill(resp: any) {
-    this.spinner.hide();
-    this.msgs = [];
-    this.msgs.push({ severity: 'success', summary: 'Success', detail: 'Document posted to Auth successfully' });
-    this.getDocumentToBill();
-  }
-
-  failedCreateBill(resp: any) {
-    this.spinner.hide();
-    this.msgs = [];
-    this.msgs.push({ severity: 'error', summary: 'Failed', detail: 'Please try again' });
-  }
-
-  showHideViewer(){
-    this.isViewerHidden = !this.isViewerHidden;
-  }
-	
-
-	getRecordClass(index:any, docType:any)
-  {
-      if(docType == "CreditNote"){
-        return 'creditNote'
-      }
-      else{
-       return (index % 2 === 0) ? 'odd' : 'even' ;
-      }
-    
 	}
-	
+
+	successCreateBill(resp: any) {
+		this.spinner.hide();
+		this.msgs = [];
+		this.msgs.push({ severity: 'success', summary: 'Success', detail: 'Document posted to Auth successfully' });
+		this.getDocumentToBill();
+	}
+
+	failedCreateBill(resp: any) {
+		this.spinner.hide();
+		this.msgs = [];
+		this.msgs.push({ severity: 'error', summary: 'Failed', detail: 'Please try again' });
+	}
+
+	showHideViewer() {
+		this.isViewerHidden = !this.isViewerHidden;
+	}
+
+
+	getRecordClass(index: any, docType: any) {
+		if (docType == "CreditNote") {
+			return 'creditNote'
+		}
+		else {
+			return (index % 2 === 0) ? 'odd' : 'even';
+		}
+
+	}
+
 	failedDocumentFile(resp: any) {
-    this.spinner.hide();
-  }
+		this.spinner.hide();
+	}
 
-  onChangeApproveAll(event: any) {
+	onChangeApproveAll(event: any) {
 
-    this.xeroDocumentLines.forEach(element => {
-      element.SelectToBill = event.target.checked;
+		this.xeroDocumentLines.forEach(element => {
+			element.SelectToBill = event.target.checked;
 
-    });
-  }
+		});
+	}
 
-  onChangeApprove(event: any, hdr: any) {
-    console.log(hdr.DocumentID);
-    
-    var lines = this.xeroDocumentLines.filter(xx => xx.DocumentID == hdr.DocumentID);
-    if(lines != null){
-      lines.forEach(element => {
-        element.SelectToBill = event.target.checked;
-  
-      });
+	onChangeApprove(event: any, hdr: any) {
+		console.log(hdr.DocumentID);
 
-    }
-    
-  }
-	
+		var lines = this.xeroDocumentLines.filter(xx => xx.DocumentID == hdr.DocumentID);
+		if (lines != null) {
+			lines.forEach(element => {
+				element.SelectToBill = event.target.checked;
+
+			});
+
+		}
+
+	}
+
 }

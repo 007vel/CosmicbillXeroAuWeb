@@ -11,6 +11,7 @@ import { PackagePurchaseHelper } from '../PackagePurchaseHelper';
 import { Alert } from 'selenium-webdriver';
 import { CosmicNotifyService } from '../CosmicNotifyService';
 import { NgxSpinnerService } from 'ngx-spinner';
+import { AppComponent } from '../app.component';
 @Component({
     selector: 'app-homelayout',
     templateUrl: './homelayout.component.html',
@@ -73,22 +74,23 @@ export class HomelayoutComponent implements AfterViewInit, OnDestroy, OnInit {
     constructor(private api: ApiService, private router: Router, public renderer: Renderer2, private ss: StoreService,
         private packagePurchaseHelper: PackagePurchaseHelper, private confirmationService: ConfirmationService,
         private spinner: NgxSpinnerService,
-        protected cosmicNotifyService: CosmicNotifyService) {
+        protected cosmicNotifyService: CosmicNotifyService, private appComponent: AppComponent) {
 
-
+        this.appComponent.isConnectedToXero = this.ss.fetchIsAuthorize();
         this.companyName = this.ss.fetchCompanyName();
-        if (this.companyName == '' || this.companyName == null) {
-            this.companyName = "No company is connected, Connect a company from Switch Company menu";
+        
+        debugger;
+        var IsAuthorize = this.ss.fetchIsAuthorize();
+        if (!this.companyName) {
+            this.companyName = "No company is connected, Connect a company";
         }
-        // this.packagePurchaseHelper.getSubscribedPlan();
+
         this.getStartofAutoRenwalInfo();
         this.getSubscribedPlan1();
-
         this.CheckAvailablePDFCount();
-
-
     }
     ngOnInit() {
+
         console.log(">>>>>>>>>>>>>>>>>>>>>>>> ngOnInit cosmicNotifyService");
         this.cosmicNotifyService.myEventEmiter.subscribe(
             () => {
@@ -103,6 +105,40 @@ export class HomelayoutComponent implements AfterViewInit, OnDestroy, OnInit {
     }
     delay(ms: number) {
         return new Promise(resolve => setTimeout(resolve, ms));
+    }
+    disconnectFromXero() {
+        console.log("**********disconnectFromXero********");
+        this.appComponent.showDisconnectConfirmation = true;
+        this.SHowXeroDisconnectDialog();
+
+    }
+    connectToXero() {
+        console.log("**********connectFromXero********");
+        this.appComponent.ReAuthXeroUI();
+    }
+
+    private async DisconnectFromXero() {
+        this.spinner.show();
+        this.api.post('Xero/RevokeXeroToken', '').subscribe(
+            (res: {}) => this.xeroconnectionResponse(res),
+            error => this.xeroconnectionResponse(<any>error));
+    }
+    private SHowXeroDisconnectDialog() {
+        console.log("********** SHowXeroDisconnectDialog********");
+        this.confirmationService.confirm({
+            message: "Can you confirm if you would like to disconnect from Xero?",
+            accept: () => {
+                this.loadingMessage = "Xero connection...";
+                this.DisconnectFromXero();
+            },
+            reject: () => {
+            }
+        });
+    }
+    xeroconnectionResponse(res: any) {
+        this.spinner.hide();
+        console.log("xeroconnectionResponse>>>>>>>>>>>>>> " + res);
+        this.appComponent.GetAccount();
     }
     private async CheckAvailablePDFCount() {
         await this.delay(1000);

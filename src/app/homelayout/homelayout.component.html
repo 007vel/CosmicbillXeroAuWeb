@@ -1,46 +1,24 @@
-<div
-    class="wrapper"
-    [ngClass]="{
+<div class="wrapper" [ngClass]="{
         'sidebar-inactive-l': menuInactiveDesktop,
         'sidebar-active-m': menuActiveMobile
-    }"
->
-    <div
-        *ngIf="subscribedPlan"
-        id="topbar-icons"
-        style="color: white; background-color: rgb(8, 58, 75); float: center"
-        class="animated"
-    >
+    }">
+    <div *ngIf="subscribedPlan" id="topbar-icons" style="color: white; background-color: rgb(8, 58, 75); float: center"
+        class="animated">
         <div *ngIf="!subscribedPlan.IsPaidPlan && !showAutoRenewwalMessage">
             Your have left {{ totalTrialPdf }} trial pdf(s) to scan.
-            <a
-                style="color: rgb(236, 236, 215)"
-                [routerLink]=""
-                (click)="NavigateToPaymentApp($event)"
-            >
-                <u> Please click here to subscribe</u></a
-            >
+            <a style="color: rgb(236, 236, 215)" [routerLink]="" (click)="NavigateToPaymentApp($event)">
+                <u> Please click here to subscribe</u></a>
         </div>
         <div *ngIf="subscribedPlan.IsPaidPlan && !showAutoRenewwalMessage">
             Your have left {{ totalPaidPdf }} pdf(s) to scan.
-            <a
-                style="color: rgb(236, 236, 215)"
-                [routerLink]=""
-                (click)="NavigateToPaymentApp($event)"
-            >
-                <u> Please click here to upgrade plan</u></a
-            >
+            <a style="color: rgb(236, 236, 215)" [routerLink]="" (click)="NavigateToPaymentApp($event)">
+                <u> Please click here to upgrade plan</u></a>
         </div>
         <div *ngIf="showAutoRenewwalMessage">
             Please keep on processing you are on Auto Renewal we will populate
             your subscribed Bills.
-            <a
-                style="color: rgb(236, 236, 215)"
-                [routerLink]=""
-                (click)="NavigateToPaymentApp($event)"
-            >
-                <u> </u
-            ></a>
+            <a style="color: rgb(236, 236, 215)" [routerLink]="" (click)="NavigateToPaymentApp($event)">
+                <u> </u></a>
         </div>
     </div>
 
@@ -52,24 +30,23 @@
         <a id="options-menu-button" href="#" (click)="toggleTopMenu($event)">
             <span class="fa fa-ellipsis-h"></span>
         </a>
-        <div
-            id="topbar-icons"
-            class="animated"
-            [ngClass]="{
-                'topbar-icons-visible flipInX': topMenuActive,
+        <div id="topbar-icons" class="animated" [ngClass]="{
+                'topbar-icons-visible flipInX': topMenuActive, 
                 flipOutX: topMenuLeaving
-            }"
-        >
-            <span class="topbar-item-text">{{ companyName }}</span>
+            }" style="display: flex; flex-direction: row; padding-right: 20px; ">
+            <span class="topbar-item-text" style="margin-top: 10px;">{{ companyName }}</span>
 
-            <!-- <span class="topbar-search" (click)="onSearchClick()">
-              <input type="text" placeholder="Search" />
-              <span class="topbar-search-icon fa fa-search"></span>
-          </span> -->
-            <a href="https://login.xero.com/" target="_blank"
-                >Login into Xero</a
-            >
+
+            <div class="xero-btn" style="margin-bottom: 10px;" matRipple class="my-ripple-container">
+
+                <img *ngIf="appComponent.isConnectedToXero" src="./assets/images/svgs/disconnect-white.svg" width="95%"
+                    height="75%" (click)="disconnectFromXero()">
+                <img *ngIf="!appComponent.isConnectedToXero" src="./assets/images/svgs/connect-white.svg" width="95%"
+                    height="75%" (click)="connectToXero()">
+            </div>
+
         </div>
+
     </div>
     <div class="sidebar" (click)="onMenuClick()">
         <p-scrollPanel #scroller [style]="{ height: '100%' }">

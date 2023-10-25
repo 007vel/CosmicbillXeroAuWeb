@@ -11,6 +11,8 @@ import { EncryptingService } from '../encrypting.service';
 import { ParameterHashLocationStrategy } from '../ParameterHashLocationStrategy';
 import { HomelayoutComponent } from '../homelayout/homelayout.component';
 import { Console } from 'console';
+import { AppComponent } from '../app.component';
+import { stringhelper } from '../stringhelper';
 
 
 @Component({
@@ -19,11 +21,12 @@ import { Console } from 'console';
   providers: [ApiService],
   encapsulation: ViewEncapsulation.None
 })
-export class InitLoginComponent implements OnInit,OnDestroy  {
+export class InitLoginComponent implements OnInit, OnDestroy {
 
   token: string = null;
   code: string = null;
   IsloginFlow: boolean = null;
+  ReAuthXeroUI: boolean = null;
   paramToken: string = null;
   xeroConnectID: string;
   returnUrl: string;
@@ -31,9 +34,9 @@ export class InitLoginComponent implements OnInit,OnDestroy  {
   private sub: any;
   xeroTokenTemp: any = {};
   private encrypt: EncryptingService;
-  private accountName: string = "";  
+  private accountName: string = "";
 
-  constructor(private route: ActivatedRoute, private router: Router, private ss: StoreService, private api: ApiService, private spinner: NgxSpinnerService,  private _encrypt: EncryptingService) {
+  constructor(private route: ActivatedRoute, private router: Router, private ss: StoreService, private api: ApiService, private spinner: NgxSpinnerService, private _encrypt: EncryptingService, private appComponent: AppComponent) {
     this.encrypt = _encrypt;
   }
 
@@ -44,136 +47,150 @@ export class InitLoginComponent implements OnInit,OnDestroy  {
   // } 
   async ngOnInit() {
     this.sub = this.route.queryParams.subscribe(params => {
-     this.code = ParameterHashLocationStrategy.authCode;
-     ParameterHashLocationStrategy.authCode=null;
-     ParameterHashLocationStrategy.signinFlow =false;
-      this.IsloginFlow = params['IsLoginFlow']; 
-      console.log("Auth code:"+this.code);
+      this.code = ParameterHashLocationStrategy.authCode;
+      ParameterHashLocationStrategy.authCode = null;
+      ParameterHashLocationStrategy.signinFlow = false;
+      this.IsloginFlow = params['IsLoginFlow'];
+      this.ReAuthXeroUI = params['ReAuthXeroUI'];
+      //  debugger;
+      console.log("Auth code:" + this.code);
       this.delay(1000);
       var accessTokenFromStore = this.ss.fetchToken();
-      if(accessTokenFromStore!=null)
-      {
-        if(ParameterHashLocationStrategy.planId!=null)
-        {
-          this.router.navigate(['/myaccount']); 
-        }else{
+      if (accessTokenFromStore != null) {
+        if (ParameterHashLocationStrategy.planId != null) {
+          this.router.navigate(['/myaccount']);
+        } else {
+          // NOrmal login work flow
           console.log("Init flow 1 ==========>");
           this.GetAccount();
-          this.router.navigate(['/docupload']); 
+          this.router.navigate(['/docupload']);
         }
 
-      }else{
+      } else {
 
-        if(this.code && this.code.length>20)
-        {
+        if (this.code && this.code.length > 20) {
           console.log("Init flow 2 ==========>");
-          this.getToken();
-       
-        }else if(this.IsloginFlow){
+          var email = this.ss.fetchEmail();
+          debugger;
+          if (!stringhelper.IsNullOrEmptyOrDefault(email)) {
+            this.ReAuthXeroUI = this.ss.fetchIsReAuthFlow();
+            this.getToken();
+            this.ss.storeIsReAuthFlow(false);
+          } else {
+            this.ss.storeXeroAuthUrl(ParameterHashLocationStrategy.authUrl);
+            this.router.navigate(['/signup']);
+          }
+
+        } else if (this.IsloginFlow) {
           console.log("Init flow 3 ==========>");
-        window.location.href = "https://login.xero.com/identity/connect/authorize?response_type=code&client_id="+this.api.xeroclientId+"&redirect_uri="+this.api.xeroCallbackUrl+"&scope="+this.api.xeroScope;
-        }else{
+          this.ss.storeIsReAuthFlow(this.ReAuthXeroUI);
+          this.delay(1000);
+          var connectUrl = "https://login.xero.com/identity/connect/authorize?response_type=code&client_id=" + this.api.xeroclientId + "&redirect_uri=" + this.api.xeroCallbackUrl + "&scope=" + this.api.xeroScope;
+          console.log(connectUrl);
+          window.location.href = connectUrl;
+        } else {
           console.log("Init flow 4 ==========>");
-          this.router.navigate(['/login']); 
+          this.router.navigate(['/login']);
         }
       }
-   });
+    });
 
-   
+
 
   }
-  getToken(){
-    console.log('getToken entered'+this.ss.fetchUserName());
-    this.xeroTokenTemp.Code =this.code
-    this.xeroTokenTemp.UserName =this.ss.fetchUserName();
+  getToken() {
+    console.log('getToken entered' + this.ss.fetchUserName());
+    this.xeroTokenTemp.Code = this.code
+    this.xeroTokenTemp.UserName = this.ss.fetchUserName();
     console.log('getToken request:', JSON.stringify(this.xeroTokenTemp));
-    this.api.post('Xero/GetXeroAccessTokenByCode',this.xeroTokenTemp).subscribe(
+    this.api.post('Xero/GetXeroAccessTokenByCode', this.xeroTokenTemp).subscribe(
       (res1: {}) => this.successGetXeroAccessTokenByCode(res1),
       error => this.failed(<any>error));
   }
 
-  successGetXeroAccessTokenByCode(res:any){
-    console.log("successGetXeroAccessTokenByCode "+JSON.stringify(res));
+  successGetXeroAccessTokenByCode(res: any) {
+    console.log("successGetXeroAccessTokenByCode " + JSON.stringify(res));
     this.DoLoginAftergettingCode();
   }
 
-  failed(res:any){
-    
+  failed(res: any) {
+
   }
-   delay(ms: number) {
-    return new Promise( resolve => setTimeout(resolve, ms) );
-}
+  delay(ms: number) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
   ngOnDestroy() {
     this.sub.unsubscribe();
   }
 
   DoLoginAftergettingCode() {
     var loginData = { 'UserName': this.ss.fetchUserName(), 'Password': this.ss.fetchPassword() }
-  
+
     console.log('>>>>>>>>>>init-login');
     this.api.postAsEndUser('login/DoLogin', loginData).subscribe(
       (res: {}) => this.SaveLoginresponse(res),
       error => this.SaveLoginresponse(<any>error));
-    }
+  }
 
-  GetAccount()
-  {
+  GetAccount() {
     console.log('GetAccounts entered');
+    this.appComponent.GetAccount();// there are two account GET, this one is invokes the appcomponent to fetch the IsAuthorize
     this.api.get('Xero/GetByAccountID', '').subscribe(
       (res: {}) => this.SaveAccount(res),
       error => this.failedXeroMaster(<any>error));
   }
 
   SaveLoginresponse(res: any) {
-
-    console.log("SaveLoginresponse"+ JSON.stringify(res));
+    // debugger;
+    console.log("SaveLoginresponse" + JSON.stringify(res));
     if (res.StatusCode == 0) {
 
       this.ss.storeToken(res.Data.Token.toString());
       this.ss.storeCsomicAccountID(res.Data.AccountID.toString());
-      this.DefaultPlanAssign();
-    } 
+      this.ss.storeIsAuthorize(res.Data.IsAuthrorize);
+      if (this.ReAuthXeroUI + "" == "true") {
+      } else {
+        this.DefaultPlanAssign();
+      }
+
+    }
     this.GetAccount();
   }
 
-  private DefaultPlanAssign()
- {
-  this.api.post('Admin/SaveSubscriptionMaster', { 'PlanID': 8988,"IsDefaultSubscription":true }).subscribe(
-    (res1: {}) => this.DefaultPlanAssignSuccess(),
-    error => this.DefaultPlanAssignError()); 
- }
+  private DefaultPlanAssign() {
+    this.api.post('Admin/SaveSubscriptionMaster', { 'PlanID': 8988, "IsDefaultSubscription": true }).subscribe(
+      (res1: {}) => this.DefaultPlanAssignSuccess(),
+      error => this.DefaultPlanAssignError());
+  }
 
- DefaultPlanAssignSuccess()
- {
+  DefaultPlanAssignSuccess() {
 
- }
+  }
 
- DefaultPlanAssignError()
- {
-  
- }
-  getRequest(){
-    
-    this.api.post('Xero/GetXeroRequestUrl',"").subscribe(
+  DefaultPlanAssignError() {
+
+  }
+  getRequest() {
+
+    this.api.post('Xero/GetXeroRequestUrl', "").subscribe(
       (res1: {}) => this.successUrl(res1),
       error => this.failed(<any>error));
   }
-  
-  successUrl(res:any){
+
+  successUrl(res: any) {
     console.log("xero");
-    console.log("succcessUrl",JSON.stringify(res));
+    console.log("succcessUrl", JSON.stringify(res));
     //this.getToken();
-      this.xeroTokenTemp = res;
-       console.log('this.xeroTokenTemp');
-       alert(this.xeroTokenTemp.XeroUrl)
+    this.xeroTokenTemp = res;
+    console.log('this.xeroTokenTemp');
+    alert(this.xeroTokenTemp.XeroUrl)
 
-       window.open(
-        this.xeroTokenTemp.XeroUrl,
-        '_blank' // <- This is what makes it open in a new window.
-      );
-       }
+    window.open(
+      this.xeroTokenTemp.XeroUrl,
+      '_blank' // <- This is what makes it open in a new window.
+    );
+  }
   SaveAccount(res: any) {
-
     if (res.StatusCode == 0) {
       if (res.Data != null) {
 
@@ -184,8 +201,9 @@ export class InitLoginComponent implements OnInit,OnDestroy  {
           if (res.Data.length == 1) {
             this.ss.storeXeroConnectID(res.Data[0].XeroID);
             this.ss.storeCompanyName(res.Data[0].CompanyName);
+
             this.returnUrl = 'login';
-            this.getAllXeroAccount(); 
+            this.getAllXeroAccount();
 
           }
           else {
@@ -195,15 +213,15 @@ export class InitLoginComponent implements OnInit,OnDestroy  {
         }
         else {
           var token = this.ss.fetchToken();
-          window.location.href = this.api._xeroConnectUrl + token + "&xeroConnectID=" + this.xeroConnectID;
-         
+          //window.location.href = this.api._xeroConnectUrl + token + "&xeroConnectID=" + this.xeroConnectID;
+          alert("Error in Account save");
         }
       }
     }
   }
 
   failedXeroMaster(res: any) {
-console.log('failedXeroMaster entered');
+    console.log('failedXeroMaster entered');
   }
 
   getAllXeroAccount() {
@@ -222,6 +240,7 @@ console.log('failedXeroMaster entered');
   }
 
   failedAllXeroAccount(resp: any) {
+    // debugger;
     console.log(resp);
     console.log(resp.statusText);
     console.log(resp.error)
@@ -230,7 +249,8 @@ console.log('failedXeroMaster entered');
     if (resp != null) {
       if (resp.error.Error == "XERO_TOKEN_EXPIRED") {
         var token = this.ss.fetchToken();
-        window.location.href = this.api._xeroConnectUrl + token + "&xeroConnectID=" + this.xeroConnectID;
+        //window.location.href = this.api._xeroConnectUrl + token + "&xeroConnectID=" + this.xeroConnectID;
+        alert("Error in XERO_TOKEN_EXPIRED ");
       }
       else { this.router.navigate(['/docupload']); }
     }
@@ -246,6 +266,7 @@ console.log('failedXeroMaster entered');
 
   sucessXeroVendor(resp: any) {
     console.log(resp);
+    // debugger;
     this.ss.storeXeroVendors(resp.Data);
 
     this.loadingMessage = "Redirecting in a second...";
@@ -256,7 +277,10 @@ console.log('failedXeroMaster entered');
       if (tempVendors != null) {
 
         if (tempVendors.find(xx => xx.XeroAccountID == 0 || xx.XeroAccountID == null) == null) {
+
+          ParameterHashLocationStrategy.signinFlow = null;
           this.router.navigate(['/docupload']);
+          //  this.router.navigate(['/docpost']);
           this.spinner.hide();
         }
         else {
@@ -282,12 +306,6 @@ console.log('failedXeroMaster entered');
     this.spinner.hide();
     this.router.navigate(['/docupload']);
   }
-
-  // sucessXeroTax(res: any) { }
-  // failedXeroTax(res: any) { }
-
-
-
 
 }
 function newEventEmitter<T>() {

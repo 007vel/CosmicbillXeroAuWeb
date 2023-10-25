@@ -8,16 +8,20 @@ const TOKEN_KEY = 'local_token';
 const COSMIC_ACCOUNT_ID = 'cosmic_account_id';
 const USER_KEY = 'local_user';
 const PASSWORD = 'password';
+const IsAUTHORIZE = 'IsAUTHORIZE';
 
 const EMAIL_KEY = 'local_email';
 const KEY_COMPANYID = 'local_companyId';
 const KEY_COMPANY_NAME = 'local_companyName';
+const KEY_REAUTH_FLOW_IN_LOGIN = 'local_reauth_in_login';
 
 const XERO_VENDOR_KEY = 'local_XeroVendor';
 const XERO_ACCOUNT_KEY = 'local_XeroAccount';
 
 const PAID_PDF_COUNT = 'paid_pdf_count';
 const TRIAL_PDF_COUNT = 'trial_pdf_count';
+
+const XeroAuthUrl = 'XeroAuthUrl';
 
 const TOTAL_ALLOCATED_PDF_KEY = 'total_allocated_pdf';
 
@@ -66,6 +70,10 @@ export class StoreService {
     this.storage.set(USER_KEY, userName);
 
   }
+  public storeIsAuthorize(isAuthorize: boolean): void {
+    this.storage.set(IsAUTHORIZE, isAuthorize);
+
+  }
 
 
 
@@ -76,6 +84,9 @@ export class StoreService {
 
   public fetchUserName(): String {
     return this.storage.get(USER_KEY)
+  }
+  public fetchIsAuthorize(): boolean {
+    return this.storage.get(IsAUTHORIZE)
   }
 
   public storeEmail(email: string): void {
@@ -101,7 +112,7 @@ export class StoreService {
   }
   public fetchCosmicAccountID(): String {
     return this.storage.get(COSMIC_ACCOUNT_ID)
-  //return "5292";
+    //return "5292";
   }
 
   public storeCompanyName(value: string): void {
@@ -109,14 +120,26 @@ export class StoreService {
     console.log(this.storage.get(KEY_COMPANY_NAME) || 'LocaL storage is empty');
   }
 
+  public storeIsReAuthFlow(value: boolean): void {
+    this.storage.set(KEY_REAUTH_FLOW_IN_LOGIN, value);
+
+  }
+  public fetchIsReAuthFlow(): boolean {
+    // return "jhvhjv"
+    return this.storage.get(KEY_REAUTH_FLOW_IN_LOGIN)
+  }
+
   public fetchCompanyName(): String {
-// return "jhvhjv"
-       return this.storage.get(KEY_COMPANY_NAME)
+    // return "jhvhjv"
+    return this.storage.get(KEY_COMPANY_NAME)
   }
 
   public storeXeroVendors(data: any): void {
     this.storage.set(XERO_VENDOR_KEY, data);
     console.log(this.storage.get(XERO_VENDOR_KEY) || 'LocaL storage is empty');
+  }
+  public storeXeroAuthUrl(data: string): void {
+    this.storage.set(XeroAuthUrl, data);
   }
 
   public fetchXeroVendors(): any {
@@ -146,19 +169,20 @@ export class StoreService {
   public fetchPaidPdfCount(): any {
     return this.storage.get(PAID_PDF_COUNT)
   }
+  public fetchXeroAuthUrl(): string {
+    return this.storage.get(XeroAuthUrl)
+  }
   public storePaidPdfCount(value: any, invalidateTrialCount: boolean): void {
     this.storage.set(PAID_PDF_COUNT, value);
-    if(invalidateTrialCount === true)
-    {
+    if (invalidateTrialCount === true) {
       this.storeTrialPdfCount(0, false);
     }
 
   }
-  public storeTrialPdfCount(value: any,  invalidatePaidCount: boolean): void {
+  public storeTrialPdfCount(value: any, invalidatePaidCount: boolean): void {
     this.storage.set(TRIAL_PDF_COUNT, value);
 
-    if(invalidatePaidCount === true)
-    {
+    if (invalidatePaidCount === true) {
       this.storePaidPdfCount(0, false);
     }
 
@@ -177,6 +201,8 @@ export class StoreService {
     this.storage.set(COSMIC_ACCOUNT_ID, null);
     this.storage.set(PAID_PDF_COUNT, null);
     this.storage.set(TRIAL_PDF_COUNT, null);
+    this.storage.set(IsAUTHORIZE, null);
+    this.storage.set(KEY_REAUTH_FLOW_IN_LOGIN, null);
   }
 
 }
