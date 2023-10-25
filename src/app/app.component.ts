@@ -8,6 +8,7 @@ import { ApiService } from './api.service';
 import { NgxSpinnerService } from 'ngx-spinner';
 
 
+
 @Component({
     selector: 'app-root',
     templateUrl: './app.component.html',
@@ -18,7 +19,7 @@ export class AppComponent {
     public isConnectedToXero: boolean = false;
     connectCompanyMessage: string = "";
     public showDisconnectConfirmation: boolean = false;
-    constructor(private ss: StoreService, private router: Router, private api: ApiService, private spinner: NgxSpinnerService) {
+    constructor(private ss: StoreService, private router: Router, private api: ApiService, private spinner: NgxSpinnerService,  private confirmationService: ConfirmationService ) {
         this.GetAccount();
     }
 
@@ -52,13 +53,38 @@ export class AppComponent {
                     if (!res.Data[0].IsAuthrorize) {
                         alert("You are no longer connected to Xero.");
                     }
+
+                    // this.confirmationService.confirm({
+                    //     message: 'No company is connected, Connect a company',
+                    //     accept: () => {
+                    //       // User accepted the popup (optional)
+                    //     },
+                    //   });
                 }
+                    debugger;
+                if (this.showDisconnectConfirmation && !res.Data[0].IsAuthrorize) {
+                    // Display the popup when not authorized
+                    this.confirmationService.confirm({
+                      message: 'No company is connected, Connect a company',
+                      accept: () => {
+                        // User accepted the popup (optional)
+                      },
+                    });
+                  }
+
+                
             }
 
             var IsAuthorize = this.ss.fetchIsAuthorize();
-
-            if (!IsAuthorize) {
+            
+            debugger;
+            if (!IsAuthorize ) {
                 this.connectCompanyMessage = "No company is connected, Connect a company";
+
+                this.confirmationService.confirm({
+                    message: 'No company is connected. Connect a company.',
+                });
+
             } else {
                 this.connectCompanyMessage = "";
             }
