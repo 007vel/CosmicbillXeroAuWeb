@@ -11,6 +11,7 @@ import { Validators, FormControl, FormGroup, FormBuilder } from '@angular/forms'
 import { ParameterHashLocationStrategy } from '../ParameterHashLocationStrategy';
 import { PackagePurchaseHelper } from '../PackagePurchaseHelper';
 import { CosmicNotifyService } from '../CosmicNotifyService';
+import { debugOutputAstAsTypeScript } from '@angular/compiler';
 
 
 @Component({
@@ -242,18 +243,20 @@ export class MyAccountComponent implements OnInit {
 
         this.spinner.show();
         this.loadingMessage = "Please wait..."
-
+        debugger;
         this.api.get('Account/Get', '').subscribe(
             (res: {}) => this.sucessGetMyAccount(res),
             error => this.failedGetMyAccount(<any>error));
     }
 
     sucessGetMyAccount(res: any) {
+        debugger;
         this.myAccountDetail = res.Data;
         this.userform = this.fb.group({
             UserName: [res.Data.UserName],
             Email: [res.Data.Email],
             Phone: [res.Data.Phone]
+
         });
 
         this.spinner.hide();
@@ -267,13 +270,28 @@ export class MyAccountComponent implements OnInit {
 
 
     buyWithCard() {
-        // debugger;
-
-        // if (!this.packagePurchaseHelper.CheckAvailablePackageCount()) {
-        if (!this.packagePurchaseHelper.CheckAvailablePaidPDFCount()) {
-            this.packagePurchaseHelper.NavigateToPackageApp();
-        } else {
-            alert('You have enough package to process bills..');
+        //------------
+        // Get Account Master Account By using Account ID 
+        // Check the IsXeroreferalUser Is 1 or 0 
+        // If 1 = True THen Xero Payment Link 
+        // If 0 = False Then Cosmic Payment Link
+        //------------
+        debugger;
+        var a = this.myAccountDetail.IsXeroReferaluser;
+        if (a !== null) {
+            debugger;
+            if (a) {
+                //For xerorefUder Link 
+                debugger;
+                window.open("https://www.google.com/");
+            }
+            else {
+                if (!this.packagePurchaseHelper.CheckAvailablePaidPDFCount()) {
+                    this.packagePurchaseHelper.NavigateToPackageApp();
+                } else {
+                    alert('You have enough package to process bills..');
+                }
+            }
         }
     }
 
