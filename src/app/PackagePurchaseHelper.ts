@@ -12,16 +12,23 @@ export class PackagePurchaseHelper {
     subscribedPlan: any = 0;
     totalTrialPdf: Number = 0;
     totalPaidPdf: Number = 0;
-    private isPackageInfoFetched = false;
+    private isPackageInfoFetched = false;buyWithCard
     loadingMessage: any = "Loading...";
     IsPaidPlan: boolean;
     IsAutoRenewal: boolean;
     constructor(private api: ApiService, private ss: StoreService, private confirmationService: ConfirmationService, protected cosmicNotifyService: CosmicNotifyService) {
 
     }
-    public NavigateToPackageApp() {
+    public async NavigateToPackageApp() {
 
         console.log("NavigateToPaymentApp");
+        //------------
+        // Get Account Master Account By using Account ID 
+        // Check the IsXeroreferalUser Is 1 or 0 
+        // If 1 = True THen Xero Payment Link 
+        // If 0 = False Then Cosmic Payment Link
+        //------------
+        // Write this as a method
 
         window.open(this.api.Paymentapp + "?UserId=" + this.ss.fetchUserName() +
             "&Email=" + this.ss.fetchEmail() +

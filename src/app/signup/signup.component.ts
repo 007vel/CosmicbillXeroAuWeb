@@ -77,6 +77,14 @@ export class SignupComponent implements OnInit {
 
       this.ss.storeEmail(this.signupform.value.Email);
       this.ss.storeUserName(this.signupform.value.UserName);
+      var xeroauthURl = this.ss.fetchXeroAuthUrl();
+      if(!stringhelper.IsNullOrEmptyOrDefault(xeroauthURl) )
+      {
+      //Xero referal user
+      this.signupform.value.IsXereReferaluser = true;;
+      }else{
+        this.signupform.value.IsXereReferaluser = false;;
+      }
       var encryptPassword = this.encApi.encrypt(this.signupform.value.Password);
       this.ss.storePassword(encryptPassword);
       if (this.signupform.value.Password != this.signupform.value.NewPassword) {
