@@ -243,14 +243,14 @@ export class MyAccountComponent implements OnInit {
 
         this.spinner.show();
         this.loadingMessage = "Please wait..."
-        debugger;
+        // debugger;
         this.api.get('Account/Get', '').subscribe(
             (res: {}) => this.sucessGetMyAccount(res),
             error => this.failedGetMyAccount(<any>error));
     }
 
     sucessGetMyAccount(res: any) {
-        debugger;
+        // debugger;
         this.myAccountDetail = res.Data;
         this.userform = this.fb.group({
             UserName: [res.Data.UserName],
@@ -276,23 +276,27 @@ export class MyAccountComponent implements OnInit {
         // If 1 = True THen Xero Payment Link 
         // If 0 = False Then Cosmic Payment Link
         //------------
-        debugger;
-        var a = this.myAccountDetail.IsXeroReferaluser;
-        if (a !== null) {
-            debugger;
-            if (a) {
-                //For xerorefUder Link 
-                debugger;
-                window.open("https://www.google.com/");
-            }
-            else {
-                if (!this.packagePurchaseHelper.CheckAvailablePaidPDFCount()) {
-                    this.packagePurchaseHelper.NavigateToPackageApp();
-                } else {
-                    alert('You have enough package to process bills..');
-                }
-            }
-        }
+        //   debugger;
+        window.open("https://apps.xero.com/!sc-7l/au/subscribe/d589a79e-e0d5-483a-b129-c67d8327b808");
+
+
+
+        // var a = this.myAccountDetail.IsXeroReferaluser;
+        // if (a !== null) {
+        //     //  debugger;
+        //     if (a) {
+        //         //For xerorefUder Link 
+        //         //    debugger;
+        //         window.open("https://www.google.com/");
+        //     }
+        //     else {
+        //         if (!this.packagePurchaseHelper.CheckAvailablePaidPDFCount()) {
+        //             this.packagePurchaseHelper.NavigateToPackageApp();
+        //         } else {
+        //             alert('You have enough package to process bills..');
+        //         }
+        //     }
+        // }
     }
 
     AutoRenewalCheckboxChange(_event) {

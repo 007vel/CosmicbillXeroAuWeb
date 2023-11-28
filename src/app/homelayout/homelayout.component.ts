@@ -78,8 +78,8 @@ export class HomelayoutComponent implements AfterViewInit, OnDestroy, OnInit {
 
         this.appComponent.isConnectedToXero = this.ss.fetchIsAuthorize();
         this.companyName = this.ss.fetchCompanyName();
-        
-        debugger;
+
+        // debugger;
         var IsAuthorize = this.ss.fetchIsAuthorize();
         if (!this.companyName) {
             this.companyName = "No company is connected, Connect a company";

@@ -60,11 +60,9 @@ export class DocUploadComponent implements OnInit {
 
 
     this.companyName = this.ss.fetchCompanyName();
-    
-    debugger;
-    var IsAuthorize = this.ss.fetchIsAuthorize();
+
     if (!this.companyName) {
-        this.companyName = "No company is connected, Connect a company";
+      this.companyName = "No company is connected, Connect a company";
     }
 
 
@@ -76,30 +74,31 @@ export class DocUploadComponent implements OnInit {
 
     var companyName = this.ss.fetchCompanyName();
     var IsAuthorize = this.ss.fetchIsAuthorize();
-  //   debugger;
-  //   if (!IsAuthorize) {
-  //     this.appComponent.connectCompanyMessage = "No company is connected, Connect a company";
-  //   } else {
-  //     this.appComponent.connectCompanyMessage = "";
-  // }
+    // debugger;
+    if (!IsAuthorize) {
+      this.appComponent.connectCompanyMessage = "No company is connected, Connect a company";
+      //  debugger;
+      this.confirmationService.confirm({
+        message: 'No company is connected, Connect a company',
+        accept: () => {
+        },
 
-  debugger;
-  this.confirmationService.confirm({
-    message: 'No company is connected, Connect a company',
-    accept: () => {
-    },
-    
-    header : 'Error',
-    acceptLabel: 'Ok',
-    rejectVisible: false,
-    
-   
-  });
-
-}
+        header: 'Error',
+        acceptLabel: 'Ok',
+        rejectVisible: false,
 
 
-  
+      });
+    } else {
+      this.appComponent.connectCompanyMessage = "";
+    }
+
+
+
+  }
+
+
+
   ngOnInit() {
 
     this.validateConnectCompany();
@@ -187,7 +186,7 @@ export class DocUploadComponent implements OnInit {
 
   onUpload(event) {
 
-    debugger;
+    // debugger;
     this.totalFiles = 0;
     this.spinner.hide();
 

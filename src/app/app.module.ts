@@ -139,6 +139,7 @@ import { PackagePurchaseHelper } from './PackagePurchaseHelper';
 import { CosmicNotifyService } from './CosmicNotifyService';
 import { RecaptchaModule } from "ng-recaptcha";
 import { AutoxignupxeroComponent } from './AutoSignupXero/autoxignupxero.component';
+import { LaunchPageComponent } from './launch-page/launch-page.component';
 
 
 
@@ -269,18 +270,15 @@ import { AutoxignupxeroComponent } from './AutoSignupXero/autoxignupxero.compone
         ManageItemComponent,
         DocEditComponent,
         DocAuthComponent,
-        AutoxignupxeroComponent
+        AutoxignupxeroComponent,
+        LaunchPageComponent
     ],
     providers: [
         CarService, CountryService, ConfirmDialogModule, EventService, ConfirmationService, NodeService, ApiService, StoreService, EncryptingService, CosmicNotifyService,
         {
             provide: LocationStrategy,
             useClass: ParameterHashLocationStrategy
-        } /*,
-        {
-            provide: HTTP_INTERCEPTORS,
-			useClass: CacheInterceptor,multi: true
-        } */
+        }
     ],
 
     bootstrap: [AppComponent]

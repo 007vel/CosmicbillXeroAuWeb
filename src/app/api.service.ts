@@ -12,7 +12,7 @@ import { StoreService } from './store.service';
 })
 export class ApiService {
 
- 
+
   public apiBaseUrl = environment.apiBaseUrl;
   public apiPreBaseUrl = environment.apiPreBaseUrl;
   public urlPostPDF = environment.urlPostPDF;
@@ -27,7 +27,7 @@ export class ApiService {
   token: any;
 
   constructor(public http: HttpClient,
-    private storage: StoreService, ) {
+    private storage: StoreService,) {
 
     this.xeroConnectID = storage.fetchXeroConnectID();
     this.token = storage.fetchToken();
@@ -41,8 +41,8 @@ export class ApiService {
     return new HttpHeaders(
       {
         'Content-Type': 'application/json',
-        'CosmicBill-UserToken': (this.token !=null ? this.token.toString():""),
-        'CosmicBill-XeroConnectID': (this.xeroConnectID != null ? this.xeroConnectID .toString() : 0),
+        'CosmicBill-UserToken': (this.token != null ? this.token.toString() : ""),
+        'CosmicBill-XeroConnectID': (this.xeroConnectID != null ? this.xeroConnectID.toString() : 0),
         'CosmicBill-PlatformID': '3',
         'Cache-Control': 'no-cache'
       }
@@ -54,6 +54,7 @@ export class ApiService {
 
     return new HttpHeaders(
       {
+        'Access-Control-Allow-Origin': '*',
         'Content-Type': 'application/json',
         'CosmicBill-PlatformID': '3',
         'Cache-Control': 'no-cache'
@@ -78,7 +79,7 @@ export class ApiService {
       .pipe(map(this.extractData));
   };
 
-  
+
 
   get(endUrl: string, request: any): Response | any {
     return this.http.get(this.apiBaseUrl + endUrl + request, { headers: this.getHeader() })

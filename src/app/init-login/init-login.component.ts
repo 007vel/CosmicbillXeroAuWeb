@@ -52,7 +52,7 @@ export class InitLoginComponent implements OnInit, OnDestroy {
       ParameterHashLocationStrategy.signinFlow = false;
       this.IsloginFlow = params['IsLoginFlow'];
       this.ReAuthXeroUI = params['ReAuthXeroUI'];
-      //  debugger;
+      debugger;
       console.log("Auth code:" + this.code);
       this.delay(1000);
       var accessTokenFromStore = this.ss.fetchToken();
@@ -147,6 +147,7 @@ export class InitLoginComponent implements OnInit, OnDestroy {
 
       this.ss.storeToken(res.Data.Token.toString());
       this.ss.storeCsomicAccountID(res.Data.AccountID.toString());
+      debugger;
       this.ss.storeIsAuthorize(res.Data.IsAuthrorize);
       if (this.ReAuthXeroUI + "" == "true") {
       } else {

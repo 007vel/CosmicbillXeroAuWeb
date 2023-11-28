@@ -92,19 +92,14 @@ export class LoginComponent implements OnInit {
             if (res.Data.length > 0) {
                 this.ss.storeXeroConnectID(res.Data[0].XeroID);
                 this.ss.storeCompanyName(res.Data[0].CompanyName);
-                if (res.Data[0] != null && res.Data[0] != undefined && res.Data[0].IsAuthrorize != true) {
-                    //   debugger;
-                    // this.confirmationService.confirm({
-                    //     message: "Can you confirm if you would like to disconnect from Xero?",
-                    //     accept: () => {                            
-                    //         this.appComponent.ReAuthXeroUI();
-                    //     },
-                    //     reject: () => {
-                    //     }
-                    // });
+                this.ss.storeIsAuthorize(res.Data[0].IsAuthrorize);
+                debugger;
+                if (res.Data[0] == null || res.Data[0] == undefined || res.Data[0].IsAuthrorize == false) {
+
                     this.appComponent.ReAuthXeroUI();
 
                 } else {
+
                     this.router.navigate(['/initlogin/' + accountRes.Data.Token.toString() + '/0/login']);
                 }
             }

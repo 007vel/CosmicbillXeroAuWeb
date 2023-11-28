@@ -39,6 +39,7 @@ import { ManageProductComponent } from './manage-product/manage-product.componen
 import { DocEditComponent } from './doc-edit/doc-edit.component';
 import { AutoLoginService } from 'angular-auth-oidc-client/lib/auto-login/auto-login.service';
 import { AutoxignupxeroComponent } from './AutoSignupXero/autoxignupxero.component';
+import { LaunchPageComponent } from './launch-page/launch-page.component';
 
 export const routes: Routes = [
   { path: 'callback', redirectTo: 'initlogin' },
@@ -79,6 +80,7 @@ export const routes: Routes = [
       { path: 'setpass', component: SetpassComponent },
       { path: 'welcome', component: WelcomeComponent },
       { path: 'xerosignup', component: AutoxignupxeroComponent },
+      { path: 'launchpage', component: LaunchPageComponent },  /// xero redirect apge
       { path: 'initlogin/:token/:connectid/:returnUrl', component: InitLoginComponent, pathMatch: 'full' }
     ]
   }
