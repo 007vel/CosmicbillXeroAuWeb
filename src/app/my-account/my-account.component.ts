@@ -39,6 +39,7 @@ export class MyAccountComponent implements OnInit {
     userform: FormGroup;
     AutoRenewalEnable: boolean = false;
 
+    XeroReferaluser : any;
     submitted: boolean;
 
     genders: SelectItem[];
@@ -81,8 +82,8 @@ export class MyAccountComponent implements OnInit {
             this.getStartofAutoRenwalInfo();
 
         } else { this.getTotalPdfUsed(); }
-        this.getSubscribedPlan();
         this.getMyAccount();
+        this.getSubscribedPlan();
         this.getPlans();
         this.getPayment();
         this.getTotalTrialPdfUsed();
@@ -162,6 +163,7 @@ export class MyAccountComponent implements OnInit {
     }
 
     sucessGetSubscribedPlan(res: any) {
+        //debugger;
         this.subscribedPlan = res.Data;
         this.AutoRenewalEnable = res.Data.IsAutoRenew;
         console.log('subscribedPlan' + this.subscribedPlan);
@@ -171,6 +173,7 @@ export class MyAccountComponent implements OnInit {
         console.log("PlanStartDateTime is:" + PlanStartDateTime);
         let todayDate = new Date();
         console.log("todayDate is:" + todayDate);
+        //debugger;
         const diffTime = Math.abs(todayDate.getTime() - PlanStartDateTime.getTime());
         this.diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
@@ -243,15 +246,16 @@ export class MyAccountComponent implements OnInit {
 
         this.spinner.show();
         this.loadingMessage = "Please wait..."
-        // debugger;
+        debugger;
         this.api.get('Account/Get', '').subscribe(
             (res: {}) => this.sucessGetMyAccount(res),
             error => this.failedGetMyAccount(<any>error));
     }
 
     sucessGetMyAccount(res: any) {
-        // debugger;
+         debugger;
         this.myAccountDetail = res.Data;
+        this.XeroReferaluser = this.myAccountDetail.IsXeroReferaluser;
         this.userform = this.fb.group({
             UserName: [res.Data.UserName],
             Email: [res.Data.Email],
@@ -276,17 +280,17 @@ export class MyAccountComponent implements OnInit {
         // If 1 = True THen Xero Payment Link 
         // If 0 = False Then Cosmic Payment Link
         //------------
-        //   debugger;
+        //   //debugger;
         window.open("https://apps.xero.com/!sc-7l/au/subscribe/d589a79e-e0d5-483a-b129-c67d8327b808");
 
 
 
         // var a = this.myAccountDetail.IsXeroReferaluser;
         // if (a !== null) {
-        //     //  debugger;
+        //     //  //debugger;
         //     if (a) {
         //         //For xerorefUder Link 
-        //         //    debugger;
+        //         //    //debugger;
         //         window.open("https://www.google.com/");
         //     }
         //     else {

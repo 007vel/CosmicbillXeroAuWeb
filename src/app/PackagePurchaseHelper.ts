@@ -46,7 +46,7 @@ export class PackagePurchaseHelper {
         if (res.Data != null) {
             this.totalPaidPdf = this.subscribedPlan.TotalAllocatePDF - res.Data.TotalPaidUsed;
             this.ss.storePaidPdfCount(this.totalPaidPdf, true);
-            // debugger;
+            // //debugger;
             this.isPackageInfoFetched = true;
             this.cosmicNotifyService.myEventEmiter.emit();
         }
@@ -55,7 +55,7 @@ export class PackagePurchaseHelper {
         if (res.Data != null) {
             this.totalTrialPdf = this.subscribedPlan.TrialPdf - res.Data.TotalTrialUsed;
             this.ss.storeTrialPdfCount(this.totalTrialPdf, true);
-            //  debugger;
+            //  //debugger;
             this.isPackageInfoFetched = true;
         }
         this.cosmicNotifyService.myEventEmiter.emit();
@@ -77,7 +77,7 @@ export class PackagePurchaseHelper {
     }
 
     public CheckAvailablePackageCount(): boolean {
-        // debugger;
+        // //debugger;
         if (this.ss.fetchTrialPdfCount() < 1) {
             if (this.ss.fetchPaidPdfCount() < 1) {
                 return false;
@@ -95,7 +95,7 @@ export class PackagePurchaseHelper {
     }
 
     public CheckAvailablePaidPDFCount(): boolean {
-        // debugger;
+        // //debugger;
         if (this.ss.fetchPaidPdfCount() < 1) {
             return false;
 

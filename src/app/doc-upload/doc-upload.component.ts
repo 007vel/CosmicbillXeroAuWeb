@@ -74,10 +74,10 @@ export class DocUploadComponent implements OnInit {
 
     var companyName = this.ss.fetchCompanyName();
     var IsAuthorize = this.ss.fetchIsAuthorize();
-    // debugger;
+    // //debugger;
     if (!IsAuthorize) {
       this.appComponent.connectCompanyMessage = "No company is connected, Connect a company";
-      //  debugger;
+      //  //debugger;
       this.confirmationService.confirm({
         message: 'No company is connected, Connect a company',
         accept: () => {
@@ -186,7 +186,7 @@ export class DocUploadComponent implements OnInit {
 
   onUpload(event) {
 
-    // debugger;
+    // //debugger;
     this.totalFiles = 0;
     this.spinner.hide();
 
@@ -315,7 +315,7 @@ export class DocUploadComponent implements OnInit {
     if (this.packagePurchaseHelper.CheckAvailablePackageCount()) {
       this.uploadBills(event);
     } else {
-      // debugger;
+      // //debugger;
       this.SHowLowpDfcountDialog();
     }
   }

@@ -41,7 +41,7 @@ export class DocPostComponent implements OnInit {
     private confirmationService: ConfirmationService, private ss: StoreService, protected cosmicNotifyService: CosmicNotifyService, private appComponent: AppComponent) { }
 
 
-  // debugger;
+  // //debugger;
   validateConnectCompany() {
     var companyName = this.ss.fetchCompanyName();
     var IsAuthorize = this.ss.fetchIsAuthorize();

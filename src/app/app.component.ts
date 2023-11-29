@@ -45,7 +45,7 @@ export class AppComponent {
         console.log("res ", JSON.stringify(res));
         if (res.Data != null) {
             if (res.Data.length > 0) {
-                debugger;
+                //debugger;
                 this.ss.storeIsAuthorize(res.Data[0].IsAuthrorize);
                 this.ss.storeXeroConnectID(res.Data[0].XeroID);
                 this.ss.storeCompanyName(res.Data[0].CompanyName);
@@ -56,7 +56,7 @@ export class AppComponent {
                     }
 
                 }
-                //     debugger;
+                //     //debugger;
                 if (this.showDisconnectConfirmation && !res.Data[0].IsAuthrorize) {
                     // Display the popup when not authorized
                     this.confirmationService.confirm({
@@ -72,7 +72,7 @@ export class AppComponent {
 
             var IsAuthorize = this.ss.fetchIsAuthorize();
 
-            //   debugger;
+            //   //debugger;
             if (!IsAuthorize) {
                 this.connectCompanyMessage = "No company is connected, Connect a company";
 
