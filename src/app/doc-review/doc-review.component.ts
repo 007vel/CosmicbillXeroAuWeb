@@ -58,7 +58,7 @@ export class DocReviewComponent implements OnInit {
     private spinner: NgxSpinnerService, private ss: StoreService,
     private confirmationService: ConfirmationService, protected cosmicNotifyService: CosmicNotifyService, private appComponent: AppComponent) { }
 
-  // debugger;
+  // //
 
   validateConnectCompany() {
     var companyName = this.ss.fetchCompanyName();
@@ -396,7 +396,7 @@ export class DocReviewComponent implements OnInit {
   }
   onDeleteClicked() {
     this.msgs = [];
-    // debugger;
+    // //
     //  var qboDocument = this.qboDocumentLines.filter(xx => xx.Deleted == true);
     //if(qboDocument.length>0)
     if (this.xeroDocumentToDelete.length > 0) {
@@ -413,7 +413,7 @@ export class DocReviewComponent implements OnInit {
     }
   }
   onChangeDelete(event: any, hdr: any) {
-    // debugger;
+    // //
     this.msgs = [];
     var qboDocument = this.xeroDocumentLines.filter(xx => xx.DocumentID == hdr.DocumentID);
     qboDocument[0].Deleted = event.target.checked;

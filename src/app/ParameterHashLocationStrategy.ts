@@ -8,7 +8,7 @@ export class ParameterHashLocationStrategy extends HashLocationStrategy {
     public static planId: string = null;
     public static signinFlow: boolean = null;
     prepareExternalUrl(internal: string): string {
-        //debugger;
+        ////
         console.log('preparing external url', "1>>>> " + window.location.search, "2>>>> " + super.prepareExternalUrl(internal)); // log
 
 

@@ -65,13 +65,13 @@
                 <div *ngIf="subscribedPlan.IsPaidPlan">
                     <div
                         *ngIf="
-                            diffDays <= 365 && AutoRenewalEnable;
+                            diffDays <= 365 && (AutoRenewalEnable || XeroReferaluser);
                             else pack_expired
                         "
                     >
                         <span style="color: blue">
                             You have scanned <b>{{ totalPdfUsed }}</b> bills out
-                            of <b> {{ totalAllocatedPdf }} </b>
+                            of <b> {{ totalAllocatedPdf  }} </b>
                         </span>
                     </div>
                     <ng-template #pack_expired>

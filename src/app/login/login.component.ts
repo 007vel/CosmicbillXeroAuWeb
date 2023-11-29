@@ -66,7 +66,7 @@ export class LoginComponent implements OnInit {
             this.loading = true;
             this.spinner.show();
             console.log("*******onSubmit*******:" + this.encrypt.decrypt("BiFm0/MWLspQSo7lwbuCgw=="));
-            //  debugger;
+            //  //
             var encryptPassword = this.encrypt.encrypt(this.loginform.value.Password);
             var loginData = { 'UserName': this.loginform.value.UserName, 'Password': encryptPassword }
             this.ss.storePassword(encryptPassword);
@@ -84,7 +84,7 @@ export class LoginComponent implements OnInit {
             error => this.failedGetAccount(<any>error));
     }
     SaveAccount(res: any, accountRes: any) {
-        // debugger;
+        // //
         console.log("res ", JSON.stringify(res));
 
         if (res.Data != null) {
@@ -93,7 +93,7 @@ export class LoginComponent implements OnInit {
                 this.ss.storeXeroConnectID(res.Data[0].XeroID);
                 this.ss.storeCompanyName(res.Data[0].CompanyName);
                 this.ss.storeIsAuthorize(res.Data[0].IsAuthrorize);
-                debugger;
+                //
                 if (res.Data[0] == null || res.Data[0] == undefined || res.Data[0].IsAuthrorize == false) {
 
                     this.appComponent.ReAuthXeroUI();

@@ -52,7 +52,7 @@ export class InitLoginComponent implements OnInit, OnDestroy {
       ParameterHashLocationStrategy.signinFlow = false;
       this.IsloginFlow = params['IsLoginFlow'];
       this.ReAuthXeroUI = params['ReAuthXeroUI'];
-      debugger;
+      //
       console.log("Auth code:" + this.code);
       this.delay(1000);
       var accessTokenFromStore = this.ss.fetchToken();
@@ -71,7 +71,7 @@ export class InitLoginComponent implements OnInit, OnDestroy {
         if (this.code && this.code.length > 20) {
           console.log("Init flow 2 ==========>");
           var email = this.ss.fetchEmail();
-          debugger;
+          //
           if (!stringhelper.IsNullOrEmptyOrDefault(email)) {
             this.ReAuthXeroUI = this.ss.fetchIsReAuthFlow();
             this.getToken();
@@ -141,13 +141,13 @@ export class InitLoginComponent implements OnInit, OnDestroy {
   }
 
   SaveLoginresponse(res: any) {
-    // debugger;
+    // //
     console.log("SaveLoginresponse" + JSON.stringify(res));
     if (res.StatusCode == 0) {
 
       this.ss.storeToken(res.Data.Token.toString());
       this.ss.storeCsomicAccountID(res.Data.AccountID.toString());
-      debugger;
+      //
       this.ss.storeIsAuthorize(res.Data.IsAuthrorize);
       if (this.ReAuthXeroUI + "" == "true") {
       } else {
@@ -241,7 +241,7 @@ export class InitLoginComponent implements OnInit, OnDestroy {
   }
 
   failedAllXeroAccount(resp: any) {
-    // debugger;
+    // //
     console.log(resp);
     console.log(resp.statusText);
     console.log(resp.error)
@@ -267,7 +267,7 @@ export class InitLoginComponent implements OnInit, OnDestroy {
 
   sucessXeroVendor(resp: any) {
     console.log(resp);
-    // debugger;
+    // //
     this.ss.storeXeroVendors(resp.Data);
 
     this.loadingMessage = "Redirecting in a second...";

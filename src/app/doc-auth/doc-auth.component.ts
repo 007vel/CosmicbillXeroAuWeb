@@ -36,11 +36,11 @@ export class DocAuthComponent implements OnInit {
 	constructor(private router: Router, private api: ApiService, private http: HttpClient, private spinner: NgxSpinnerService,
 		private confirmationService: ConfirmationService, private ss: StoreService, private appComponent: AppComponent) { }
 
-		debugger;
+		//
 	validateConnectCompany() {
 		var companyName = this.ss.fetchCompanyName();
 		var IsAuthorize = this.ss.fetchIsAuthorize();
-		debugger;
+		//
 		if (!IsAuthorize) {
 			this.appComponent.connectCompanyMessage = "No company is connected, Connect a company";
 		} else {
