@@ -206,7 +206,7 @@ export class DocEditComponent implements OnInit {
 
   }
   successGetDocument(resp: any) {
-    // //debugger;
+    // //
     this.spinner.hide();
     this.xeroDocumentLinesEdit = resp.Data;
 
@@ -296,7 +296,7 @@ export class DocEditComponent implements OnInit {
         this.spinner.show();
         this.loadingMessage = "Processing...";
         console.log(this.xeroDocumentLinesEdit);
-        ////debugger;
+        ////
         this.api.post('Xero/SaveXeroDocumentEditChanges', this.xeroDocumentLinesEdit).subscribe(
           (res1: {}) => this.successSaveEditChanges(res1),
           error => this.failedSaveEditChanges(<any>error));
@@ -476,11 +476,11 @@ export class DocEditComponent implements OnInit {
   successDeleteLineRecord(res: any, record: any, isbulkdelete: boolean) {
     this.spinner.hide();
     if (res.StatusCode == 0) {
-      // //debugger;
+      // //
       const index: number = this.xeroDocumentLinesEdit.indexOf(record);
       console.log(index);
       this.xeroDocumentLinesEdit.splice(index, 1);
-      // //debugger;
+      // //
 
       this.CalculateTotal();
 
@@ -502,7 +502,7 @@ export class DocEditComponent implements OnInit {
     console.log(record.DocumentLineID);
     if (confirm("Are you sure want to remove this line ?")) {
       if (record.DocumentLineID == 0) {
-        // //debugger;
+        // //
         const index: number = this.xeroDocumentLinesEdit.indexOf(record);
         console.log(index);
         this.xeroDocumentLinesEdit.splice(index, 1);
@@ -528,7 +528,7 @@ export class DocEditComponent implements OnInit {
 
 
   sucessDocumentFilePath(resp: any, valu: any) {
-    // //debugger;
+    // //
     console.log(this.api.apiPreBaseUrl + resp);
     const win = window.open(this.api.apiPreBaseUrl + resp, 'View Pdf', 'width=800,height=700');
     win.focus();

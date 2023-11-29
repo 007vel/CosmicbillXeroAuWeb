@@ -86,7 +86,7 @@ export class MyProfileComponent implements OnInit {
 		}
 	}
 	saveChecked() {
-	//	//debugger;
+	//	//
 		this.xeromaster.AsyncBackEndScanning = this.AsyncBackEndScanning;
 		this.xeromaster.DirectPostfromEmail = this.DirectPostfromEmail;
 		this.xeromaster.XeroDocPostAs = this.docPostAs;
