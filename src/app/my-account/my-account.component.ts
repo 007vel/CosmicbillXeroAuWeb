@@ -65,6 +65,8 @@ export class MyAccountComponent implements OnInit {
 
             // this.totalAllocatedPdf = this.ss.fetchTotalAllocatedPDF();
         }
+        debugger;
+        this.getMyAccount();
         this.PostSelectedPlanID();
         //this.DoTimeDelay();
         this.GetAllPageData();
@@ -82,7 +84,7 @@ export class MyAccountComponent implements OnInit {
             this.getStartofAutoRenwalInfo();
 
         } else { this.getTotalPdfUsed(); }
-        this.getMyAccount();
+        //this.getMyAccount();
         this.getSubscribedPlan();
         this.getPlans();
         this.getPayment();
@@ -274,33 +276,65 @@ export class MyAccountComponent implements OnInit {
 
 
     buyWithCard() {
-        //------------
-        // Get Account Master Account By using Account ID 
-        // Check the IsXeroreferalUser Is 1 or 0 
-        // If 1 = True THen Xero Payment Link 
-        // If 0 = False Then Cosmic Payment Link
-        //------------
-        //   //
-        window.open("https://apps.xero.com/!sc-7l/au/subscribe/d589a79e-e0d5-483a-b129-c67d8327b808");
+        debugger;
+        var flag_purchase = false;
+        console.log("IsPaidPlan = "+this.subscribedPlan.IsPaidPlan);
+        console.log("total Paid Pdf = " + this.subscribedPlan.totalPaidPdf);
+        console.log("total Pdf Used = "+this.totalPdfUsed);
+        console.log("total Trial Pdf = "+this.subscribedPlan.TrialPdf);
+        console.log("total Trial Pdf Used = "+this.totalTrialPdfUsed);
+        if(this.subscribedPlan.IsPaidPlan){
+            if((this.subscribedPlan.totalPaidPdf - this.totalPdfUsed) > 0 ){
+                alert("You have Available PDF Count to sacn and use");
+            }
+            else{
+                debugger;
+                flag_purchase = true;
+            }
+        }
+        else{
+            if(!this.subscribedPlan.IsPaidPlan){
+                debugger;
+                if((this.subscribedPlan.TrialPdf - this.totalTrialPdfUsed) > 0 ){
+                    alert("You have Available PDF Count to sacn and use");
+                }
+                else{
+                    debugger;
+                    flag_purchase = true;
+                }
+            }
+        }
+        
+        if(flag_purchase){
+            debugger;
+                //------------
+                // Get Account Master Account By using Account ID 
+                // Check the IsXeroreferalUser Is 1 or 0 
+                // If 1 = True THen Xero Payment Link 
+                // If 0 = False Then Cosmic Payment Link
+                //------------
+                //   //
+                window.open("https://apps.xero.com/!sc-7l/au/subscribe/d589a79e-e0d5-483a-b129-c67d8327b808");
+                // var a = this.myAccountDetail.IsXeroReferaluser;
+                // if (a !== null) {
+                //     //  //
+                //     if (a) {
+                //         //For xerorefUder Link 
+                //         //    //
+                //         window.open("https://www.google.com/");
+                //     }
+                //     else {
+                //         if (!this.packagePurchaseHelper.CheckAvailablePaidPDFCount()) {
+                //             this.packagePurchaseHelper.NavigateToPackageApp();
+                //         } else {
+                //             alert('You have enough package to process bills..');
+                //         }
+                //     }
+                // }
+        }
 
-
-
-        // var a = this.myAccountDetail.IsXeroReferaluser;
-        // if (a !== null) {
-        //     //  //
-        //     if (a) {
-        //         //For xerorefUder Link 
-        //         //    //
-        //         window.open("https://www.google.com/");
-        //     }
-        //     else {
-        //         if (!this.packagePurchaseHelper.CheckAvailablePaidPDFCount()) {
-        //             this.packagePurchaseHelper.NavigateToPackageApp();
-        //         } else {
-        //             alert('You have enough package to process bills..');
-        //         }
-        //     }
-        // }
+            
+        
     }
 
     AutoRenewalCheckboxChange(_event) {
