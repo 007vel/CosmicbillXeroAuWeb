@@ -39,7 +39,7 @@ export class MyAccountComponent implements OnInit {
     userform: FormGroup;
     AutoRenewalEnable: boolean = false;
 
-    XeroReferaluser : any;
+    XeroReferaluser: any;
     submitted: boolean;
 
     genders: SelectItem[];
@@ -96,7 +96,7 @@ export class MyAccountComponent implements OnInit {
     }
     private PostSelectedPlanID() {
         if (ParameterHashLocationStrategy.planId != null) {
-            this.api.post('Admin/SaveSubscriptionMaster', { 'PlanID': ParameterHashLocationStrategy.planId }).subscribe(
+            this.api.post('Admin/SaveSubscriptionMasterinCosmic', { 'PlanID': ParameterHashLocationStrategy.planId }).subscribe(
                 (res1: {}) => this.PostPlaidSuccess(),
                 error => this.PostPlaidFailuer());
         }
@@ -246,14 +246,14 @@ export class MyAccountComponent implements OnInit {
 
         this.spinner.show();
         this.loadingMessage = "Please wait..."
-        
+
         this.api.get('Account/Get', '').subscribe(
             (res: {}) => this.sucessGetMyAccount(res),
             error => this.failedGetMyAccount(<any>error));
     }
 
     sucessGetMyAccount(res: any) {
-         
+
         this.myAccountDetail = res.Data;
         this.XeroReferaluser = this.myAccountDetail.IsXeroReferaluser;
         this.userform = this.fb.group({
