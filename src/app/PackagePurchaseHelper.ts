@@ -126,6 +126,7 @@ export class PackagePurchaseHelper {
 
     public getSubscribedPlan()  // Use this mrthod, if need force call for package availability
     {
+        //debugger;
         this.api.get('Plan/GetAccountSubscribedPlan', '').subscribe(
             (res: {}) => this.sucessGetSubscribedPlan(res),
             error => this.failedGetSubscribedPlan(<any>error));
@@ -134,7 +135,7 @@ export class PackagePurchaseHelper {
 
     private sucessGetSubscribedPlan(res: any) {
         this.subscribedPlan = res.Data;
-
+        //debugger;
         console.log('subscribedPlan' + this.subscribedPlan);
         this.IsAutoRenewal = this.subscribedPlan.IsAutoRenew;
         this.IsPaidPlan = this.subscribedPlan.IsPaidPlan;
