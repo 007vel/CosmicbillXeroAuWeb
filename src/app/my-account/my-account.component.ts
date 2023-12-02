@@ -65,7 +65,7 @@ export class MyAccountComponent implements OnInit {
 
             // this.totalAllocatedPdf = this.ss.fetchTotalAllocatedPDF();
         }
-        debugger;
+        //debugger;
         this.getMyAccount();
         this.PostSelectedPlanID();
         //this.DoTimeDelay();
@@ -158,7 +158,7 @@ export class MyAccountComponent implements OnInit {
     getSubscribedPlan() {
         this.spinner.show();
         this.loadingMessage = "Please wait..."
-
+        //debugger;
         this.api.get('Plan/GetAccountSubscribedPlan', '').subscribe(
             (res: {}) => this.sucessGetSubscribedPlan(res),
             error => this.failedGetSubscribedPlan(<any>error));
@@ -280,11 +280,21 @@ export class MyAccountComponent implements OnInit {
         var flag_purchase = false;
         console.log("IsPaidPlan = " + this.subscribedPlan.IsPaidPlan);
         console.log("total Paid Pdf = " + this.subscribedPlan.totalPaidPdf);
+        console.log("total Allocated Pdf = " + this.totalAllocatedPdf);
         console.log("total Pdf Used = " + this.totalPdfUsed);
         console.log("total Trial Pdf = " + this.subscribedPlan.TrialPdf);
         console.log("total Trial Pdf Used = " + this.totalTrialPdfUsed);
         if (this.subscribedPlan.IsPaidPlan) {
-            if ((this.subscribedPlan.totalPaidPdf - this.totalPdfUsed) > 0) {
+
+            var totalpdf = 0;
+            if (this.subscribedPlan.totalPaidPdf == null || undefined)
+            {
+                totalpdf = this.totalAllocatedPdf;
+            }
+            else{
+                totalpdf = this.subscribedPlan.totalPaidPdf;
+            }
+            if((totalpdf - this.totalPdfUsed) > 0) {
                 alert("You have enough PDF Count to scan and use");
 
             }
@@ -308,34 +318,35 @@ export class MyAccountComponent implements OnInit {
 
         if (flag_purchase) {
             debugger;
-            //------------
-            // Get Account Master Account By using Account ID 
-            // Check the IsXeroreferalUser Is 1 or 0 
-            // If 1 = True THen Xero Payment Link 
-            // If 0 = False Then Cosmic Payment Link
-            //------------
-            //   //
-            window.open("https://apps.xero.com/!sc-7l/au/subscribe/d589a79e-e0d5-483a-b129-c67d8327b808");
-            // var a = this.myAccountDetail.IsXeroReferaluser;
-            // if (a !== null) {
-            //     //  //
-            //     if (a) {
-            //         //For xerorefUder Link 
-            //         //    //
-            //         window.open("https://www.google.com/");
-            //     }
-            //     else {
-            //         if (!this.packagePurchaseHelper.CheckAvailablePaidPDFCount()) {
-            //             this.packagePurchaseHelper.NavigateToPackageApp();
-            //         } else {
-            //             alert('You have enough package to process bills..');
-            //         }
-            //     }
-            // }
+                // ------------
+                // Get Account Master Account By using Account ID 
+                // Check the IsXeroreferalUser Is 1 or 0 
+                // If 1 = True THen Xero Payment Link 
+                // If 0 = False Then Cosmic Payment Link
+                // ------------
+                  //
+                
+                var a = this.myAccountDetail.IsXeroReferaluser;
+                debugger;
+                if (a !== null) {
+                    //  //
+                    if (a) {
+                        //For xerorefUder Link 
+                        //    //
+                       window.open("https://apps.xero.com/!sc-7l/au/subscribe/d589a79e-e0d5-483a-b129-c67d8327b808");
+                    }
+                    else {
+                        if (!this.packagePurchaseHelper.CheckAvailablePaidPDFCount()) {
+                            this.packagePurchaseHelper.NavigateToPackageApp();
+                        } else {
+                            alert('You have enough package to process bills..');
+                        }
+                    }
+                }
         }
-
-
-
+        //Xero Referal link
+        //window.open("https://apps.xero.com/!sc-7l/au/subscribe/d589a79e-e0d5-483a-b129-c67d8327b808");
+        
     }
 
     AutoRenewalCheckboxChange(_event) {
