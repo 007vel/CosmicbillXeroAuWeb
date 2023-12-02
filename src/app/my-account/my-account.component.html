@@ -126,7 +126,14 @@
             </div>
           </ng-template>
         </p-dropdown> -->
-
+        <div
+        *ngIf="
+        PaymentStatus ;
+            else trial_Inprogress_message
+        ">
+        <b><span style="color: red;"> {{PaymentStatus}}</span></b>
+    </div>
+    <ng-template #trial_Inprogress_message>  </ng-template>
             <p-footer>
                 <button
                     pButton

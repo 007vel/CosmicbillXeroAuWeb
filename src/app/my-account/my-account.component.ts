@@ -38,10 +38,12 @@ export class MyAccountComponent implements OnInit {
     totalAllocatedPdf: any;
     userform: FormGroup;
     AutoRenewalEnable: boolean = false;
-
+    PaymentStatus: any = " ";
+    PaymentInitDateTime : any = null;
     XeroReferaluser: any;
     submitted: boolean;
-
+    minutesDifference : any = 0;
+    allowpayment : any = false;
     genders: SelectItem[];
 
     description: string;
@@ -65,7 +67,7 @@ export class MyAccountComponent implements OnInit {
 
             // this.totalAllocatedPdf = this.ss.fetchTotalAllocatedPDF();
         }
-        //debugger;
+        // 
         this.getMyAccount();
         this.PostSelectedPlanID();
         //this.DoTimeDelay();
@@ -158,7 +160,7 @@ export class MyAccountComponent implements OnInit {
     getSubscribedPlan() {
         this.spinner.show();
         this.loadingMessage = "Please wait..."
-        //debugger;
+        // 
         this.api.get('Plan/GetAccountSubscribedPlan', '').subscribe(
             (res: {}) => this.sucessGetSubscribedPlan(res),
             error => this.failedGetSubscribedPlan(<any>error));
@@ -255,27 +257,60 @@ export class MyAccountComponent implements OnInit {
     }
 
     sucessGetMyAccount(res: any) {
-
         this.myAccountDetail = res.Data;
         this.XeroReferaluser = this.myAccountDetail.IsXeroReferaluser;
         this.userform = this.fb.group({
             UserName: [res.Data.UserName],
             Email: [res.Data.Email],
             Phone: [res.Data.Phone]
-
         });
+        debugger;
+        var a = this.myAccountDetail.PaymentInitiationDateTime ;
+       var  dbdate = new Date(a);
+        var currentDatetime = new Date();
+        // debugger;
+        var timeDifference = ((currentDatetime.getTime()) - dbdate.getTime()) ;
+        this.minutesDifference = Math.floor(timeDifference / (1000 * 60));
+        console.log("Payment recall Minutes Current difference : " , this.minutesDifference);
+        //debugger;
+        if(this.minutesDifference > 2)
+        {
+            //debugger;
+            this.allowpayment = true;
+            this.PaymentStatus = "Payment Confirmation Failed";
+            //debugger;
+            
+        }
+        else{
+            this.PaymentStatus = "Payment Confirmation In progress";
+        }
 
         this.spinner.hide();
-
-
     }
 
     failedGetMyAccount(res: any) {
         this.spinner.hide();
     }
 
+    sucessUpdatedPaymentInitiationDateTime(res: any) {
+         //debugger;
+
+    }
+    failedUpdatedPaymentInitiationDateTime(res: any) {}
 
     buyWithCard() {
+        // Payment Button
+        // Move this Code near navigation link 
+        var curentDateTime = new Date();
+        debugger;
+
+        this.api.post('Account/UpdatedPaymentInitiationDateTimeByAccountID', {"PaymentInitiationDateTime":curentDateTime.toDateString()}).subscribe(
+            (res: {}) => this.sucessUpdatedPaymentInitiationDateTime(res),
+            error => this.failedUpdatedPaymentInitiationDateTime(<any>error));
+
+        var xerorefuser = this.myAccountDetail.IsXeroReferaluser;
+        if(this.allowpayment)
+        {
         debugger;
         var flag_purchase = false;
         console.log("IsPaidPlan = " + this.subscribedPlan.IsPaidPlan);
@@ -299,25 +334,25 @@ export class MyAccountComponent implements OnInit {
 
             }
             else {
-                debugger;
+                 
                 flag_purchase = true;
             }
         }
         else {
             if (!this.subscribedPlan.IsPaidPlan) {
-                debugger;
+                 
                 if ((this.subscribedPlan.TrialPdf - this.totalTrialPdfUsed) > 0) {
                     alert("You have enough PDF Count to scan and use");
                 }
                 else {
-                    debugger;
+                     
                     flag_purchase = true;
                 }
             }
         }
 
         if (flag_purchase) {
-            debugger;
+             
                 // ------------
                 // Get Account Master Account By using Account ID 
                 // Check the IsXeroreferalUser Is 1 or 0 
@@ -325,15 +360,22 @@ export class MyAccountComponent implements OnInit {
                 // If 0 = False Then Cosmic Payment Link
                 // ------------
                   //
-                
-                var a = this.myAccountDetail.IsXeroReferaluser;
-                debugger;
-                if (a !== null) {
+                  var curentDateTime = new Date();
+                  debugger;
+                //   this.api.post('Account/UpdatedPaymentInitiationDateTimeByAccountID', {"PaymentInitiationDateTime":curentDateTime}).subscribe(
+                //     (res: {}) => this.sucessUpdatedPaymentInitiationDateTime(res),
+                //     error => this.failedUpdatedPaymentInitiationDateTime(<any>error));
+
+                 
+                if (xerorefuser !== null) {
                     //  //
-                    if (a) {
+                    if (xerorefuser) {
                         //For xerorefUder Link 
                         //    //
                        window.open("https://apps.xero.com/!sc-7l/au/subscribe/d589a79e-e0d5-483a-b129-c67d8327b808");
+
+                       
+
                     }
                     else {
                         if (!this.packagePurchaseHelper.CheckAvailablePaidPDFCount()) {
@@ -348,6 +390,7 @@ export class MyAccountComponent implements OnInit {
         //window.open("https://apps.xero.com/!sc-7l/au/subscribe/d589a79e-e0d5-483a-b129-c67d8327b808");
         
     }
+}
 
     AutoRenewalCheckboxChange(_event) {
         console.log(">>>>>>>>>>>>>>> AutoRenewalCheckboxChange");
