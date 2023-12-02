@@ -39,7 +39,7 @@ export class MyAccountComponent implements OnInit {
     userform: FormGroup;
     AutoRenewalEnable: boolean = false;
 
-    XeroReferaluser : any;
+    XeroReferaluser: any;
     submitted: boolean;
 
     genders: SelectItem[];
@@ -98,7 +98,7 @@ export class MyAccountComponent implements OnInit {
     }
     private PostSelectedPlanID() {
         if (ParameterHashLocationStrategy.planId != null) {
-            this.api.post('Admin/SaveSubscriptionMaster', { 'PlanID': ParameterHashLocationStrategy.planId }).subscribe(
+            this.api.post('Admin/SaveSubscriptionMasterinCosmic', { 'PlanID': ParameterHashLocationStrategy.planId }).subscribe(
                 (res1: {}) => this.PostPlaidSuccess(),
                 error => this.PostPlaidFailuer());
         }
@@ -248,14 +248,14 @@ export class MyAccountComponent implements OnInit {
 
         this.spinner.show();
         this.loadingMessage = "Please wait..."
-        
+
         this.api.get('Account/Get', '').subscribe(
             (res: {}) => this.sucessGetMyAccount(res),
             error => this.failedGetMyAccount(<any>error));
     }
 
     sucessGetMyAccount(res: any) {
-         
+
         this.myAccountDetail = res.Data;
         this.XeroReferaluser = this.myAccountDetail.IsXeroReferaluser;
         this.userform = this.fb.group({
@@ -278,44 +278,45 @@ export class MyAccountComponent implements OnInit {
     buyWithCard() {
         debugger;
         var flag_purchase = false;
-        console.log("IsPaidPlan = "+this.subscribedPlan.IsPaidPlan);
+        console.log("IsPaidPlan = " + this.subscribedPlan.IsPaidPlan);
         console.log("total Paid Pdf = " + this.subscribedPlan.totalPaidPdf);
         console.log("total Allocated Pdf = " + this.totalAllocatedPdf);
-        console.log("total Pdf Used = "+this.totalPdfUsed);
-        console.log("total Trial Pdf = "+this.subscribedPlan.TrialPdf);
-        console.log("total Trial Pdf Used = "+this.totalTrialPdfUsed);
-        if(this.subscribedPlan.IsPaidPlan){
+        console.log("total Pdf Used = " + this.totalPdfUsed);
+        console.log("total Trial Pdf = " + this.subscribedPlan.TrialPdf);
+        console.log("total Trial Pdf Used = " + this.totalTrialPdfUsed);
+        if (this.subscribedPlan.IsPaidPlan) {
 
             var totalpdf = 0;
-            if(this.subscribedPlan.totalPaidPdf == null || undefined)
+            if (this.subscribedPlan.totalPaidPdf == null || undefined)
             {
                 totalpdf = this.totalAllocatedPdf;
             }
             else{
                 totalpdf = this.subscribedPlan.totalPaidPdf;
             }
-            if((totalpdf - this.totalPdfUsed) > 0 ){
-                alert("You have Available PDF Count to sacn and use");
+            if((totalpdf - this.totalPdfUsed) > 0) {
+                alert("You have enough PDF Count to scan and use");
+
             }
-            else{
+            else {
                 debugger;
                 flag_purchase = true;
             }
         }
-        else{
-            if(!this.subscribedPlan.IsPaidPlan){
+        else {
+            if (!this.subscribedPlan.IsPaidPlan) {
                 debugger;
-                if((this.subscribedPlan.TrialPdf - this.totalTrialPdfUsed) > 0 ){
-                    alert("You have Available PDF Count to sacn and use");
+                if ((this.subscribedPlan.TrialPdf - this.totalTrialPdfUsed) > 0) {
+                    alert("You have enough PDF Count to scan and use");
                 }
-                else{
+                else {
                     debugger;
                     flag_purchase = true;
                 }
             }
         }
-        
-        if(flag_purchase){
+
+        if (flag_purchase) {
             debugger;
                 // ------------
                 // Get Account Master Account By using Account ID 

@@ -159,7 +159,7 @@ export class InitLoginComponent implements OnInit, OnDestroy {
   }
 
   private DefaultPlanAssign() {
-    this.api.post('Admin/SaveSubscriptionMaster', { 'PlanID': 8988, "IsDefaultSubscription": true }).subscribe(
+    this.api.post('Admin/SaveSubscriptionMasterinCosmic', { 'PlanID': 8988, "IsDefaultSubscription": true }).subscribe(
       (res1: {}) => this.DefaultPlanAssignSuccess(),
       error => this.DefaultPlanAssignError());
   }
