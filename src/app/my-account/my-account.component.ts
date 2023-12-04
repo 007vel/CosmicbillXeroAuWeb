@@ -12,6 +12,7 @@ import { ParameterHashLocationStrategy } from '../ParameterHashLocationStrategy'
 import { PackagePurchaseHelper } from '../PackagePurchaseHelper';
 import { CosmicNotifyService } from '../CosmicNotifyService';
 import { debugOutputAstAsTypeScript } from '@angular/compiler';
+import { stringhelper } from '../stringhelper';
 
 
 @Component({
@@ -39,11 +40,11 @@ export class MyAccountComponent implements OnInit {
     userform: FormGroup;
     AutoRenewalEnable: boolean = false;
     PaymentStatus: any = " ";
-    PaymentInitDateTime : any = null;
+    PaymentInitDateTime: any = null;
     XeroReferaluser: any;
     submitted: boolean;
-    minutesDifference : any = 0;
-    allowpayment : any = false;
+    minutesDifference: any = 0;
+    allowpayment: any = true;
     genders: SelectItem[];
 
     description: string;
@@ -265,25 +266,27 @@ export class MyAccountComponent implements OnInit {
             Phone: [res.Data.Phone]
         });
         debugger;
-        var a = this.myAccountDetail.PaymentInitiationDateTime ;
-       var  dbdate = new Date(a);
+        var _date = this.myAccountDetail.PaymentInitiatedDateTime;
+        var dbdate = new Date(_date);
         var currentDatetime = new Date();
-        // debugger;
-        var timeDifference = ((currentDatetime.getTime()) - dbdate.getTime()) ;
+        debugger;
+        var timeDifference = ((currentDatetime.getTime()) - dbdate.getTime());
         this.minutesDifference = Math.floor(timeDifference / (1000 * 60));
-        console.log("Payment recall Minutes Current difference : " , this.minutesDifference);
+        console.log("Payment recall Minutes Current difference : ", this.minutesDifference);
         //debugger;
-        if(this.minutesDifference > 2)
-        {
-            //debugger;
-            this.allowpayment = true;
-            this.PaymentStatus = "Payment Confirmation Failed";
-            //debugger;
-            
+        if (!stringhelper.IsNullOrEmptyOrDefault(_date)) {
+            if (this.minutesDifference <= 4) {
+                //debugger;
+                this.allowpayment = true;
+                this.PaymentStatus = "Payment Confirmation In progress";
+                //debugger;
+            }
+            else {
+                this.allowpayment = true;
+                this.PaymentStatus = "Last payment is Failed, Contact cosmic support";
+            }
         }
-        else{
-            this.PaymentStatus = "Payment Confirmation In progress";
-        }
+
 
         this.spinner.hide();
     }
@@ -293,88 +296,66 @@ export class MyAccountComponent implements OnInit {
     }
 
     sucessUpdatedPaymentInitiationDateTime(res: any) {
-         //debugger;
-
+        //debugger;
+        window.open("https://apps.xero.com/!sc-7l/au/subscribe/d589a79e-e0d5-483a-b129-c67d8327b808");
     }
-    failedUpdatedPaymentInitiationDateTime(res: any) {}
+    failedUpdatedPaymentInitiationDateTime(res: any) { }
 
     buyWithCard() {
-        // Payment Button
-        // Move this Code near navigation link 
-        var curentDateTime = new Date();
         debugger;
-
-        this.api.post('Account/UpdatedPaymentInitiationDateTimeByAccountID', {"PaymentInitiationDateTime":curentDateTime.toDateString()}).subscribe(
-            (res: {}) => this.sucessUpdatedPaymentInitiationDateTime(res),
-            error => this.failedUpdatedPaymentInitiationDateTime(<any>error));
-
         var xerorefuser = this.myAccountDetail.IsXeroReferaluser;
-        if(this.allowpayment)
-        {
-        debugger;
-        var flag_purchase = false;
-        console.log("IsPaidPlan = " + this.subscribedPlan.IsPaidPlan);
-        console.log("total Paid Pdf = " + this.subscribedPlan.totalPaidPdf);
-        console.log("total Allocated Pdf = " + this.totalAllocatedPdf);
-        console.log("total Pdf Used = " + this.totalPdfUsed);
-        console.log("total Trial Pdf = " + this.subscribedPlan.TrialPdf);
-        console.log("total Trial Pdf Used = " + this.totalTrialPdfUsed);
-        if (this.subscribedPlan.IsPaidPlan) {
+        if (this.allowpayment) {
 
-            var totalpdf = 0;
-            if (this.subscribedPlan.totalPaidPdf == null || undefined)
-            {
-                totalpdf = this.totalAllocatedPdf;
-            }
-            else{
-                totalpdf = this.subscribedPlan.totalPaidPdf;
-            }
-            if((totalpdf - this.totalPdfUsed) > 0) {
-                alert("You have enough PDF Count to scan and use");
+            var flag_purchase = false;
+            console.log("IsPaidPlan = " + this.subscribedPlan.IsPaidPlan);
+            console.log("total Paid Pdf = " + this.subscribedPlan.totalPaidPdf);
+            console.log("total Allocated Pdf = " + this.totalAllocatedPdf);
+            console.log("total Pdf Used = " + this.totalPdfUsed);
+            console.log("total Trial Pdf = " + this.subscribedPlan.TrialPdf);
+            console.log("total Trial Pdf Used = " + this.totalTrialPdfUsed);
+            if (this.subscribedPlan.IsPaidPlan) {
 
-            }
-            else {
-                 
-                flag_purchase = true;
-            }
-        }
-        else {
-            if (!this.subscribedPlan.IsPaidPlan) {
-                 
-                if ((this.subscribedPlan.TrialPdf - this.totalTrialPdfUsed) > 0) {
-                    alert("You have enough PDF Count to scan and use");
+                var totalpdf = 0;
+                if (this.subscribedPlan.totalPaidPdf == null || undefined) {
+                    totalpdf = this.totalAllocatedPdf;
                 }
                 else {
-                     
+                    totalpdf = this.subscribedPlan.totalPaidPdf;
+                }
+                if ((totalpdf - this.totalPdfUsed) > 0) {
+                    alert("You have enough PDF Count to scan and use");
+
+                }
+                else {
+
                     flag_purchase = true;
                 }
             }
-        }
+            else {
+                if (!this.subscribedPlan.IsPaidPlan) {
 
-        if (flag_purchase) {
-             
-                // ------------
-                // Get Account Master Account By using Account ID 
-                // Check the IsXeroreferalUser Is 1 or 0 
-                // If 1 = True THen Xero Payment Link 
-                // If 0 = False Then Cosmic Payment Link
-                // ------------
-                  //
-                  var curentDateTime = new Date();
-                  debugger;
-                //   this.api.post('Account/UpdatedPaymentInitiationDateTimeByAccountID', {"PaymentInitiationDateTime":curentDateTime}).subscribe(
-                //     (res: {}) => this.sucessUpdatedPaymentInitiationDateTime(res),
-                //     error => this.failedUpdatedPaymentInitiationDateTime(<any>error));
+                    if ((this.subscribedPlan.TrialPdf - this.totalTrialPdfUsed) > 0) {
+                        alert("You have enough PDF Count to scan and use");
+                    }
+                    else {
 
-                 
+                        flag_purchase = true;
+                    }
+                }
+            }
+
+            if (flag_purchase) {
+
+                var curentDateTime = new Date();
+                debugger;
                 if (xerorefuser !== null) {
                     //  //
                     if (xerorefuser) {
-                        //For xerorefUder Link 
-                        //    //
-                       window.open("https://apps.xero.com/!sc-7l/au/subscribe/d589a79e-e0d5-483a-b129-c67d8327b808");
+                        var curentDateTime = new Date();
+                        this.api.post('Account/UpdateAccountMaster', { "PaymentInitiatedDateTime": curentDateTime.toLocaleString() }).subscribe(
+                            (res: {}) => this.sucessUpdatedPaymentInitiationDateTime(res),
+                            error => this.failedUpdatedPaymentInitiationDateTime(<any>error));
 
-                       
 
                     }
                     else {
@@ -385,12 +366,9 @@ export class MyAccountComponent implements OnInit {
                         }
                     }
                 }
+            }
         }
-        //Xero Referal link
-        //window.open("https://apps.xero.com/!sc-7l/au/subscribe/d589a79e-e0d5-483a-b129-c67d8327b808");
-        
     }
-}
 
     AutoRenewalCheckboxChange(_event) {
         console.log(">>>>>>>>>>>>>>> AutoRenewalCheckboxChange");
