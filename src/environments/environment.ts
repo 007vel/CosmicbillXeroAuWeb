@@ -5,7 +5,7 @@
 
 export const environment = {
 
-  scope: "openid profile email accounting.transactions accounting.settings offline_access accounting.contacts.read accounting.contacts accounting.settings.read accounting.attachments",
+  scope: "openid profile email accounting.transactions accounting.settings accounting.contacts.read accounting.contacts accounting.settings.read accounting.attachments",
 
   // production: false,
   // apiBaseUrl: 'http://localhost:61457/api/',
