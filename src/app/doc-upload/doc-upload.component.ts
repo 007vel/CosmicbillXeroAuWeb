@@ -247,6 +247,7 @@ export class DocUploadComponent implements OnInit {
   }
 
   async myUploader(event) {
+    debugger;
     if (this.uploadedFiles.length == 0) {
       return;
     }

@@ -42,6 +42,7 @@ export class MyAccountComponent implements OnInit {
     PaymentStatus: any = " ";
     PaymentInitDateTime: any = null;
     XeroReferaluser: any;
+    IsEligibleForXeroPlanOws : any ;
     submitted: boolean;
     minutesDifference: any = 0;
     allowpayment: any = true;
@@ -161,7 +162,6 @@ export class MyAccountComponent implements OnInit {
     getSubscribedPlan() {
         this.spinner.show();
         this.loadingMessage = "Please wait..."
-        // 
         this.api.get('Plan/GetAccountSubscribedPlan', '').subscribe(
             (res: {}) => this.sucessGetSubscribedPlan(res),
             error => this.failedGetSubscribedPlan(<any>error));
@@ -170,6 +170,7 @@ export class MyAccountComponent implements OnInit {
     sucessGetSubscribedPlan(res: any) {
         //
         this.subscribedPlan = res.Data;
+        this.IsEligibleForXeroPlanOws = res.data.IsEligibleForXeroPlanOws;
         this.AutoRenewalEnable = res.Data.IsAutoRenew;
         console.log('subscribedPlan' + this.subscribedPlan);
 
@@ -265,21 +266,17 @@ export class MyAccountComponent implements OnInit {
             Email: [res.Data.Email],
             Phone: [res.Data.Phone]
         });
-        debugger;
         var _date = this.myAccountDetail.PaymentInitiatedDateTime;
         var dbdate = new Date(_date);
         var currentDatetime = new Date();
-        debugger;
         var timeDifference = ((currentDatetime.getTime()) - dbdate.getTime());
         this.minutesDifference = Math.floor(timeDifference / (1000 * 60));
         console.log("Payment recall Minutes Current difference : ", this.minutesDifference);
-        //debugger;
+       
         if (!stringhelper.IsNullOrEmptyOrDefault(_date)) {
-            if (this.minutesDifference <= 4) {
-                //debugger;
+            if (this.minutesDifference <= 4) {         
                 this.allowpayment = true;
                 this.PaymentStatus = "Payment Confirmation In progress";
-                //debugger;
             }
             else {
                 this.allowpayment = true;
@@ -303,6 +300,7 @@ export class MyAccountComponent implements OnInit {
 
     buyWithCard() {
         debugger;
+        this.getSubscribedPlan();
         var xerorefuser = this.myAccountDetail.IsXeroReferaluser;
         if (this.allowpayment) {
 
@@ -348,6 +346,10 @@ export class MyAccountComponent implements OnInit {
 
                 var curentDateTime = new Date();
                 debugger;
+     
+                if(this.IsEligibleForXeroPlanOws){
+
+                }
                 if (xerorefuser !== null) {
                     //  //
                     if (xerorefuser) {

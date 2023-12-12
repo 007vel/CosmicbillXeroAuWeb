@@ -269,6 +269,7 @@ export class HomelayoutComponent implements AfterViewInit, OnDestroy, OnInit {
     }
 
     getSubscribedPlan1() {
+
         this.api.get('Plan/GetAccountSubscribedPlan', '').subscribe(
             (res: {}) => {
 
