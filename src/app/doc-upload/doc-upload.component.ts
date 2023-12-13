@@ -247,7 +247,7 @@ export class DocUploadComponent implements OnInit {
   }
 
   async myUploader(event) {
-    debugger;
+     
     if (this.uploadedFiles.length == 0) {
       return;
     }
@@ -259,10 +259,12 @@ export class DocUploadComponent implements OnInit {
     this.packagePurchaseHelper.getSubscribedPlan();
 
     await this.delay(4000);
+     
     var availableTotalPdfCount = this.packagePurchaseHelper.GetAvailablePDf();
 
-    if (availableTotalPdfCount < 1 || availableTotalPdfCount == undefined) {
+    if ((availableTotalPdfCount < 1 || availableTotalPdfCount == undefined ) && !this.packagePurchaseHelper.UserIsEligibleForXeroPlanOws) {
       if (this.packagePurchaseHelper.IsAutoRenewal && this.packagePurchaseHelper.IsPaidPlan) {
+         
         this.loadingMessage = "Auto Renewal...";
         console.log(" IsAutoRenewal true");
         this.api.post('Admin/AutoRenewal', null).subscribe(
@@ -276,6 +278,7 @@ export class DocUploadComponent implements OnInit {
           return;
         }
       } else {
+         
         this.SHowLowpDfcountDialog();
         this.spinner.hide();
         this.disableUploadButton = false;
@@ -284,8 +287,9 @@ export class DocUploadComponent implements OnInit {
 
     }
     this.loadingMessage = "Processing...";
-    if (availableTotalPdfCount < this.uploadedFiles.length) // uploding more than count
+    if (availableTotalPdfCount < this.uploadedFiles.length && !this.packagePurchaseHelper.UserIsEligibleForXeroPlanOws) // uploding more than count
     {
+       
       console.log("========== no pdf count=" + this.uploadedFiles.length);
       console.log("======== available count=" + availableTotalPdfCount);
       var sliced = this.uploadedFiles.slice(0, availableTotalPdfCount);
@@ -298,6 +302,7 @@ export class DocUploadComponent implements OnInit {
       });
 
     } else {
+       
       console.log("========== count available");
       this.uploadedFiles.forEach(el => {
         el.progressMessage = "Uploading...";
@@ -312,8 +317,8 @@ export class DocUploadComponent implements OnInit {
     console.log("autorenewalfailed");
   }
   onUploadclick(event) {
-
-    if (this.packagePurchaseHelper.CheckAvailablePackageCount()) {
+     
+    if (this.packagePurchaseHelper.CheckAvailablePackageCount() || this.packagePurchaseHelper.UserIsEligibleForXeroPlanOws) {
       this.uploadBills(event);
     } else {
       // //

@@ -42,11 +42,13 @@ export class MyAccountComponent implements OnInit {
     PaymentStatus: any = " ";
     PaymentInitDateTime: any = null;
     XeroReferaluser: any;
-    IsEligibleForXeroPlanOws : any ;
+    //IsEligibleForXeroPlanOws : boolean ;
     submitted: boolean;
     minutesDifference: any = 0;
     allowpayment: any = true;
     genders: SelectItem[];
+    allowOwing : boolean ;
+    totalused : any;
 
     description: string;
 
@@ -61,13 +63,13 @@ export class MyAccountComponent implements OnInit {
         this.genders.push({ label: 'Select Gender', value: '' });
         this.genders.push({ label: 'Male', value: 'Male' });
         this.genders.push({ label: 'Female', value: 'Female' });
-
+        debugger;
         if (!this.packagePurchaseHelper.IsAutoRenewal) {
             this.packagePurchaseHelper.getSubscribedPlan();
             this.totalAllocatedPdf = this.ss.fetchPaidPdfCount();
         } else {
 
-            // this.totalAllocatedPdf = this.ss.fetchTotalAllocatedPDF();
+             this.totalAllocatedPdf = this.ss.fetchTotalAllocatedPDF();
         }
         // 
         this.getMyAccount();
@@ -89,6 +91,7 @@ export class MyAccountComponent implements OnInit {
 
         } else { this.getTotalPdfUsed(); }
         //this.getMyAccount();
+        this.getTotalPdfUsed();
         this.getSubscribedPlan();
         this.getPlans();
         this.getPayment();
@@ -161,6 +164,7 @@ export class MyAccountComponent implements OnInit {
 
     getSubscribedPlan() {
         this.spinner.show();
+        debugger;
         this.loadingMessage = "Please wait..."
         this.api.get('Plan/GetAccountSubscribedPlan', '').subscribe(
             (res: {}) => this.sucessGetSubscribedPlan(res),
@@ -169,8 +173,11 @@ export class MyAccountComponent implements OnInit {
 
     sucessGetSubscribedPlan(res: any) {
         //
+        debugger;
         this.subscribedPlan = res.Data;
-        this.IsEligibleForXeroPlanOws = res.data.IsEligibleForXeroPlanOws;
+        console.log(this.subscribedPlan);
+        console.log(this.subscribedPlan.IsEligibleForXeroPlanOws + "IsEligibleForXeroPlanOws");
+        this.allowOwing = res.data.IsEligibleForXeroPlanOws;
         this.AutoRenewalEnable = res.Data.IsAutoRenew;
         console.log('subscribedPlan' + this.subscribedPlan);
 
@@ -207,14 +214,16 @@ export class MyAccountComponent implements OnInit {
     }
 
     sucessGetStartofAutoRenwalInfo(res: any) {
-
+        debugger;
         if (res.Data != null) {
             this.totalPdfUsed = res.Data.totalUsedPdf;
-            this.totalAllocatedPdf = res.Data.totalAllocatedPdf;
+           // this.totalAllocatedPdf = res.Data.totalAllocatedPdf;
         }
     }
     sucessGetTotalPdfUsed(res: any) {
+        debugger;
         if (res.Data != null) {
+            
             this.totalPdfUsed = res.Data.TotalPaidUsed;
         }
         this.spinner.hide();
@@ -293,14 +302,14 @@ export class MyAccountComponent implements OnInit {
     }
 
     sucessUpdatedPaymentInitiationDateTime(res: any) {
-        //debugger;
+        // 
         window.open("https://apps.xero.com/!sc-7l/au/subscribe/d589a79e-e0d5-483a-b129-c67d8327b808");
     }
     failedUpdatedPaymentInitiationDateTime(res: any) { }
 
     buyWithCard() {
-        debugger;
-        this.getSubscribedPlan();
+         
+        //this.getSubscribedPlan();
         var xerorefuser = this.myAccountDetail.IsXeroReferaluser;
         if (this.allowpayment) {
 
@@ -345,29 +354,32 @@ export class MyAccountComponent implements OnInit {
             if (flag_purchase) {
 
                 var curentDateTime = new Date();
-                debugger;
+                 
      
-                if(this.IsEligibleForXeroPlanOws){
+                if(this.packagePurchaseHelper.UserIsEligibleForXeroPlanOws){
 
+                    var a  = window.confirm("You're exceeded current month limit. But stil, you can process the pdf's. the additional usage will be charged in upcoming blling");
                 }
-                if (xerorefuser !== null) {
-                    //  //
-                    if (xerorefuser) {
-                        var curentDateTime = new Date();
-                        this.api.post('Account/UpdateAccountMaster', { "PaymentInitiatedDateTime": curentDateTime.toLocaleString() }).subscribe(
-                            (res: {}) => this.sucessUpdatedPaymentInitiationDateTime(res),
-                            error => this.failedUpdatedPaymentInitiationDateTime(<any>error));
-
-
-                    }
-                    else {
-                        if (!this.packagePurchaseHelper.CheckAvailablePaidPDFCount()) {
-                            this.packagePurchaseHelper.NavigateToPackageApp();
-                        } else {
-                            alert('You have enough package to process bills..');
+                else{
+                    if (xerorefuser !== null) {
+                        if (xerorefuser) {
+                            var curentDateTime = new Date();
+                            this.api.post('Account/UpdateAccountMaster', { "PaymentInitiatedDateTime": curentDateTime.toLocaleString() }).subscribe(
+                                (res: {}) => this.sucessUpdatedPaymentInitiationDateTime(res),
+                                error => this.failedUpdatedPaymentInitiationDateTime(<any>error));
+    
+    
+                        }
+                        else {
+                            if (!this.packagePurchaseHelper.CheckAvailablePaidPDFCount()) {
+                                this.packagePurchaseHelper.NavigateToPackageApp();
+                            } else {
+                                alert('You have enough package to process bills..');
+                            }
                         }
                     }
                 }
+                
             }
         }
     }

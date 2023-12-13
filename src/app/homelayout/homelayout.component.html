@@ -10,9 +10,17 @@
                 <u> Please click here to subscribe</u></a>
         </div>
         <div *ngIf="subscribedPlan.IsPaidPlan && !showAutoRenewwalMessage">
-            Your have left {{ totalPaidPdf }} pdf(s) to scan.
-            <a style="color: rgb(236, 236, 215)" [routerLink]="" (click)="NavigateToPaymentApp($event)">
+            <div *ngIf="subscribedPlan.IsPaidPlan && subscribedPlan.AllowOweing && (totalPaidPdf < 0)" >
+                 Your Current Plan Is Expired . Your Owing Count is {{ totalPaidPdf * -1 }}.
+                <!-- <a style="color: rgb(236, 236, 215)" [routerLink]="" >
+                    <u> Please click here to upgrade plan</u></a> -->
+            </div>
+            <ng-template #elseTemplate>
+                Your have left {{ totalPaidPdf }} pdf(s) to scan.
+                <a style="color: rgb(236, 236, 215)" [routerLink]="" (click)="NavigateToPaymentApp($event)">
                 <u> Please click here to upgrade plan</u></a>
+            </ng-template>
+            
         </div>
         <div *ngIf="showAutoRenewwalMessage">
             Please keep on processing you are on Auto Renewal we will populate
