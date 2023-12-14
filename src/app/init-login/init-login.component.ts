@@ -196,7 +196,7 @@ export class InitLoginComponent implements OnInit, OnDestroy {
       if (res.Data != null) {
 
         if (res.Data.length > 0) {
-
+          
           var token = this.ss.fetchToken();
 
           if (res.Data.length == 1) {

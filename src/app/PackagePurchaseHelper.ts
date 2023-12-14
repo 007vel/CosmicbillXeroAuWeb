@@ -16,6 +16,8 @@ export class PackagePurchaseHelper {
     loadingMessage: any = "Loading...";
     IsPaidPlan: boolean;
     IsAutoRenewal: boolean;
+    UserIsEligibleForXeroPlanOws: boolean;
+
     constructor(private api: ApiService, private ss: StoreService, private confirmationService: ConfirmationService, protected cosmicNotifyService: CosmicNotifyService) {
 
     }
@@ -136,8 +138,11 @@ export class PackagePurchaseHelper {
     private sucessGetSubscribedPlan(res: any) {
         this.subscribedPlan = res.Data;
         // 
+        
         console.log('subscribedPlan' + this.subscribedPlan);
         this.IsAutoRenewal = this.subscribedPlan.IsAutoRenew;
+        this.UserIsEligibleForXeroPlanOws = this.subscribedPlan.IsEligibleForXeroPlanOws;
+       
         this.IsPaidPlan = this.subscribedPlan.IsPaidPlan;
         if (!this.subscribedPlan.IsPaidPlan) {
             // 1 in cur year any paid ---1--last puchased--rem---carry forwd

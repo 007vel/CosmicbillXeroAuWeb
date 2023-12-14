@@ -55,7 +55,7 @@ export class HomelayoutComponent implements AfterViewInit, OnDestroy, OnInit {
     subscribedPlan: any = null;
     totalTrialPdf: any = 0;
     totalPaidPdf: any = null;
-
+    AllowOweing : boolean ;
     public companyName: String = "No company is connected, Connect a company from Switch Company menu";
 
 
@@ -269,6 +269,7 @@ export class HomelayoutComponent implements AfterViewInit, OnDestroy, OnInit {
     }
 
     getSubscribedPlan1() {
+
         this.api.get('Plan/GetAccountSubscribedPlan', '').subscribe(
             (res: {}) => {
 
@@ -296,7 +297,8 @@ export class HomelayoutComponent implements AfterViewInit, OnDestroy, OnInit {
 
     sucessGetSubscribedPlan(res: any) {
         this.subscribedPlan = res.Data;
-
+         
+        this.subscribedPlan.AllowOweing = this.packagePurchaseHelper.UserIsEligibleForXeroPlanOws;
         console.log('subscribedPlan' + this.subscribedPlan);
         if (!this.subscribedPlan.IsPaidPlan) {
             //if the user has subscribed for paid version ever then the count should be 0 else continue.

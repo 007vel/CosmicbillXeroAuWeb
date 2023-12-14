@@ -7,27 +7,27 @@ export const environment = {
 
   scope: "openid profile email accounting.transactions accounting.settings accounting.contacts.read accounting.contacts accounting.settings.read accounting.attachments",
 
-  // production: false,
-  // apiBaseUrl: 'http://localhost:61457/api/',
-  // apiPreBaseUrl: 'http://localhost:61457/',
-  // urlPostPDF: 'http://localhost:61457/api/Scan/UploadDocumentXero/',
-  // xeroConnectUrl: 'http://localhost:58224/connectxero?token=',
-  // stripePaymentUrl: 'http://localhost:44354/PayInvoice?token=',
-  // xerocallbackUrl: "http://localhost:4200/xerouiau",
-  // XeroClientId: "277BDB35BF49482DB8291CFECCC5C241",
-  // Paymentapp: "http://localhost:58216/#/plan",
-  // PaymentreturnURL: "http://localhost:4200/#/myaccount"
-
-
-  production: true,
-  apiBaseUrl: 'https://cosmicinv.com/xeroapiau/api/',
-  apiPreBaseUrl: 'https://cosmicinv.com/xeroapiau/',
-  urlPostPDF: 'https://cosmicinv.com/xeroapiau/api/Scan/UploadDocumentXero/',
-  xeroConnectUrl: 'https://cosmicinv.com/CoreConnect/4d901dc2-787f-4527-9062-80491a428865?token=',
-  stripePaymentUrl: 'https://cosmicinv.com/CorePayment/PayInvoice?token=',
-  xerocallbackUrl: "https://cosmicbills.com/xerouiau",
+  production: false,
+  apiBaseUrl: 'http://localhost:61457/api/',
+  apiPreBaseUrl: 'http://localhost:61457/',
+  urlPostPDF: 'http://localhost:61457/api/Scan/UploadDocumentXero/',
+  xeroConnectUrl: 'http://localhost:58224/connectxero?token=',
+  stripePaymentUrl: 'http://localhost:44354/PayInvoice?token=',
+  xerocallbackUrl: "http://localhost:4200/xerouiau",
   XeroClientId: "277BDB35BF49482DB8291CFECCC5C241",
-  Paymentapp: "https://paymenthub.cosmicbills.com/#/plan",
-  PaymentreturnURL: "https://cosmicbills.com/xerouiau/#/myaccount"
+  Paymentapp: "http://localhost:58216/#/plan",
+  PaymentreturnURL: "http://localhost:4200/#/myaccount"
+
+
+  // production: true,
+  // apiBaseUrl: 'https://cosmicinv.com/xeroapiau/api/',
+  // apiPreBaseUrl: 'https://cosmicinv.com/xeroapiau/',
+  // urlPostPDF: 'https://cosmicinv.com/xeroapiau/api/Scan/UploadDocumentXero/',
+  // xeroConnectUrl: 'https://cosmicinv.com/CoreConnect/4d901dc2-787f-4527-9062-80491a428865?token=',
+  // stripePaymentUrl: 'https://cosmicinv.com/CorePayment/PayInvoice?token=',
+  // xerocallbackUrl: "https://cosmicbills.com/xerouiau",
+  // XeroClientId: "277BDB35BF49482DB8291CFECCC5C241",
+  // Paymentapp: "https://paymenthub.cosmicbills.com/#/plan",
+  // PaymentreturnURL: "https://cosmicbills.com/xerouiau/#/myaccount"
 
 };

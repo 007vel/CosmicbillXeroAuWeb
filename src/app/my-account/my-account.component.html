@@ -61,24 +61,34 @@
                         </ng-template>
                 </div>
 
-                <div *ngIf="subscribedPlan.IsPaidPlan">
-                    <div
+                <div *ngIf="subscribedPlan.IsPaidPlan ">
+
+                    <div *ngIf="subscribedPlan.IsPaidPlan && !allowOwing ; else notAllowduser">
+                        <span style="color: blue">
+                            Your Current Plan Is Expired . Your Owing Count is {{ totalAllocatedPdf * -1}}.
+                        </span> 
+                    </div>
+                    <ng-template #notAllowduser>
+                        <div
                         *ngIf="
-                            diffDays <= 365 && (AutoRenewalEnable || XeroReferaluser);
+                            diffDays <= 365 && (AutoRenewalEnable || XeroReferaluser) ;
                             else pack_expired
                         "
                     >
+                     
                         <span style="color: blue">
                             You have scanned <b>{{ totalPdfUsed }}</b> bills out
-                            of <b> {{ totalAllocatedPdf  }} </b>
+                            of <b> {{ totalAllocatedPdf }} </b>
                         </span>
+                    
                     </div>
                     <ng-template #pack_expired>
                         <span style="color: red">
                             Your Subscription Plan has expired please buy a new
-                            plan.
+                            plan. 
                         </span>
                     </ng-template>
+                    </ng-template>    
                 </div>
 
                 <div

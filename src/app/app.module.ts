@@ -140,6 +140,7 @@ import { CosmicNotifyService } from './CosmicNotifyService';
 import { RecaptchaModule } from "ng-recaptcha";
 import { AutoxignupxeroComponent } from './AutoSignupXero/autoxignupxero.component';
 import { LaunchPageComponent } from './launch-page/launch-page.component';
+import { SelectCompanyDialogComponent } from './Dialog/components/select-company-dialog/select-company-dialog.component';
 
 
 
@@ -271,7 +272,8 @@ import { LaunchPageComponent } from './launch-page/launch-page.component';
         DocEditComponent,
         DocAuthComponent,
         AutoxignupxeroComponent,
-        LaunchPageComponent
+        LaunchPageComponent,
+        SelectCompanyDialogComponent
     ],
     providers: [
         CarService, CountryService, ConfirmDialogModule, EventService, ConfirmationService, NodeService, ApiService, StoreService, EncryptingService, CosmicNotifyService,
