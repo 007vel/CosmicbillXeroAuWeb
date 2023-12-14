@@ -49,6 +49,8 @@ export class MyAccountComponent implements OnInit {
     genders: SelectItem[];
     allowOwing : boolean ;
     totalused : any;
+    xeromaster: any = null;
+    xeroPlansUrl = 'https://apps.xero.com/${shortcode}/au/subscribe/d589a79e-e0d5-483a-b129-c67d8327b808';
 
     description: string;
 
@@ -73,6 +75,7 @@ export class MyAccountComponent implements OnInit {
         }
         // 
         this.getMyAccount();
+        this.getXeroMaster();
         this.PostSelectedPlanID();
         //this.DoTimeDelay();
         this.GetAllPageData();
@@ -266,7 +269,27 @@ export class MyAccountComponent implements OnInit {
             (res: {}) => this.sucessGetMyAccount(res),
             error => this.failedGetMyAccount(<any>error));
     }
+    getXeroMaster() {
+        this.spinner.show();
+        this.loadingMessage = "Please wait..."
+        this.api.get('Xero/GetByAccountID', '').subscribe(
+            (res: {}) => this.sucessXeroMaster(res),
+            error => this.failedXeroMaster(<any>error));
+    }
 
+    failedXeroMaster(res: any) {
+        this.spinner.hide();
+    }
+
+    sucessXeroMaster(res: any) {
+        this.spinner.hide();
+        this.xeromaster = res.Data[0];
+
+        if (res.StatusCode == 0) {
+            //    this.AsyncBackEndScanning = res.Data[0].ShortCode;
+
+        }
+    }
     sucessGetMyAccount(res: any) {
         this.myAccountDetail = res.Data;
         this.XeroReferaluser = this.myAccountDetail.IsXeroReferaluser;
@@ -302,14 +325,18 @@ export class MyAccountComponent implements OnInit {
     }
 
     sucessUpdatedPaymentInitiationDateTime(res: any) {
-        // 
-        window.open("https://apps.xero.com/!sc-7l/au/subscribe/d589a79e-e0d5-483a-b129-c67d8327b808");
+        //debugger;
+        var shortcode = this.xeromaster.ShortCode;
+        window.open(`https://apps.xero.com/${shortcode}/au/subscribe/d589a79e-e0d5-483a-b129-c67d8327b808`);
+
     }
     failedUpdatedPaymentInitiationDateTime(res: any) { }
 
     buyWithCard() {
          
         //this.getSubscribedPlan();
+        //   this.sucessUpdatedPaymentInitiationDateTime(null);
+        debugger;
         var xerorefuser = this.myAccountDetail.IsXeroReferaluser;
         if (this.allowpayment) {
 
