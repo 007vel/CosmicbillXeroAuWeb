@@ -65,7 +65,7 @@ export class MyAccountComponent implements OnInit {
         this.genders.push({ label: 'Select Gender', value: '' });
         this.genders.push({ label: 'Male', value: 'Male' });
         this.genders.push({ label: 'Female', value: 'Female' });
-        debugger;
+         
         if (!this.packagePurchaseHelper.IsAutoRenewal) {
             this.packagePurchaseHelper.getSubscribedPlan();
             this.totalAllocatedPdf = this.ss.fetchPaidPdfCount();
@@ -167,7 +167,7 @@ export class MyAccountComponent implements OnInit {
 
     getSubscribedPlan() {
         this.spinner.show();
-        debugger;
+         
         this.loadingMessage = "Please wait..."
         this.api.get('Plan/GetAccountSubscribedPlan', '').subscribe(
             (res: {}) => this.sucessGetSubscribedPlan(res),
@@ -176,8 +176,9 @@ export class MyAccountComponent implements OnInit {
 
     sucessGetSubscribedPlan(res: any) {
         //
-        debugger;
+         
         this.subscribedPlan = res.Data;
+        
         console.log(this.subscribedPlan);
         console.log(this.subscribedPlan.IsEligibleForXeroPlanOws + "IsEligibleForXeroPlanOws");
         this.allowOwing = res.data.IsEligibleForXeroPlanOws;
@@ -217,14 +218,14 @@ export class MyAccountComponent implements OnInit {
     }
 
     sucessGetStartofAutoRenwalInfo(res: any) {
-        debugger;
+         
         if (res.Data != null) {
             this.totalPdfUsed = res.Data.totalUsedPdf;
            // this.totalAllocatedPdf = res.Data.totalAllocatedPdf;
         }
     }
     sucessGetTotalPdfUsed(res: any) {
-        debugger;
+         
         if (res.Data != null) {
             
             this.totalPdfUsed = res.Data.TotalPaidUsed;
@@ -325,7 +326,7 @@ export class MyAccountComponent implements OnInit {
     }
 
     sucessUpdatedPaymentInitiationDateTime(res: any) {
-        //debugger;
+        // 
         var shortcode = this.xeromaster.ShortCode;
         window.open(`https://apps.xero.com/${shortcode}/au/subscribe/d589a79e-e0d5-483a-b129-c67d8327b808`);
 
@@ -336,7 +337,7 @@ export class MyAccountComponent implements OnInit {
          
         //this.getSubscribedPlan();
         //   this.sucessUpdatedPaymentInitiationDateTime(null);
-        debugger;
+        
         var xerorefuser = this.myAccountDetail.IsXeroReferaluser;
         if (this.allowpayment) {
 
@@ -383,9 +384,9 @@ export class MyAccountComponent implements OnInit {
                 var curentDateTime = new Date();
                  
      
-                if(this.packagePurchaseHelper.UserIsEligibleForXeroPlanOws){
+                if(this.packagePurchaseHelper.UserIsEligibleForXeroPlanOws && this.subscribedPlan.IsPaidPlan ){
 
-                    var a  = window.confirm("You're exceeded current month limit. But stil, you can process the pdf's. the additional usage will be charged in upcoming blling");
+                    var a  = window.confirm("You're exceeded current month limit. But stil, you can process the pdf's. the additional usage will be charged in upcoming billing");
                 }
                 else{
                     if (xerorefuser !== null) {
