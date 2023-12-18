@@ -71,8 +71,9 @@ export class InitLoginComponent implements OnInit, OnDestroy {
         if (this.code && this.code.length > 20) {
           console.log("Init flow 2 ==========>");
           var email = this.ss.fetchEmail();
+          var email = this.ss.fetchUserName();
           //
-          if (!stringhelper.IsNullOrEmptyOrDefault(email)) {
+          if (!stringhelper.IsNullOrEmptyOrDefault(email) || !stringhelper.IsNullOrEmptyOrDefault(email)) {
             this.ReAuthXeroUI = this.ss.fetchIsReAuthFlow();
             this.getToken();
             this.ss.storeIsReAuthFlow(false);
@@ -196,7 +197,7 @@ export class InitLoginComponent implements OnInit, OnDestroy {
       if (res.Data != null) {
 
         if (res.Data.length > 0) {
-          
+
           var token = this.ss.fetchToken();
 
           if (res.Data.length == 1) {

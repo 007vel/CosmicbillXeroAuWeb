@@ -55,7 +55,7 @@ export class HomelayoutComponent implements AfterViewInit, OnDestroy, OnInit {
     subscribedPlan: any = null;
     totalTrialPdf: any = 0;
     totalPaidPdf: any = null;
-    AllowOweing : boolean ;
+    AllowOweing: boolean;
     public companyName: String = "No company is connected, Connect a company from Switch Company menu";
 
 
@@ -128,7 +128,7 @@ export class HomelayoutComponent implements AfterViewInit, OnDestroy, OnInit {
         this.confirmationService.confirm({
             message: "Can you confirm if you would like to disconnect from Xero?",
             accept: () => {
-                this.loadingMessage = "Xero connection...";
+                this.loadingMessage = "Xero Disconnection...";
                 this.DisconnectFromXero();
             },
             reject: () => {
@@ -297,7 +297,7 @@ export class HomelayoutComponent implements AfterViewInit, OnDestroy, OnInit {
 
     sucessGetSubscribedPlan(res: any) {
         this.subscribedPlan = res.Data;
-         
+
         this.subscribedPlan.AllowOweing = this.packagePurchaseHelper.UserIsEligibleForXeroPlanOws;
         console.log('subscribedPlan' + this.subscribedPlan);
         if (!this.subscribedPlan.IsPaidPlan) {

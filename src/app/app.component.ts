@@ -73,16 +73,16 @@ export class AppComponent {
             var IsAuthorize = this.ss.fetchIsAuthorize();
 
             //   //
-            if (!IsAuthorize) {
-                this.connectCompanyMessage = "No company is connected, Connect a company";
+            // if (!IsAuthorize) {
+            //     this.connectCompanyMessage = "No company is connected, Connect a company";
 
-                this.confirmationService.confirm({
-                    message: 'No company is connected. Connect a company.',
-                });
+            //     this.confirmationService.confirm({
+            //         message: 'No company is connected. Connect a company.',
+            //     });
 
-            } else {
-                this.connectCompanyMessage = "";
-            }
+            // } else {
+            //     this.connectCompanyMessage = "";
+            // }
         }
     }
 
