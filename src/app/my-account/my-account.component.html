@@ -91,16 +91,13 @@
                     </ng-template>    
                 </div>
 
-                <div
-                    class="ui-grid ui-grid-responsive ui-grid-pad ui-fluid"
-                    style="margin: 10px 0px"
-                >
+                <div *ngIf="!XeroReferaluser">
+                    <div class="ui-grid ui-grid-responsive ui-grid-pad ui-fluid"
+                    style="margin: 10px 0px">
                     <div class="ui-grid-row">
                         <div
                             class="ui-grid-col-12"
-                            style="color: blue; font-size: 20px"
-                        >
-                            Auto Renewal
+                            style="color: blue; font-size: 20px">Auto Renewal
                         </div>
                         <div class="ui-grid-col-2">
                             <input
@@ -112,6 +109,9 @@
                         </div>
                     </div>
                 </div>
+                    
+                </div>
+                
                 <p-confirmDialog
                     header="Confirmation"
                     icon="pi pi-exclamation-triangle"
