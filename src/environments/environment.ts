@@ -9,7 +9,7 @@ export const environment = {
 
   production: false,
   apiBaseUrl: 'http://localhost:61457/api/',
-  apiPreBaseUrl: 'http://localhost:61457/',
+  apiPreBaseUrl: 'http://localhost:61457/', 
   urlPostPDF: 'http://localhost:61457/api/Scan/UploadDocumentXero/',
   xeroConnectUrl: 'http://localhost:58224/connectxero?token=',
   stripePaymentUrl: 'http://localhost:44354/PayInvoice?token=',
