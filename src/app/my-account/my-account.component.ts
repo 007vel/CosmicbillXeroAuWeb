@@ -24,6 +24,8 @@ import { stringhelper } from '../stringhelper';
 })
 export class MyAccountComponent implements OnInit {
 
+    isPopupVisible : boolean;
+
     offProfile: any = false;
 
     loadingMessage: string = "loading...";
@@ -333,6 +335,14 @@ export class MyAccountComponent implements OnInit {
 
     }
     failedUpdatedPaymentInitiationDateTime(res: any) { }
+
+    openPopup() {
+        debugger;
+        this.isPopupVisible = true;
+      }
+      closePopup() {
+        this.isPopupVisible = false;
+      }
 
     buyWithCard() {
 
