@@ -298,7 +298,7 @@ export class HomelayoutComponent implements AfterViewInit, OnDestroy, OnInit {
     sucessGetSubscribedPlan(res: any) {
         this.subscribedPlan = res.Data;
 
-        this.subscribedPlan.AllowOweing = this.packagePurchaseHelper.UserIsEligibleForXeroPlanOws;
+        this.subscribedPlan.IsEligibleForXeroPlanOws = this.packagePurchaseHelper.UserIsEligibleForXeroPlanOws;
         console.log('subscribedPlan' + this.subscribedPlan);
         if (!this.subscribedPlan.IsPaidPlan) {
             //if the user has subscribed for paid version ever then the count should be 0 else continue.
@@ -375,6 +375,7 @@ export class HomelayoutComponent implements AfterViewInit, OnDestroy, OnInit {
 
 
         console.log('subscribedPlan' + this.subscribedPlan);
+        debugger;
         if (!this.subscribedPlan.IsPaidPlan) {
             //if the user has subscribed for paid version ever then the count should be 0 else continue.
             //if(everSubvScribedPlan) then tottal avail =0 else getTotalTrialPdfUsed

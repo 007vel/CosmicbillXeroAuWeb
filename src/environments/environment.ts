@@ -9,7 +9,7 @@ export const environment = {
 
   production: false,
   apiBaseUrl: 'http://localhost:61457/api/',
-  apiPreBaseUrl: 'http://localhost:61457/', 
+  apiPreBaseUrl: 'http://localhost:61457/',
   urlPostPDF: 'http://localhost:61457/api/Scan/UploadDocumentXero/',
   xeroConnectUrl: 'http://localhost:58224/connectxero?token=',
   stripePaymentUrl: 'http://localhost:44354/PayInvoice?token=',
@@ -19,7 +19,7 @@ export const environment = {
   PaymentreturnURL: "http://localhost:4200/#/myaccount"
 
 
-  // production: true, 
+  // production: true,
   // apiBaseUrl: 'https://cosmicinv.com/xeroapiau/api/',
   // apiPreBaseUrl: 'https://cosmicinv.com/xeroapiau/',
   // urlPostPDF: 'https://cosmicinv.com/xeroapiau/api/Scan/UploadDocumentXero/',

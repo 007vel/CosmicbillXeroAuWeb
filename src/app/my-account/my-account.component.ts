@@ -178,11 +178,11 @@ export class MyAccountComponent implements OnInit {
         //
 
         this.subscribedPlan = res.Data;
-
+        debugger;
         console.log(this.subscribedPlan);
         console.log(this.subscribedPlan.IsEligibleForXeroPlanOws + "IsEligibleForXeroPlanOws");
-        this.allowOwing = res.data.IsEligibleForXeroPlanOws;
-        this.AutoRenewalEnable = res.Data.IsAutoRenew;
+        this.allowOwing = this.subscribedPlan.IsEligibleForXeroPlanOws;
+        this.AutoRenewalEnable = this.subscribedPlan.IsAutoRenew;
         console.log('subscribedPlan' + this.subscribedPlan);
 
         //Get days past since sub-plan is started.

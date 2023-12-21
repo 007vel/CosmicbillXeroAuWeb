@@ -12,7 +12,7 @@ export class PackagePurchaseHelper {
     subscribedPlan: any = 0;
     totalTrialPdf: Number = 0;
     totalPaidPdf: Number = 0;
-    private isPackageInfoFetched = false;buyWithCard
+    private isPackageInfoFetched = false; buyWithCard
     loadingMessage: any = "Loading...";
     IsPaidPlan: boolean;
     IsAutoRenewal: boolean;
@@ -138,11 +138,11 @@ export class PackagePurchaseHelper {
     private sucessGetSubscribedPlan(res: any) {
         this.subscribedPlan = res.Data;
         // 
-        
+
         console.log('subscribedPlan' + this.subscribedPlan);
         this.IsAutoRenewal = this.subscribedPlan.IsAutoRenew;
         this.UserIsEligibleForXeroPlanOws = this.subscribedPlan.IsEligibleForXeroPlanOws;
-       
+
         this.IsPaidPlan = this.subscribedPlan.IsPaidPlan;
         if (!this.subscribedPlan.IsPaidPlan) {
             // 1 in cur year any paid ---1--last puchased--rem---carry forwd
