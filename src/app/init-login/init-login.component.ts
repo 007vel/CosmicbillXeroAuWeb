@@ -63,7 +63,8 @@ export class InitLoginComponent implements OnInit, OnDestroy {
           // NOrmal login work flow
           console.log("Init flow 1 ==========>");
           this.GetAccount();
-          this.router.navigate(['/docupload']);
+          // me
+          //this.router.navigate(['/docupload']);
         }
 
       } else {
@@ -254,7 +255,10 @@ export class InitLoginComponent implements OnInit, OnDestroy {
         //window.location.href = this.api._xeroConnectUrl + token + "&xeroConnectID=" + this.xeroConnectID;
         alert("Error in XERO_TOKEN_EXPIRED ");
       }
-      else { this.router.navigate(['/docupload']); }
+      else { 
+        // me
+        // this.router.navigate(['/docupload']); 
+      }
     }
   }
 
@@ -281,7 +285,8 @@ export class InitLoginComponent implements OnInit, OnDestroy {
         if (tempVendors.find(xx => xx.XeroAccountID == 0 || xx.XeroAccountID == null) == null) {
 
           ParameterHashLocationStrategy.signinFlow = null;
-          this.router.navigate(['/docupload']);
+          // me
+          //this.router.navigate(['/docupload']);
           //  this.router.navigate(['/docpost']);
           this.spinner.hide();
         }
@@ -306,7 +311,8 @@ export class InitLoginComponent implements OnInit, OnDestroy {
   failedXeroVendor(resp: any) {
     console.log(resp);
     this.spinner.hide();
-    this.router.navigate(['/docupload']);
+    // me
+    //this.router.navigate(['/docupload']);
   }
 
 }
