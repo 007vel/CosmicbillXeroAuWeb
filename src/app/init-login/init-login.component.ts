@@ -35,11 +35,23 @@ export class InitLoginComponent implements OnInit, OnDestroy {
   xeroTokenTemp: any = {};
   private encrypt: EncryptingService;
   private accountName: string = "";
-
+  defaultVendors: any;
+  xeroCompany: any[] = [
+    { label: 'Default Supplier 1', value: 'default-value-1' },
+    { label: 'Default Supplier 2', value: 'default-value-2' },
+    // Add more default values as needed
+  ];
+  documentCompany :any[] ;
   constructor(private route: ActivatedRoute, private router: Router, private ss: StoreService, private api: ApiService, private spinner: NgxSpinnerService, private _encrypt: EncryptingService, private appComponent: AppComponent) {
     this.encrypt = _encrypt;
   }
+  show : boolean= false;
 
+  openpopup(){
+    this.show =true;
+  }
+  showSelectCompany : boolean =false;
+  navigate : boolean = false;
   // @Output() usernameEmitter = new EventEmitter<string>();
 
   // PostData() {  
@@ -47,12 +59,14 @@ export class InitLoginComponent implements OnInit, OnDestroy {
   // } 
   async ngOnInit() {
     this.sub = this.route.queryParams.subscribe(params => {
+      this.documentCompany = this.defaultVendors;
       this.code = ParameterHashLocationStrategy.authCode;
       ParameterHashLocationStrategy.authCode = null;
       ParameterHashLocationStrategy.signinFlow = false;
       this.IsloginFlow = params['IsLoginFlow'];
       this.ReAuthXeroUI = params['ReAuthXeroUI'];
       //
+      
       console.log("Auth code:" + this.code);
       this.delay(1000);
       var accessTokenFromStore = this.ss.fetchToken();
@@ -62,7 +76,13 @@ export class InitLoginComponent implements OnInit, OnDestroy {
         } else {
           // NOrmal login work flow
           console.log("Init flow 1 ==========>");
+          if(confirm("Are You Want to add company")){
+            this.openpopup();
+          }
           this.GetAccount();
+          // if(this.navigate){
+          //   //this.router.navigate(['/docupload']);  
+          // }
           // me
           //this.router.navigate(['/docupload']);
         }
@@ -96,9 +116,34 @@ export class InitLoginComponent implements OnInit, OnDestroy {
         }
       }
     });
+  }  
+  onnavigatetoUpload(){
+    this.router.navigate(['/docupload']);
+  }
 
+  OnSaveClick(){
+    if(confirm("Save Clicked")){
+      this.show = false;
+      // navigate to upload called ;
+      alert("Save Ok Clicked");
+    }else{
+      alert("Save No Clicked");
+ 
+    }
+  }
 
+  OnCancelClick(){
+    if(confirm("Cancel Clicked")){
+      alert("Cancel Ok Clicked");
+      this.show = false;
+    }else{
+      alert("Cancel No Clicked");
+    }
+  }
 
+  onChangeCompany(event: any) {
+    // save company in var on the dropdown event changed
+    this.documentCompany = event.value;
   }
   getToken() {
     console.log('getToken entered' + this.ss.fetchUserName());
