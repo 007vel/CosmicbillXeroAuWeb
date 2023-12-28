@@ -76,10 +76,18 @@ export class InitLoginComponent implements OnInit, OnDestroy {
         } else {
           // NOrmal login work flow
           console.log("Init flow 1 ==========>");
+          
+          this.GetAccount();
+          //this.GetCompany();
           if(confirm("Are You Want to add company")){
             this.openpopup();
           }
-          this.GetAccount();
+          // Get Company Call
+          // if(confirm("Are You Want to add company")){                              
+          //   this.openpopup();
+          // }
+           
+
           // if(this.navigate){
           //   //this.router.navigate(['/docupload']);  
           // }
@@ -117,6 +125,21 @@ export class InitLoginComponent implements OnInit, OnDestroy {
       }
     });
   }  
+
+  GetCompany(){
+    console.log('GetCompany entered');
+    this.api.post('Xero/GetXeroAccessTokenByCode1', this.xeroTokenTemp).subscribe(
+      (res1: {}) => this.successGetCompany(res1),
+      error => this.failedsaveCompany(<any>error));
+  }
+
+  successGetCompany(res: any) {
+    console.log("successGetXeroAccessTokenByCode " + JSON.stringify(res));
+  }
+
+  failedsaveCompany(res: any) {
+  }
+
   onnavigatetoUpload(){
     this.router.navigate(['/docupload']);
   }
@@ -124,7 +147,7 @@ export class InitLoginComponent implements OnInit, OnDestroy {
   OnSaveClick(){
     if(confirm("Save Clicked")){
       this.show = false;
-      // navigate to upload called ;
+      // navigate to upload should called  here ;
       alert("Save Ok Clicked");
     }else{
       alert("Save No Clicked");
@@ -149,6 +172,7 @@ export class InitLoginComponent implements OnInit, OnDestroy {
     console.log('getToken entered' + this.ss.fetchUserName());
     this.xeroTokenTemp.Code = this.code
     this.xeroTokenTemp.UserName = this.ss.fetchUserName();
+    debugger;
     console.log('getToken request:', JSON.stringify(this.xeroTokenTemp));
     this.api.post('Xero/GetXeroAccessTokenByCode', this.xeroTokenTemp).subscribe(
       (res1: {}) => this.successGetXeroAccessTokenByCode(res1),
