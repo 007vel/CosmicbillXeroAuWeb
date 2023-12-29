@@ -13,6 +13,7 @@ import { HomelayoutComponent } from '../homelayout/homelayout.component';
 import { Console } from 'console';
 import { AppComponent } from '../app.component';
 import { stringhelper } from '../stringhelper';
+import { forEach } from '@angular/router/src/utils/collection';
 
 
 @Component({
@@ -33,14 +34,12 @@ export class InitLoginComponent implements OnInit, OnDestroy {
   loadingMessage: string = "Please wait...";
   private sub: any;
   xeroTokenTemp: any = {};
+  companyInfo:any;
+  Listcompany: any[];
   private encrypt: EncryptingService;
   private accountName: string = "";
   defaultVendors: any;
-  xeroCompany: any[] = [
-    { label: 'Default Supplier 1', value: 'default-value-1' },
-    { label: 'Default Supplier 2', value: 'default-value-2' },
-    // Add more default values as needed
-  ];
+  xeroCompany: any[] ;
   documentCompany :any[] ;
   constructor(private route: ActivatedRoute, private router: Router, private ss: StoreService, private api: ApiService, private spinner: NgxSpinnerService, private _encrypt: EncryptingService, private appComponent: AppComponent) {
     this.encrypt = _encrypt;
@@ -76,12 +75,8 @@ export class InitLoginComponent implements OnInit, OnDestroy {
         } else {
           // NOrmal login work flow
           console.log("Init flow 1 ==========>");
-          
           this.GetAccount();
-          //this.GetCompany();
-          if(confirm("Are You Want to add company")){
-            this.openpopup();
-          }
+
           // Get Company Call
           // if(confirm("Are You Want to add company")){                              
           //   this.openpopup();
@@ -126,20 +121,6 @@ export class InitLoginComponent implements OnInit, OnDestroy {
     });
   }  
 
-  GetCompany(){
-    console.log('GetCompany entered');
-    this.api.post('Xero/GetXeroAccessTokenByCode1', this.xeroTokenTemp).subscribe(
-      (res1: {}) => this.successGetCompany(res1),
-      error => this.failedsaveCompany(<any>error));
-  }
-
-  successGetCompany(res: any) {
-    console.log("successGetXeroAccessTokenByCode " + JSON.stringify(res));
-  }
-
-  failedsaveCompany(res: any) {
-  }
-
   onnavigatetoUpload(){
     this.router.navigate(['/docupload']);
   }
@@ -147,12 +128,24 @@ export class InitLoginComponent implements OnInit, OnDestroy {
   OnSaveClick(){
     if(confirm("Save Clicked")){
       this.show = false;
-      // navigate to upload should called  here ;
+      // API Call => if Sucess then navigation
+      this.api.post('Xero/SaveSelectedCompany', this.xeroTokenTemp).subscribe(
+        (res1: {}) => this.successSaveSelectedCompany(res1),
+        error => this.failedSaveSelectedCompany(<any>error));
+
       alert("Save Ok Clicked");
     }else{
+      //this.show = false;
       alert("Save No Clicked");
  
     }
+  }
+  successSaveSelectedCompany(res1: any){
+    // Navigates to Upload
+
+  }
+  failedSaveSelectedCompany(res: any){
+
   }
 
   OnCancelClick(){
@@ -172,7 +165,6 @@ export class InitLoginComponent implements OnInit, OnDestroy {
     console.log('getToken entered' + this.ss.fetchUserName());
     this.xeroTokenTemp.Code = this.code
     this.xeroTokenTemp.UserName = this.ss.fetchUserName();
-    debugger;
     console.log('getToken request:', JSON.stringify(this.xeroTokenTemp));
     this.api.post('Xero/GetXeroAccessTokenByCode', this.xeroTokenTemp).subscribe(
       (res1: {}) => this.successGetXeroAccessTokenByCode(res1),
@@ -181,7 +173,44 @@ export class InitLoginComponent implements OnInit, OnDestroy {
 
   successGetXeroAccessTokenByCode(res: any) {
     console.log("successGetXeroAccessTokenByCode " + JSON.stringify(res));
-    this.DoLoginAftergettingCode();
+    debugger;
+      //// show 
+      var result = res;
+      if(res.UIOrgList != null){
+        console.log(res.UIOrgList);
+        //this.DoLoginAftergettingCode();
+        var length = res.UIOrgList.length;
+        let myArray: any = [];
+
+          // Define the object you want to add
+          //let newObj = { key: 'example', value: 42 };
+
+          // Use a for loop to add the object to the array
+          for (let i = 0; i < length; i++) {
+              myArray.push(res.UIOrgList[i]);
+          }
+
+          // Print the updated array
+          console.log(myArray);
+
+        const xy:any = res.UIOrgList; 
+        // this.xeroCompany = res.UIOrgList;
+        debugger;
+          res.UIOrgList.forEach(function (value) {
+            console.log(value);
+        });
+        
+      }
+      else{
+        //this.DoLoginAftergettingCode();
+      }
+      debugger;
+      if(confirm("Are You Want to add company")){
+        this.openpopup();
+      }
+
+    // me 
+    // this.DoLoginAftergettingCode();
   }
 
   failed(res: any) {
@@ -206,7 +235,7 @@ export class InitLoginComponent implements OnInit, OnDestroy {
   GetAccount() {
     console.log('GetAccounts entered');
     this.appComponent.GetAccount();// there are two account GET, this one is invokes the appcomponent to fetch the IsAuthorize
-    this.api.get('Xero/GetByAccountID', '').subscribe(
+    this.api.get('Xero/GetByAccountID', '').subscribe( 
       (res: {}) => this.SaveAccount(res),
       error => this.failedXeroMaster(<any>error));
   }
