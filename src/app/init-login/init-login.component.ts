@@ -39,7 +39,7 @@ export class InitLoginComponent implements OnInit, OnDestroy {
   private encrypt: EncryptingService;
   private accountName: string = "";
   defaultVendors: any;
-  xeroCompany: any[] ;
+  xeroCompany: any[] =[];
   documentCompany :any[] ;
   constructor(private route: ActivatedRoute, private router: Router, private ss: StoreService, private api: ApiService, private spinner: NgxSpinnerService, private _encrypt: EncryptingService, private appComponent: AppComponent) {
     this.encrypt = _encrypt;
@@ -159,6 +159,7 @@ export class InitLoginComponent implements OnInit, OnDestroy {
 
   onChangeCompany(event: any) {
     // save company in var on the dropdown event changed
+    debugger;
     this.documentCompany = event.value;
   }
   getToken() {
@@ -174,32 +175,33 @@ export class InitLoginComponent implements OnInit, OnDestroy {
   successGetXeroAccessTokenByCode(res: any) {
     console.log("successGetXeroAccessTokenByCode " + JSON.stringify(res));
     debugger;
-      //// show 
+      // show 
       var result = res;
       if(res.UIOrgList != null){
         console.log(res.UIOrgList);
         //this.DoLoginAftergettingCode();
         var length = res.UIOrgList.length;
-        let myArray: any = [];
+        console.log("Company Count/Length -"+length);
+        let allCompanies: any = [];
 
           // Define the object you want to add
           //let newObj = { key: 'example', value: 42 };
-
+          debugger;
           // Use a for loop to add the object to the array
           for (let i = 0; i < length; i++) {
-              myArray.push(res.UIOrgList[i]);
+            allCompanies.push(res.UIOrgList[i]);
           }
-
+          debugger;
           // Print the updated array
-          console.log(myArray);
-
-        const xy:any = res.UIOrgList; 
-        // this.xeroCompany = res.UIOrgList;
-        debugger;
-          res.UIOrgList.forEach(function (value) {
-            console.log(value);
-        });
-        
+          console.log(allCompanies);
+          for (const company of allCompanies) {
+            this.xeroCompany.push({ label: company.Name, value: company.Name });
+          }
+          allCompanies.forEach(element => {
+            this.xeroCompany.push({ label: element.Name, value: element.Name });
+          });
+          debugger;
+        debugger; 
       }
       else{
         //this.DoLoginAftergettingCode();
