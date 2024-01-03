@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit, ViewEncapsulation, Output, EventEmitter } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewEncapsulation, Output, EventEmitter, ElementRef } from '@angular/core';
 import { Router, ActivatedRoute, Params, Data, NavigationEnd } from '@angular/router';
 import { StoreService } from '../store.service';
 import { NgxSpinnerService } from 'ngx-spinner';
@@ -41,6 +41,8 @@ export class InitLoginComponent implements OnInit, OnDestroy {
   defaultVendors: any;
   xeroCompany: any[] =[];
   documentCompany :any[] ;
+  allCompanies: any = [];
+  CurrentAccountId : any ;
   constructor(private route: ActivatedRoute, private router: Router, private ss: StoreService, private api: ApiService, private spinner: NgxSpinnerService, private _encrypt: EncryptingService, private appComponent: AppComponent) {
     this.encrypt = _encrypt;
   }
@@ -65,14 +67,17 @@ export class InitLoginComponent implements OnInit, OnDestroy {
       this.IsloginFlow = params['IsLoginFlow'];
       this.ReAuthXeroUI = params['ReAuthXeroUI'];
       //
-      
+      debugger;
       console.log("Auth code:" + this.code);
       this.delay(1000);
       var accessTokenFromStore = this.ss.fetchToken();
+      debugger;
       if (accessTokenFromStore != null) {
+        debugger;
         if (ParameterHashLocationStrategy.planId != null) {
           this.router.navigate(['/myaccount']);
         } else {
+          debugger;
           // NOrmal login work flow
           console.log("Init flow 1 ==========>");
           this.GetAccount();
@@ -91,7 +96,7 @@ export class InitLoginComponent implements OnInit, OnDestroy {
         }
 
       } else {
-
+        debugger;
         if (this.code && this.code.length > 20) {
           console.log("Init flow 2 ==========>");
           var email = this.ss.fetchEmail();
@@ -127,25 +132,51 @@ export class InitLoginComponent implements OnInit, OnDestroy {
 
   OnSaveClick(){
     if(confirm("Save Clicked")){
-      this.show = false;
-      // API Call => if Sucess then navigation
-      this.api.post('Xero/SaveSelectedCompany', this.xeroTokenTemp).subscribe(
+      debugger;
+      //this.show = false;
+      var allcompany = this.allCompanies;
+      var selectedCompany = this.documentCompany;
+      let selectedCompanyObject : any = [];
+    
+      allcompany.forEach(element => {
+        element.Name;
+        element.LegalName;
+        
+        debugger;
+        if(selectedCompany == element.Name) {
+          debugger;
+          selectedCompanyObject = element;
+        }
+      });
+
+      
+      if(selectedCompanyObject != null){
+        if(this.CurrentAccountId != null){
+          selectedCompanyObject.AccountID = this.CurrentAccountId;
+          console.log("Current Account Id : "+this.CurrentAccountId);
+        }
+        // API Call => if Sucess then navigation
+         this.api.post('Xero/SaveSelectedCompany', selectedCompanyObject).subscribe(
         (res1: {}) => this.successSaveSelectedCompany(res1),
         error => this.failedSaveSelectedCompany(<any>error));
-
+      }
       alert("Save Ok Clicked");
     }else{
-      //this.show = false;
+      this.show = false;
       alert("Save No Clicked");
  
     }
   }
   successSaveSelectedCompany(res1: any){
     // Navigates to Upload
-
+    debugger;
+    this.show = false;
+    alert("Navigate To Upload Page");
+    this.DoLoginAftergettingCode();
   }
   failedSaveSelectedCompany(res: any){
-
+    debugger;
+    this.DoLoginAftergettingCode();
   }
 
   OnCancelClick(){
@@ -174,38 +205,47 @@ export class InitLoginComponent implements OnInit, OnDestroy {
 
   successGetXeroAccessTokenByCode(res: any) {
     console.log("successGetXeroAccessTokenByCode " + JSON.stringify(res));
-    debugger;
+     
       // show 
       var result = res;
+      this.CurrentAccountId = res.AccountID;
       if(res.UIOrgList != null){
         console.log(res.UIOrgList);
         //this.DoLoginAftergettingCode();
         var length = res.UIOrgList.length;
         console.log("Company Count/Length -"+length);
-        let allCompanies: any = [];
-
+        
+          debugger;
           // Define the object you want to add
           //let newObj = { key: 'example', value: 42 };
-          debugger;
+           
           // Use a for loop to add the object to the array
           for (let i = 0; i < length; i++) {
-            allCompanies.push(res.UIOrgList[i]);
+            this.allCompanies.push(res.UIOrgList[i]);
           }
-          debugger;
+           
           // Print the updated array
-          console.log(allCompanies);
-          for (const company of allCompanies) {
-            this.xeroCompany.push({ label: company.Name, value: company.Name });
-          }
-          allCompanies.forEach(element => {
+          // console.log(this.allCompanies);
+          // for (const company of this.allCompanies) {
+          //   console.log("--- Loop 1 for---");
+          //   console.log("--- Company : "+ company);
+          //   this.xeroCompany.push({ label: company.Name, value: company.Name });
+          // }
+          debugger;
+          this.xeroCompany.push({ label: "Select Company", value: "" });
+          this.allCompanies.forEach(element => {
+            console.log("--- Loop 2 foreach---");
+            console.log("--- Company  : "+ element);
             this.xeroCompany.push({ label: element.Name, value: element.Name });
           });
-          debugger;
-        debugger; 
+           
+          
       }
       else{
+        console.log("")
         //this.DoLoginAftergettingCode();
       }
+      console.log("All Companies Count  from Xero -"+this.allCompanies.length);
       debugger;
       if(confirm("Are You Want to add company")){
         this.openpopup();

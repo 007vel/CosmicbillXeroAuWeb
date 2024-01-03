@@ -337,7 +337,7 @@ export class MyAccountComponent implements OnInit {
     failedUpdatedPaymentInitiationDateTime(res: any) { }
 
     openPopup() {
-        debugger;
+         
         this.isPopupVisible = true;
       }
       closePopup() {
