@@ -67,17 +67,17 @@ export class InitLoginComponent implements OnInit, OnDestroy {
       this.IsloginFlow = params['IsLoginFlow'];
       this.ReAuthXeroUI = params['ReAuthXeroUI'];
       //
-      debugger;
+       
       console.log("Auth code:" + this.code);
       this.delay(1000);
       var accessTokenFromStore = this.ss.fetchToken();
-      debugger;
+       
       if (accessTokenFromStore != null) {
-        debugger;
+         
         if (ParameterHashLocationStrategy.planId != null) {
           this.router.navigate(['/myaccount']);
         } else {
-          debugger;
+           
           // NOrmal login work flow
           console.log("Init flow 1 ==========>");
           this.GetAccount();
@@ -96,7 +96,7 @@ export class InitLoginComponent implements OnInit, OnDestroy {
         }
 
       } else {
-        debugger;
+         
         if (this.code && this.code.length > 20) {
           console.log("Init flow 2 ==========>");
           var email = this.ss.fetchEmail();
@@ -132,7 +132,7 @@ export class InitLoginComponent implements OnInit, OnDestroy {
 
   OnSaveClick(){
     if(confirm("Save Clicked")){
-      debugger;
+       
       //this.show = false;
       var allcompany = this.allCompanies;
       var selectedCompany = this.documentCompany;
@@ -142,9 +142,9 @@ export class InitLoginComponent implements OnInit, OnDestroy {
         element.Name;
         element.LegalName;
         
-        debugger;
+         
         if(selectedCompany == element.Name) {
-          debugger;
+           
           selectedCompanyObject = element;
         }
       });
@@ -169,14 +169,14 @@ export class InitLoginComponent implements OnInit, OnDestroy {
   }
   successSaveSelectedCompany(res1: any){
     // Navigates to Upload
-    debugger;
+     
     this.show = false;
     alert("Navigate To Upload Page");
     this.DoLoginAftergettingCode();
   }
   failedSaveSelectedCompany(res: any){
-    debugger;
-    this.DoLoginAftergettingCode();
+     
+    //this.DoLoginAftergettingCode();
   }
 
   OnCancelClick(){
@@ -190,7 +190,7 @@ export class InitLoginComponent implements OnInit, OnDestroy {
 
   onChangeCompany(event: any) {
     // save company in var on the dropdown event changed
-    debugger;
+     
     this.documentCompany = event.value;
   }
   getToken() {
@@ -215,7 +215,7 @@ export class InitLoginComponent implements OnInit, OnDestroy {
         var length = res.UIOrgList.length;
         console.log("Company Count/Length -"+length);
         
-          debugger;
+           
           // Define the object you want to add
           //let newObj = { key: 'example', value: 42 };
            
@@ -231,7 +231,7 @@ export class InitLoginComponent implements OnInit, OnDestroy {
           //   console.log("--- Company : "+ company);
           //   this.xeroCompany.push({ label: company.Name, value: company.Name });
           // }
-          debugger;
+           
           this.xeroCompany.push({ label: "Select Company", value: "" });
           this.allCompanies.forEach(element => {
             console.log("--- Loop 2 foreach---");
@@ -246,7 +246,7 @@ export class InitLoginComponent implements OnInit, OnDestroy {
         //this.DoLoginAftergettingCode();
       }
       console.log("All Companies Count  from Xero -"+this.allCompanies.length);
-      debugger;
+       
       if(confirm("Are You Want to add company")){
         this.openpopup();
       }
