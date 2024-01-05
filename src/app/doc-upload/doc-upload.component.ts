@@ -51,11 +51,10 @@ export class DocUploadComponent implements OnInit {
 
   msgs: Message[] = [];
 
-  constructor(private router: Router, private store: StoreService,
-    private http: HttpClient, private api: ApiService,
-    private spinner: NgxSpinnerService
-    , private confirmationService: ConfirmationService, private packagePurchaseHelper: PackagePurchaseHelper, protected cosmicNotifyService: CosmicNotifyService, private appComponent: AppComponent, private ss: StoreService) {
-
+  constructor(private router: Router, private store: StoreService,private http: HttpClient, private api: ApiService,
+    private spinner: NgxSpinnerService , private confirmationService: ConfirmationService, private packagePurchaseHelper: PackagePurchaseHelper,
+     protected cosmicNotifyService: CosmicNotifyService, private appComponent: AppComponent, private ss: StoreService) {
+      
     this.postDocApiUrl = api.apiBaseUrl + "scan/UploadDocumentXero?sessionID=1"
 
 
@@ -99,9 +98,13 @@ export class DocUploadComponent implements OnInit {
 
 
 
-  ngOnInit() {
-
+  async ngOnInit() {
+    this.spinner.show(); 
+    await this.delay(5000);
+    this.loadingMessage = "Package Validation...";
     this.validateConnectCompany();
+    this.spinner.hide();
+    
 
     this.steps = [
       {

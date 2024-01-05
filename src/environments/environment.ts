@@ -15,7 +15,8 @@ export const environment = {
   stripePaymentUrl: 'http://localhost:44354/PayInvoice?token=',
   xerocallbackUrl: "http://localhost:4200/xerouiau",
   XeroClientId: "277BDB35BF49482DB8291CFECCC5C241",
-  Paymentapp: "http://localhost:58216/#/plan",
+  // Paymentapp: "http://localhost:58216/#/plan",
+  Paymentapp: "http://localhost:4401/#/plan",
   PaymentreturnURL: "http://localhost:4200/#/myaccount"
 
 

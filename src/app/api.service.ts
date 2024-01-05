@@ -37,9 +37,10 @@ export class ApiService {
 
     this.xeroConnectID = this.storage.fetchXeroConnectID();
     this.token = this.storage.fetchToken();
-
     return new HttpHeaders(
+      
       {
+        
         'Content-Type': 'application/json',
         'CosmicBill-UserToken': (this.token != null ? this.token.toString() : ""),
         'CosmicBill-XeroConnectID': (this.xeroConnectID != null ? this.xeroConnectID.toString() : 0),
