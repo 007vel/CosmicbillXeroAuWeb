@@ -90,18 +90,18 @@ export class MyAccountComponent implements OnInit {
         this.loadingMessage = "Please wait..."
         //await this.delay(2000);
         this.getMyAccount();
-        this.getXeroMaster();
+        // this.getXeroMaster();
         //this.DoTimeDelay();
         if (this.packagePurchaseHelper.IsAutoRenewal) {
             this.getStartofAutoRenwalInfo();
 
         } else { this.getTotalPdfUsed(); }
         //this.getMyAccount();
-        this.getTotalPdfUsed();
-        this.getPlans();
-        this.getPayment();
-        this.getTotalTrialPdfUsed();
-        this.getSubscribedPlan();
+        // this.getTotalPdfUsed();
+        // this.getPlans();
+        // this.getPayment();
+        // this.getTotalTrialPdfUsed();
+        // this.getSubscribedPlan();
         this.cosmicNotifyService.myEventEmiter.emit();
     }
 
@@ -151,9 +151,11 @@ export class MyAccountComponent implements OnInit {
     }
 
     sucessGetPayment(resp: any) {
+
         this.stripePayment = resp.Data;
          //debugger;
         this.spinner.hide();
+        this.getTotalTrialPdfUsed();
          //debugger;   
     }
 
@@ -168,6 +170,7 @@ export class MyAccountComponent implements OnInit {
     }
 
     sucessGetPlans(resp: any) {
+        
         this.plans = resp.Data;
 
         this.plans = [];
@@ -178,6 +181,7 @@ export class MyAccountComponent implements OnInit {
         });
          //debugger;
         this.spinner.hide();
+        this.getPayment();
          //debugger;
     }
 
@@ -256,13 +260,14 @@ export class MyAccountComponent implements OnInit {
          //debugger;
     }
     sucessGetTotalPdfUsed(res: any) {
-
+       
         if (res.Data != null) {
 
             this.totalPdfUsed = res.Data.TotalPaidUsed;
         }
          //debugger;
         this.spinner.hide();
+        this.getPlans();
          //debugger;
     }
 
@@ -291,6 +296,7 @@ export class MyAccountComponent implements OnInit {
         }
          //debugger;
         this.spinner.hide();
+        this.getSubscribedPlan();
          //debugger;
     }
 
@@ -327,6 +333,7 @@ export class MyAccountComponent implements OnInit {
     }
 
     sucessXeroMaster(res: any) {
+        
         this.xeromaster = res.Data[0];
 
         if (res.StatusCode == 0) {
@@ -335,6 +342,7 @@ export class MyAccountComponent implements OnInit {
         }
          //debugger;
         this.spinner.hide();
+        this.getTotalPdfUsed();
          //debugger;
     }
     sucessGetMyAccount(res: any) {
@@ -351,7 +359,7 @@ export class MyAccountComponent implements OnInit {
         var timeDifference = ((currentDatetime.getTime()) - dbdate.getTime());
         this.minutesDifference = Math.floor(timeDifference / (1000 * 60));
         console.log("Payment recall Minutes Current difference : ", this.minutesDifference);
-
+        
 
         if (!stringhelper.IsNullOrEmptyOrDefault(_date)) {
             if (this.minutesDifference <= 4) {
@@ -365,6 +373,7 @@ export class MyAccountComponent implements OnInit {
         }
          //debugger;
         this.spinner.hide();
+        this.getXeroMaster();
          //debugger;
     }
 
