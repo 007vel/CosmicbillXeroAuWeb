@@ -375,7 +375,7 @@ export class HomelayoutComponent implements AfterViewInit, OnDestroy, OnInit {
 
 
         console.log('subscribedPlan' + this.subscribedPlan);
-        debugger;
+         //debugger;
         if (!this.subscribedPlan.IsPaidPlan) {
             //if the user has subscribed for paid version ever then the count should be 0 else continue.
             //if(everSubvScribedPlan) then tottal avail =0 else getTotalTrialPdfUsed

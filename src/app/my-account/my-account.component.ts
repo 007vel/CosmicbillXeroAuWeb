@@ -59,26 +59,26 @@ export class MyAccountComponent implements OnInit {
         private _confirmationService: ConfirmationService, private packagePurchaseHelper: PackagePurchaseHelper,
         protected cosmicNotifyService: CosmicNotifyService) { }
 
-    ngOnInit() {
-
+    async ngOnInit() {
+        this.spinner.show();       
+         //debugger;
+        this.loadingMessage = "Please wait..."
         this.genders = [];
         this.genders.push({ label: 'Select Gender', value: '' });
         this.genders.push({ label: 'Male', value: 'Male' });
         this.genders.push({ label: 'Female', value: 'Female' });
-
-        if (!this.packagePurchaseHelper.IsAutoRenewal) {
+        await this.PostSelectedPlanID();
+        if (!this.packagePurchaseHelper.IsAutoRenewal) { 
             this.packagePurchaseHelper.getSubscribedPlan();
             this.totalAllocatedPdf = this.ss.fetchPaidPdfCount();
         } else {
 
             this.totalAllocatedPdf = this.ss.fetchTotalAllocatedPDF();
         }
-        // 
-        this.getMyAccount();
-        this.getXeroMaster();
-        this.PostSelectedPlanID();
-        //this.DoTimeDelay();
-        this.GetAllPageData();
+         //debugger;
+        this.spinner.hide();
+         //debugger;
+        this.GetAllPageData(); 
     }
 
     delay(ms: number) {
@@ -86,37 +86,52 @@ export class MyAccountComponent implements OnInit {
     }
     private async GetAllPageData() {
         this.spinner.show();
+         //debugger;
         this.loadingMessage = "Please wait..."
-        await this.delay(2000);
-
+        //await this.delay(2000);
+        this.getMyAccount();
+        // this.getXeroMaster();
+        //this.DoTimeDelay();
         if (this.packagePurchaseHelper.IsAutoRenewal) {
             this.getStartofAutoRenwalInfo();
 
         } else { this.getTotalPdfUsed(); }
         //this.getMyAccount();
-        this.getTotalPdfUsed();
-        this.getSubscribedPlan();
-        this.getPlans();
-        this.getPayment();
-        this.getTotalTrialPdfUsed();
+        // this.getTotalPdfUsed();
+        // this.getPlans();
+        // this.getPayment();
+        // this.getTotalTrialPdfUsed();
+        // this.getSubscribedPlan();
         this.cosmicNotifyService.myEventEmiter.emit();
     }
 
-
+    private async Delay(ms:any) {
+        await new Promise(f => setTimeout(ms));
+    }
     private async DoTimeDelay() {
         await new Promise(f => setTimeout(this.GetAllPageData, 2000));
     }
     private PostSelectedPlanID() {
+         //debugger;
+        this.spinner.show();
+         //debugger;
         if (ParameterHashLocationStrategy.planId != null) {
             this.api.post('Admin/SaveSubscriptionMasterinCosmic', { 'PlanID': ParameterHashLocationStrategy.planId }).subscribe(
                 (res1: {}) => this.PostPlaidSuccess(),
-                error => this.PostPlaidFailuer());
+                error => this.PostPlaidFailuer()); 
         }
     }
 
-    PostPlaidSuccess() {
+    
+    async PostPlaidSuccess() { 
+         //debugger;
         ParameterHashLocationStrategy.planId = null;
-        this.router.navigate(['/myaccount']);
+        //this.router.navigate(['/docupload']);
+        this.router.navigateByUrl('/docupload');
+         //debugger;
+
+        this.spinner.hide();
+         //debugger;
     }
 
     PostPlaidFailuer() {
@@ -125,8 +140,10 @@ export class MyAccountComponent implements OnInit {
 
 
     getPayment() {
+        
         this.spinner.show();
-        this.loadingMessage = "Getting Striped Payment..."
+         //debugger;
+        this.loadingMessage = "Please wait..."
 
         this.api.get('Stripe/GetPayment', '').subscribe(
             (res: {}) => this.sucessGetPayment(res),
@@ -134,13 +151,17 @@ export class MyAccountComponent implements OnInit {
     }
 
     sucessGetPayment(resp: any) {
-        this.stripePayment = resp.Data;
 
+        this.stripePayment = resp.Data;
+         //debugger;
         this.spinner.hide();
+        this.getTotalTrialPdfUsed();
+         //debugger;   
     }
 
     getPlans() {
         this.spinner.show();
+         //debugger;
         this.loadingMessage = "Getting Suppliers..."
 
         this.api.get('Plan/GetAll', '').subscribe(
@@ -149,6 +170,7 @@ export class MyAccountComponent implements OnInit {
     }
 
     sucessGetPlans(resp: any) {
+        
         this.plans = resp.Data;
 
         this.plans = [];
@@ -157,17 +179,21 @@ export class MyAccountComponent implements OnInit {
         resp.Data.forEach(element => {
             this.plans.push({ label: element.PlanName, value: element.PlanID });
         });
-
+         //debugger;
         this.spinner.hide();
+        this.getPayment();
+         //debugger;
     }
 
     failedGetPlan(resp: any) {
+         //debugger;
         this.spinner.hide();
+         //debugger;
     }
 
     getSubscribedPlan() {
         this.spinner.show();
-
+         //debugger;
         this.loadingMessage = "Please wait..."
         this.api.get('Plan/GetAccountSubscribedPlan', '').subscribe(
             (res: {}) => this.sucessGetSubscribedPlan(res),
@@ -175,15 +201,14 @@ export class MyAccountComponent implements OnInit {
     }
 
     sucessGetSubscribedPlan(res: any) {
-        //
-
         this.subscribedPlan = res.Data;
-        debugger;
         console.log(this.subscribedPlan);
         console.log(this.subscribedPlan.IsEligibleForXeroPlanOws + "IsEligibleForXeroPlanOws");
         this.allowOwing = this.subscribedPlan.IsEligibleForXeroPlanOws;
         this.AutoRenewalEnable = this.subscribedPlan.IsAutoRenew;
         console.log('subscribedPlan' + this.subscribedPlan);
+        console.log(' 1> totalPaidPdf' + this.subscribedPlan.totalPaidPdf);
+        console.log(' 2> totalPaidPdf' + this.subscribedPlan.totalAllocatedPdf);
 
         //Get days past since sub-plan is started.
         let PlanStartDateTime = new Date(this.subscribedPlan.StartDateTime);
@@ -193,16 +218,20 @@ export class MyAccountComponent implements OnInit {
         //
         const diffTime = Math.abs(todayDate.getTime() - PlanStartDateTime.getTime());
         this.diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-
+         //debugger;
         this.spinner.hide();
+         //debugger;
     }
 
     failedGetSubscribedPlan(res: any) {
+         //debugger;
         this.spinner.hide();
+         //debugger;
     }
 
     getTotalPdfUsed() {
         this.spinner.show();
+         //debugger;
         this.loadingMessage = "Please wait..."
         this.api.get('Plan/GetTotalPaidPdfUsed', '').subscribe(
             (res: {}) => this.sucessGetTotalPdfUsed(res),
@@ -212,6 +241,9 @@ export class MyAccountComponent implements OnInit {
 
 
     getStartofAutoRenwalInfo() {
+        this.spinner.show();
+         //debugger;
+        this.loadingMessage = "Please wait..."
         this.api.get('Plan/GetStartOfAutoRenewalInfo', '').subscribe(
             (res: {}) => this.sucessGetStartofAutoRenwalInfo(res),
             error => this.failedGetSubscribedPlan(<any>error));
@@ -223,22 +255,31 @@ export class MyAccountComponent implements OnInit {
             this.totalPdfUsed = res.Data.totalUsedPdf;
             // this.totalAllocatedPdf = res.Data.totalAllocatedPdf;
         }
+         //debugger;
+        this.spinner.hide();
+         //debugger;
     }
     sucessGetTotalPdfUsed(res: any) {
-
+       
         if (res.Data != null) {
 
             this.totalPdfUsed = res.Data.TotalPaidUsed;
         }
+         //debugger;
         this.spinner.hide();
+        this.getPlans();
+         //debugger;
     }
 
     failedGetTotalPdfUsed(res: any) {
+         //debugger;
         this.spinner.hide();
+         //debugger;
     }
 
     getTotalTrialPdfUsed() {
         this.spinner.show();
+         //debugger;
         this.loadingMessage = "Please wait..."
 
         this.api.get('Plan/GetTotalTrialPdfUsed', '').subscribe(
@@ -253,17 +294,23 @@ export class MyAccountComponent implements OnInit {
             console.log('this.totalTrialPdfUsed' + this.totalTrialPdfUsed)
 
         }
+         //debugger;
         this.spinner.hide();
+        this.getSubscribedPlan();
+         //debugger;
     }
 
     failedGetTotalTrialPdfUsed(res: any) {
+         //debugger;
         this.spinner.hide();
+         //debugger;
     }
 
 
     getMyAccount() {
 
         this.spinner.show();
+         //debugger;
         this.loadingMessage = "Please wait..."
 
         this.api.get('Account/Get', '').subscribe(
@@ -272,6 +319,7 @@ export class MyAccountComponent implements OnInit {
     }
     getXeroMaster() {
         this.spinner.show();
+         //debugger;
         this.loadingMessage = "Please wait..."
         this.api.get('Xero/GetByAccountID', '').subscribe(
             (res: {}) => this.sucessXeroMaster(res),
@@ -279,17 +327,23 @@ export class MyAccountComponent implements OnInit {
     }
 
     failedXeroMaster(res: any) {
+         //debugger;
         this.spinner.hide();
+         //debugger;
     }
 
     sucessXeroMaster(res: any) {
-        this.spinner.hide();
+        
         this.xeromaster = res.Data[0];
 
         if (res.StatusCode == 0) {
             //    this.AsyncBackEndScanning = res.Data[0].ShortCode;
 
         }
+         //debugger;
+        this.spinner.hide();
+        this.getTotalPdfUsed();
+         //debugger;
     }
     sucessGetMyAccount(res: any) {
         this.myAccountDetail = res.Data;
@@ -305,6 +359,7 @@ export class MyAccountComponent implements OnInit {
         var timeDifference = ((currentDatetime.getTime()) - dbdate.getTime());
         this.minutesDifference = Math.floor(timeDifference / (1000 * 60));
         console.log("Payment recall Minutes Current difference : ", this.minutesDifference);
+        
 
         if (!stringhelper.IsNullOrEmptyOrDefault(_date)) {
             if (this.minutesDifference <= 4) {
@@ -316,13 +371,16 @@ export class MyAccountComponent implements OnInit {
                 this.PaymentStatus = "Last payment is Failed, Contact cosmic support";
             }
         }
-
-
+         //debugger;
         this.spinner.hide();
+        this.getXeroMaster();
+         //debugger;
     }
 
     failedGetMyAccount(res: any) {
+         //debugger;
         this.spinner.hide();
+         //debugger;
     }
 
     sucessUpdatedPaymentInitiationDateTime(res: any) {
@@ -433,6 +491,7 @@ export class MyAccountComponent implements OnInit {
 
     MakeAutorenewalCall() {
         this.spinner.show();
+         //debugger;
         this.loadingMessage = "Please wait..."
         var cloneSubscription = { "SubscriptionID": this.subscribedPlan.SubscriptionID, "IsAutoRenew": this.AutoRenewalEnable };
 
@@ -442,12 +501,9 @@ export class MyAccountComponent implements OnInit {
     }
 
     sucessAutoRenewalCheckboxChange(res: any) {
-        this.spinner.hide();
         this.GetAllPageData();
     }
-    failedAutoRenewalCheckboxChange(res: any) {
-
-        this.spinner.hide();
+    failedAutoRenewalCheckboxChange(res: any) {  
         this.AutoRenewalEnable = !this.AutoRenewalEnable;
 
     }
