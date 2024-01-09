@@ -64,7 +64,7 @@ export class HomelayoutComponent implements AfterViewInit, OnDestroy, OnInit {
     documentClickListener: Function;
 
     menuClick: boolean;
-
+    XeroUser: boolean;
     topMenuButtonClick: boolean;
     loadingMessage: string;
     subscriptionAutoRenew: any;
@@ -78,7 +78,7 @@ export class HomelayoutComponent implements AfterViewInit, OnDestroy, OnInit {
 
         this.appComponent.isConnectedToXero = this.ss.fetchIsAuthorize();
         this.companyName = this.ss.fetchCompanyName();
-
+         
         // //
         var IsAuthorize = this.ss.fetchIsAuthorize();
         if (!this.companyName) {
@@ -88,10 +88,12 @@ export class HomelayoutComponent implements AfterViewInit, OnDestroy, OnInit {
         this.getStartofAutoRenwalInfo();
         this.getSubscribedPlan1();
         this.CheckAvailablePDFCount();
+        this.getMyAccount();
     }
     ngOnInit() {
 
         console.log(">>>>>>>>>>>>>>>>>>>>>>>> ngOnInit cosmicNotifyService");
+
         this.cosmicNotifyService.myEventEmiter.subscribe(
             () => {
                 console.log(">>>>>>>>>>>>>>>>>>>>>>>> cosmicNotifyService");
@@ -117,6 +119,24 @@ export class HomelayoutComponent implements AfterViewInit, OnDestroy, OnInit {
         this.appComponent.ReAuthXeroUI();
     }
 
+    public getMyAccount() {
+        this.loadingMessage = "Please wait..."
+         
+        this.api.get('Account/Get', '').subscribe(
+            (res: {}) => this.sucessGetMyAccount(res),
+            error => this.failedGetMyAccount(<any>error));
+    }
+    sucessGetMyAccount(res: any) {
+         
+        this.XeroUser = res.Data.IsXeroReferaluser;
+         
+        var a = 5;
+        
+    }
+    failedGetMyAccount(res: any) {
+         
+        
+    }
     private async DisconnectFromXero() {
         this.spinner.show();
         this.api.post('Xero/RevokeXeroToken', '').subscribe(
@@ -375,7 +395,7 @@ export class HomelayoutComponent implements AfterViewInit, OnDestroy, OnInit {
 
 
         console.log('subscribedPlan' + this.subscribedPlan);
-         //debugger;
+         // 
         if (!this.subscribedPlan.IsPaidPlan) {
             //if the user has subscribed for paid version ever then the count should be 0 else continue.
             //if(everSubvScribedPlan) then tottal avail =0 else getTotalTrialPdfUsed

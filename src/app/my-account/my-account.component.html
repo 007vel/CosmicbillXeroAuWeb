@@ -104,15 +104,16 @@
           </ng-template>
         </p-dropdown> -->
             <div *ngIf="
-        PaymentStatus ;
-            else trial_Inprogress_message
-        ">
+                PaymentStatus ;
+                    else trial_Inprogress_message
+                ">
                 <b><span style="color: red;"> {{PaymentStatus}}</span></b>
             </div>
             <ng-template #trial_Inprogress_message> </ng-template>
             <p-footer>
                 <button pButton type="button" label="Purchase plan" icon="pi pi-check" style="margin-right: 0.25em"
                     (click)="buyWithCard()"></button>
+
             </p-footer>
         </p-card>
 

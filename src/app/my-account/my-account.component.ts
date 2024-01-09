@@ -24,6 +24,8 @@ import { stringhelper } from '../stringhelper';
 })
 export class MyAccountComponent implements OnInit {
 
+    isPopupVisible : boolean;
+
     offProfile: any = false;
 
     loadingMessage: string = "loading...";
@@ -202,6 +204,7 @@ export class MyAccountComponent implements OnInit {
 
     sucessGetSubscribedPlan(res: any) {
         this.subscribedPlan = res.Data;
+         
         console.log(this.subscribedPlan);
         console.log(this.subscribedPlan.IsEligibleForXeroPlanOws + "IsEligibleForXeroPlanOws");
         this.allowOwing = this.subscribedPlan.IsEligibleForXeroPlanOws;
@@ -346,6 +349,7 @@ export class MyAccountComponent implements OnInit {
          //debugger;
     }
     sucessGetMyAccount(res: any) {
+         
         this.myAccountDetail = res.Data;
         this.XeroReferaluser = this.myAccountDetail.IsXeroReferaluser;
         this.userform = this.fb.group({
@@ -391,11 +395,20 @@ export class MyAccountComponent implements OnInit {
     }
     failedUpdatedPaymentInitiationDateTime(res: any) { }
 
+    openPopup() {
+         
+        this.isPopupVisible = true;
+      }
+      closePopup() {
+        this.isPopupVisible = false;
+      }
+
     buyWithCard() {
 
         // this.getSubscribedPlan();
         // this.sucessUpdatedPaymentInitiationDateTime(null);
         // return;
+         
         var xerorefuser = this.myAccountDetail.IsXeroReferaluser;
         if (this.allowpayment) {
 
@@ -405,7 +418,7 @@ export class MyAccountComponent implements OnInit {
             console.log("total Allocated Pdf = " + this.totalAllocatedPdf);
             console.log("total Pdf Used = " + this.totalPdfUsed);
             console.log("total Trial Pdf = " + this.subscribedPlan.TrialPdf);
-            console.log("total Trial Pdf Used = " + this.totalTrialPdfUsed);
+            console.log("total Trial Pdf Used = " + this.totalTrialPdfUsed)
             if (this.subscribedPlan.IsPaidPlan) {
 
                 var totalpdf = 0;
